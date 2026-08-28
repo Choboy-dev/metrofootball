@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login | Metro Football</title>
+  <meta name="description" content="Log in to Metro Football with email or Google.">
+  <link rel="canonical" href="https://metrofootball.co.uk/login">
+  <link rel="icon" href="./images/metro-football-favicon.png" type="image/png" sizes="500x500">
+  <link rel="apple-touch-icon" href="./images/metro-football-favicon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Metro Football">
+  <meta property="og:title" content="Login | Metro Football">
+  <meta property="og:description" content="Log in to Metro Football with email or Google.">
+  <meta property="og:url" content="https://metrofootball.co.uk/login">
+  <meta property="og:image" content="https://metrofootball.co.uk/images/metro-football-favicon.png">
+  <meta property="og:image:width" content="500">
+  <meta property="og:image:height" content="500">
+  <meta property="og:locale" content="en_GB">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Login | Metro Football">
+  <meta name="twitter:description" content="Log in to Metro Football with email or Google.">
+  <meta name="twitter:image" content="https://metrofootball.co.uk/images/metro-football-favicon.png">
+  <script src="./js/perf-head.js"></script>
+  <link rel="stylesheet" href="./css/perf.css?v=20260828b">
+  <link rel="stylesheet" href="./css/app.css">
+</head>
+<body class="auth-page">
+  <section class="auth-shell">
+    <div class="auth-card auth-reveal">
+      <div class="auth-card__brand">
+        <a href="./" class="site-logo" aria-label="Metro Football home">
+          <picture>
+            <source type="image/webp" srcset="./images/metro-football-logo-dark.webp">
+            <img class="site-logo__img" src="./images/metro-football-logo-dark.png" alt="" width="320" height="107" decoding="async">
+          </picture>
+        </a>
+        <h1 class="auth-card__title">Welcome back</h1>
+      </div>
+
+      <form class="auth-form" data-login-form novalidate>
+        <p class="auth-form__error" data-form-error hidden role="alert"></p>
+
+        <div class="auth-field">
+          <label class="auth-label" for="email">Email</label>
+          <input
+            class="auth-input"
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            inputmode="email"
+            required
+            placeholder="Email"
+          >
+        </div>
+
+        <div class="auth-field">
+          <label class="auth-label" for="password">Password</label>
+          <div class="auth-password">
+            <input
+              class="auth-input auth-input--password"
+              id="password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              required
+              placeholder="Password"
+            >
+            <button
+              type="button"
+              class="auth-password__toggle"
+              data-password-toggle
+              aria-label="Show password"
+              aria-controls="password"
+              aria-pressed="false"
+            >
+              <svg class="auth-password__icon auth-password__icon--show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg class="auth-password__icon auth-password__icon--hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" hidden>
+                <path d="M3 3l18 18M10.6 10.6a3 3 0 0 0 4.2 4.2M9.9 5.1A10.5 10.5 0 0 1 12 5c6.5 0 10 7 10 7a18.5 18.5 0 0 1-4.2 4.8M6.1 6.1C3.9 7.7 2 12 2 12a18.7 18.7 0 0 0 7.1 5.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="mf-btn mf-btn--ink mf-btn--block">
+          <span class="mf-btn__label">Login</span>
+          <span class="mf-btn__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </button>
+
+        <a class="mf-btn mf-btn--light mf-btn--block" data-google-auth href="#">
+          <span class="mf-btn__label">Continue with Google</span>
+          <span class="mf-btn__icon mf-btn__icon--google" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+              <path fill="#EA4335" d="M12 10.2v3.6h5.1c-.2 1.2-1.5 3.6-5.1 3.6-3.1 0-5.6-2.5-5.6-5.6S8.9 6.2 12 6.2c1.8 0 3 .7 3.7 1.4l2.5-2.4C16.8 3.8 14.6 3 12 3 7 3 3 7 3 12s4 9 9 9c5.2 0 8.6-3.6 8.6-8.7 0-.6-.1-1-.2-1.5H12z"/>
+            </svg>
+          </span>
+        </a>
+      </form>
+
+      <p class="auth-card__footer">
+        New here?
+        <a data-register-link href="./register">Create an account</a>
+      </p>
+    </div>
+  </section>
+
+  <script type="module" src="./js/login.js"></script>
+</body>
+</html>

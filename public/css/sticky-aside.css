@@ -1,0 +1,41 @@
+/* Shared sticky sidebar offset for legal + report pages */
+
+:root {
+  --sticky-sidebar-gap: 1.25rem;
+}
+
+@media (min-width: 960px) {
+  .privacy-aside,
+  .terms-aside,
+  .fin-aside,
+  .fin-layout__aside,
+  .fin-layout__toc,
+  .report-aside,
+  .gwr-aside,
+  .pcp-aside,
+  .lt-aside,
+  aside:has([data-fin-toc]),
+  aside:has(.fin-toc__title),
+  [data-report-aside] {
+    top: calc(var(--header-height, 5.5rem) + var(--sticky-sidebar-gap)) !important;
+    z-index: 20;
+    align-self: start;
+  }
+
+  .privacy-jump {
+    top: calc(var(--header-height, 5.5rem) + 0.15rem);
+  }
+
+  .terms-jump {
+    top: calc(var(--header-height, 5.5rem) + 0.15rem);
+  }
+
+  .privacy-section,
+  .terms-section,
+  .fin-section,
+  .fin-player,
+  .gwr-section,
+  [id][class*="fin-"] {
+    scroll-margin-top: calc(var(--header-height, 5.5rem) + var(--sticky-sidebar-gap) + 0.5rem);
+  }
+}

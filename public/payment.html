@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Complete payment | Metro Football</title>
+  <meta name="description" content="Finish Premium payment for Metro Football with Flutterwave.">
+  <link rel="canonical" href="https://metrofootball.co.uk/payment">
+  <link rel="icon" href="./images/metro-football-favicon.png" type="image/png" sizes="500x500">
+  <link rel="apple-touch-icon" href="./images/metro-football-favicon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Metro Football">
+  <meta property="og:title" content="Complete payment | Metro Football">
+  <meta property="og:description" content="Finish Premium payment for Metro Football with Flutterwave.">
+  <meta property="og:url" content="https://metrofootball.co.uk/payment">
+  <meta property="og:image" content="https://metrofootball.co.uk/images/metro-football-favicon.png">
+  <meta property="og:image:width" content="500">
+  <meta property="og:image:height" content="500">
+  <meta property="og:locale" content="en_GB">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Complete payment | Metro Football">
+  <meta name="twitter:description" content="Finish Premium payment for Metro Football with Flutterwave.">
+  <meta name="twitter:image" content="https://metrofootball.co.uk/images/metro-football-favicon.png">
+  <link rel="stylesheet" href="./css/app.css">
+</head>
+<body class="auth-page" data-auth-page="payment">
+  <section class="auth-shell">
+    <div class="auth-card auth-card--pay">
+      <div class="auth-card__brand">
+        <a href="./" class="site-logo" aria-label="Metro Football home">
+          <img class="site-logo__img" src="./images/metro-football-logo-dark.png" alt="" width="320" height="107" decoding="async">
+        </a>
+        <h1 class="auth-card__title">Finish Premium</h1>
+        <p class="auth-card__lead">Signed in as <strong data-user-email></strong>. Upgrade now to unlock personal team tools.</p>
+      </div>
+
+      <p class="auth-form__error" data-form-error hidden role="alert"></p>
+      <p class="auth-form__notice" data-form-notice hidden role="status"></p>
+
+      <div class="pay-toggle" data-billing-toggle role="group" aria-label="Billing period">
+        <button type="button" class="pay-toggle__btn" data-cycle="monthly">Monthly</button>
+        <button type="button" class="pay-toggle__btn is-active" data-cycle="yearly">Yearly</button>
+      </div>
+
+      <div class="pay-summary">
+        <p class="pay-summary__amount"><span data-pay-amount>£2</span> <span data-pay-period>/ month</span></p>
+        <p class="pay-summary__note" data-pay-note>Best value for the season</p>
+      </div>
+
+      <button type="button" class="mf-btn mf-btn--primary mf-btn--block" data-pay-start>
+        <span class="mf-btn__label">Continue to checkout</span>
+        <span class="mf-btn__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </button>
+
+      <a class="mf-btn mf-btn--ink mf-btn--block mf-btn--back" href="./join" data-back-plans>
+        <span class="mf-btn__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 17 7 7M17 7H7v10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span class="mf-btn__label">Back</span>
+      </a>
+    </div>
+  </section>
+  <script type="module" src="./js/payment.js"></script>
+</body>
+</html>

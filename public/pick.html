@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pick | Metro Football</title>
+  <meta name="description" content="Plan transfers, rate your squad, and set your lineup before the deadline.">
+  <link rel="canonical" href="https://metrofootball.co.uk/pick">
+  <link rel="icon" href="./images/metro-football-favicon.png" type="image/png" sizes="500x500">
+  <link rel="apple-touch-icon" href="./images/metro-football-favicon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Metro Football">
+  <meta property="og:title" content="Pick | Metro Football">
+  <meta property="og:description" content="Plan transfers, rate your squad, and set your lineup before the deadline.">
+  <meta property="og:url" content="https://metrofootball.co.uk/pick">
+  <meta property="og:image" content="https://metrofootball.co.uk/images/metro-football-favicon.png">
+  <meta property="og:image:width" content="500">
+  <meta property="og:image:height" content="500">
+  <meta property="og:locale" content="en_GB">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Pick | Metro Football">
+  <meta name="twitter:description" content="Plan transfers, rate your squad, and set your lineup before the deadline.">
+  <meta name="twitter:image" content="https://metrofootball.co.uk/images/metro-football-favicon.png">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="./css/app.css">
+</head>
+<body class="pick-page" data-auth-page="pick" data-tool="pick" data-tool-access="free">
+  <div
+    class="mf-live-progress"
+    data-pick-progress
+    hidden
+    aria-hidden="true"
+  >
+    <div
+      class="mf-live-progress__bar"
+      data-pick-progress-bar
+      role="progressbar"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="0"
+      aria-label="Loading pick team"
+    ></div>
+  </div>
+
+  <header class="site-header" data-header>
+    <nav class="site-nav" aria-label="Main">
+      <div class="site-nav__left">
+        <a href="./" class="site-logo" aria-label="Metro Football home">
+          <img class="site-logo__img" src="./images/metro-football-logo-dark.png" alt="" width="320" height="107" decoding="async">
+        </a>
+
+        <div class="nav-menu desktop-only">
+          <div class="nav-item" data-nav-item>
+            <button type="button" class="nav-trigger" data-nav-trigger aria-expanded="false" aria-haspopup="true">
+              Tools
+              <svg class="nav-caret" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="nav-panel" data-nav-panel hidden>
+              <div class="nav-panel__card">
+                <ul class="nav-list nav-list--grid">
+                  <li>
+                    <a class="list-item" href="./gameweek-recap">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Rate My Team</span>
+                        <span class="list-item__desc">Score your squad and pick a captain</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./ai-tips">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">AI Transfers</span>
+                        <span class="list-item__desc">Get the best transfer for your squad</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./chip-strategy">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Chip Strategy Planner</span>
+                        <span class="list-item__desc">Find the best weeks for each chip</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./ai-tips#snipers">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Differential Finder</span>
+                        <span class="list-item__desc">Spot low owned high scorers</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./fixture-difficulty">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Fixture Difficulty Ticker</span>
+                        <span class="list-item__desc">See easy and hard fixture runs</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./mini-leagues">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Mini League Tracker</span>
+                        <span class="list-item__desc">Watch rivals and rank swings</span>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+                <div class="nav-panel__note">
+                  <p>Interested? <a href="./join">Go premium from £2 a month</a></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="nav-item" data-nav-item>
+            <button type="button" class="nav-trigger" data-nav-trigger aria-expanded="false" aria-haspopup="true">
+              Reports
+              <svg class="nav-caret" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="nav-panel nav-panel--reports" data-nav-panel hidden>
+              <div class="nav-company">
+                <ul class="nav-list nav-list--stack">
+                  <li>
+                    <a class="list-item" href="./gameweek-recap">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Gameweek Recap</span>
+                        <span class="list-item__desc">What just happened in FPL</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./price-changes">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Price Change Predictions</span>
+                        <span class="list-item__desc">See who may rise or fall</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./fpl-injury-news">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Injury Risk Digest</span>
+                        <span class="list-item__desc">Who may miss the next match</span>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+                <ul class="nav-list nav-list--stack">
+                  <li>
+                    <a class="list-item" href="#">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Players</span>
+                        <span class="list-item__desc">Search players and season stats</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./league-table">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">League Table</span>
+                        <span class="list-item__desc">See the table and recent form</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./fpl-gameweek-2-tips" data-nav-gw-tips-link>
+                      <span class="list-item__copy">
+                        <span class="list-item__title" data-nav-gw-tips-label>Gameweek Tips</span>
+                        <span class="list-item__desc">Picks and advice for this gameweek</span>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <a data-pricing-nav class="nav-link" href="./join">Pricing</a>
+          <a class="nav-link" href="#">About</a>
+          <a class="nav-link" href="#">Contact</a>
+        </div>
+      </div>
+
+      <div class="site-nav__right desktop-only">
+        <a class="mf-btn mf-btn--ink mf-btn--sm" href="./login" data-guest-only>
+          <span class="mf-btn__label">Sign In</span>
+          <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+        <a class="mf-btn mf-btn--primary mf-btn--sm" href="./join" data-guest-only>
+          <span class="mf-btn__label">Get Started</span>
+          <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+        <button type="button" class="mf-btn mf-btn--ink mf-btn--sm" data-auth-only data-sign-out hidden>
+          <span class="mf-btn__label">Sign Out</span>
+          <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+      </div>
+
+      <button
+        type="button"
+        class="btn-nav btn-nav--icon mobile-only"
+        data-mobile-toggle
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label="Toggle menu"
+      >
+        <span class="menu-toggle-icon" data-menu-icon aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+      </button>
+    </nav>
+  </header>
+
+  <div id="mobile-menu" class="mobile-menu" data-mobile-menu hidden>
+    <div class="mobile-menu__inner" data-mobile-inner>
+      <div class="mobile-menu__scroll" data-mobile-scroll>
+        <nav class="mobile-menu__nav" data-mobile-nav aria-label="Mobile navigation"></nav>
+      </div>
+      <div class="mobile-menu__actions">
+        <a class="mf-btn mf-btn--ink mf-btn--block" href="./login" data-guest-only>
+          <span class="mf-btn__label">Sign In</span>
+          <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+        <a class="mf-btn mf-btn--primary mf-btn--block" href="./join" data-guest-only>
+          <span class="mf-btn__label">Get Started</span>
+          <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+        <button type="button" class="mf-btn mf-btn--ink mf-btn--block" data-auth-only data-sign-out hidden>
+          <span class="mf-btn__label">Sign Out</span>
+          <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="team-tabs" aria-label="My Team" data-team-tabs>
+    <div class="container team-tabs__shell">
+      <div class="team-tabs__root" data-team-tabs-root>
+        <div class="team-tabs__hover" data-team-tabs-hover aria-hidden="true"></div>
+        <div class="team-tabs__active" data-team-tabs-active aria-hidden="true"></div>
+        <div class="team-tabs__list">
+          <a class="team-tabs__tab" href="./live" data-team-tab>Live</a>
+          <a class="team-tabs__tab is-active" href="./pick" aria-current="page" data-team-tab>Pick</a>
+          <a class="team-tabs__tab" href="./ai-tips" data-team-tab>AI Tips</a>
+          <a class="team-tabs__tab" href="./ai-teams" data-team-tab>AI Teams</a>
+          <a class="team-tabs__tab" href="./mini-leagues" data-team-tab>Mini Leagues</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="pick-main" data-pick-main>
+    <div class="container pick-shell">
+      <p class="pick-status" data-pick-status>Loading your squad</p>
+      <p class="pick-lock-banner" data-pick-lock-banner hidden></p>
+
+      <div class="live-load pick-load" data-pick-load hidden>
+        <div class="live-load__meta">
+          <p class="live-load__label" data-pick-load-label>Getting your squad ready</p>
+          <p class="live-load__pct" data-pick-load-pct aria-hidden="true">0%</p>
+        </div>
+        <div
+          class="live-load__track"
+          role="progressbar"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+          aria-labelledby="pick-load-label"
+          data-pick-load-track
+        >
+          <div class="live-load__fill" data-pick-load-fill></div>
+          <div class="live-load__sheen" aria-hidden="true"></div>
+        </div>
+        <p class="live-load__hint" data-pick-load-hint>Pulling your squad and projections from Fantasy Premier League.</p>
+      </div>
+      <p id="pick-load-label" class="sr-only" data-pick-load-sr>Getting your squad ready</p>
+
+      <p class="pick-error auth-form__error" data-pick-error hidden></p>
+
+      <section class="pick-summary" data-pick-summary hidden aria-label="Gameweek summary">
+        <div class="pick-summary__gw">
+          <button type="button" class="pick-gw-nav" data-gw-prev aria-label="Previous gameweek" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 6 9 12l6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="pick-summary__gw-copy">
+            <p class="pick-summary__gw-name" data-pick-gw-name>Gameweek</p>
+            <p class="pick-summary__deadline" data-pick-deadline></p>
+          </div>
+          <button type="button" class="pick-gw-nav" data-gw-next aria-label="Next gameweek" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 6 6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+        <div class="pick-summary__stats">
+          <article class="pick-metric">
+            <p class="pick-metric__value" data-pick-strength>0%</p>
+            <div class="pick-metric__toggles" role="group" aria-label="Strength horizon">
+              <button type="button" class="pick-chip is-active" data-strength-horizon="gw">GW</button>
+              <button type="button" class="pick-chip" data-strength-horizon="5gw">5GW</button>
+            </div>
+          </article>
+
+          <article class="pick-metric pick-metric--locked" data-lock-predicted>
+            <span class="pick-lock" data-predicted-lock aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" stroke-linecap="round"/></svg>
+            </span>
+            <p class="pick-metric__value" data-pick-predicted hidden>-</p>
+            <p class="pick-metric__label">Predicted</p>
+          </article>
+
+          <article class="pick-metric">
+            <p class="pick-metric__value pick-metric__value--bank" data-pick-bank>£0.0m</p>
+            <p class="pick-metric__label">In the bank</p>
+          </article>
+
+          <article class="pick-metric">
+            <p class="pick-metric__value" data-pick-free-transfers>1</p>
+            <p class="pick-metric__label">Available transfers</p>
+          </article>
+        </div>
+
+        <p class="pick-hits" data-pick-hits hidden></p>
+        <div class="pick-tip-row" data-pick-tip-row hidden>
+          <a class="mf-btn mf-btn--ink mf-btn--sm" href="./ai-tips" data-ai-tip>
+            <span class="mf-btn__label">Get AI tip</span>
+            <span class="mf-btn__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </a>
+        </div>
+      </section>
+
+      <div class="pick-layout" data-pick-layout hidden>
+        <section class="pick-stage" aria-label="Your pitch">
+          <div class="pick-view-toggle" role="group" aria-label="Pitch view">
+            <button type="button" class="pick-view-toggle__btn is-active" data-pitch-view="next">Next GW</button>
+            <button type="button" class="pick-view-toggle__btn" data-pitch-view="next3">Next 3 GWs</button>
+            <button type="button" class="pick-view-toggle__btn" data-pitch-view="price">Price changes</button>
+          </div>
+
+          <div class="pick-pitch" data-pick-pitch>
+            <div class="pick-pitch__markings" aria-hidden="true">
+              <span class="pick-pitch__box--far"></span>
+            </div>
+            <div class="pick-pitch__rows">
+              <div class="pick-pitch__row" data-pitch-row="gkp"></div>
+              <div class="pick-pitch__row" data-pitch-row="def"></div>
+              <div class="pick-pitch__row" data-pitch-row="mid"></div>
+              <div class="pick-pitch__row" data-pitch-row="fwd"></div>
+            </div>
+          </div>
+
+          <div class="pick-bench" aria-label="Bench">
+            <div class="pick-bench__track" data-pick-bench></div>
+          </div>
+
+          <div class="pick-actions">
+            <button type="button" class="mf-btn mf-btn--ink" data-save-team disabled>
+              <span class="mf-btn__label">Save team</span>
+              <span class="mf-btn__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 21v-8H7v8M7 3v5h8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </button>
+            <a class="mf-btn mf-btn--primary pick-actions__locked" href="./join" data-optimise-cta>
+              <span class="mf-btn__label">Optimise lineup</span>
+              <span class="mf-btn__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" stroke-linecap="round"/></svg>
+              </span>
+            </a>
+            <button type="button" class="mf-btn mf-btn--accent" data-reset-team>
+              <span class="mf-btn__label">Reset team</span>
+              <span class="mf-btn__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m19 6-1 14H6L5 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </button>
+          </div>
+
+          <section class="pick-chips" data-pick-chips aria-label="Chip strategy">
+            <div class="pick-chips__head">
+              <h2 class="pick-chips__title">Your chip strategy</h2>
+              <span class="pick-lock pick-lock--inline" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" stroke-linecap="round"/></svg>
+              </span>
+            </div>
+            <div class="pick-chips__grid">
+              <article class="pick-chip-card is-locked"><p class="pick-chip-card__name">Bench boost</p><p class="pick-chip-card__state">Not set</p></article>
+              <article class="pick-chip-card is-locked"><p class="pick-chip-card__name">Free hit</p><p class="pick-chip-card__state">Not set</p></article>
+              <article class="pick-chip-card is-locked"><p class="pick-chip-card__name">Wildcard</p><p class="pick-chip-card__state">Not set</p></article>
+              <article class="pick-chip-card is-locked"><p class="pick-chip-card__name">Triple captain</p><p class="pick-chip-card__state">Not set</p></article>
+            </div>
+          </section>
+        </section>
+
+        <aside class="pick-side" aria-label="Player list">
+          <div class="pick-side__head">
+            <h2 class="pick-side__title">Players</h2>
+            <p class="pick-side__mode" data-pick-mode-label>Browse players</p>
+          </div>
+
+          <div class="pick-filters">
+            <div class="pick-pos" role="group" aria-label="Position filter">
+              <button type="button" class="pick-pos__btn is-active" data-pos-filter="all">All</button>
+              <button type="button" class="pick-pos__btn" data-pos-filter="1">GK</button>
+              <button type="button" class="pick-pos__btn" data-pos-filter="2">DEF</button>
+              <button type="button" class="pick-pos__btn" data-pos-filter="3">MID</button>
+              <button type="button" class="pick-pos__btn" data-pos-filter="4">FWD</button>
+            </div>
+
+            <div class="mf-select mf-select--block pick-field" data-mf-select data-sort-by data-value="price" id="pick-sort">
+              <span class="mf-select__label" id="pick-sort-label">Sort by</span>
+              <button
+                type="button"
+                class="mf-select__trigger"
+                data-mf-select-trigger
+                aria-labelledby="pick-sort-label pick-sort-value"
+              >
+                <span class="mf-select__value" id="pick-sort-value" data-mf-select-value>Price</span>
+              </button>
+              <div class="mf-select__panel" data-mf-select-panel hidden>
+                <div class="mf-select__option is-selected" data-mf-select-option data-value="price" tabindex="-1">Price</div>
+                <div class="mf-select__option" data-mf-select-option data-value="form" tabindex="-1">Form</div>
+                <div class="mf-select__option" data-mf-select-option data-value="points" tabindex="-1">Total points</div>
+                <div class="mf-select__option" data-mf-select-option data-value="name" tabindex="-1">Name</div>
+              </div>
+            </div>
+
+            <div class="pick-price">
+              <div class="pick-price__labels">
+                <span data-price-min-label>4.0</span>
+                <span data-price-max-label>15.5</span>
+              </div>
+              <div class="pick-price__track" data-price-track style="--price-min:0%; --price-max:100%;">
+                <input type="range" min="4" max="15.5" step="0.5" value="4" data-price-min aria-label="Minimum price">
+                <input type="range" min="4" max="15.5" step="0.5" value="15.5" data-price-max aria-label="Maximum price">
+              </div>
+            </div>
+
+            <label class="pick-search">
+              <span class="sr-only">Search players</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3" stroke-linecap="round"/></svg>
+              <input type="search" placeholder="Search by player or team name" data-player-search>
+            </label>
+
+            <label class="pick-check">
+              <input type="checkbox" data-affordable-only>
+              <span>Affordable only</span>
+            </label>
+          </div>
+
+          <div class="pick-list-wrap">
+            <div class="pick-list-head" aria-hidden="true">
+              <span class="pick-list-head__player">Player</span>
+              <span class="pick-list-head__price">Price</span>
+              <span class="pick-list-head__gw" data-gw-range-label>GW</span>
+              <span class="pick-list-head__prc">PRC</span>
+            </div>
+            <div class="pick-list" data-player-list></div>
+          </div>
+          <div class="pick-pager">
+            <button type="button" class="pick-pager__btn" data-page-prev aria-label="Previous page">&lt;</button>
+            <span data-page-label>Page 1</span>
+            <button type="button" class="pick-pager__btn" data-page-next aria-label="Next page">&gt;</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <div class="pick-modal-shell" data-pick-modal hidden>
+    <div class="pick-modal-shell__backdrop" data-pick-modal-close></div>
+    <div
+      class="pick-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="pick-modal-title"
+      tabindex="-1"
+      data-pick-modal-dialog
+    >
+      <button type="button" class="pick-modal__close" data-pick-modal-close aria-label="Close dialog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6 18 18M18 6 6 18" stroke-linecap="round"/></svg>
+      </button>
+      <div data-pick-modal-body></div>
+    </div>
+  </div>
+
+
+
+
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="./">
+          <img class="site-logo__img site-logo__img--light" src="./images/metro-football-logo-light.png" alt="" width="320" height="107" decoding="async">
+        </a>
+        <p>Metro Football builds FPL tools and auto reports for managers who want clear answers before the deadline.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <a href="./">Home</a>
+        <a href="#">Players</a>
+        <a href="./league-table">League Table</a>
+        <a href="#">Dashboard</a>
+        <a href="./join">Upgrade</a>
+      </div>
+      <div class="footer-col">
+        <h4>Tools</h4>
+        <a href="./fixture-difficulty">Fixture Difficulty Ticker</a>
+        <a href="./ai-tips#snipers">Differential Finder</a>
+        <a href="./mini-leagues">Mini League Tracker</a>
+        <a href="./pick">Rate My Team</a>
+        <a href="#">Transfer Planner</a>
+        <a href="./ai-tips">AI Transfers</a>
+        <a href="./chip-strategy">Chip Strategy Planner</a>
+      </div>
+      <div class="footer-col">
+        <h4>Account</h4>
+        <a href="#">Log in</a>
+        <a href="#">Register</a>
+        <a href="#">Settings</a>
+        <a href="#">Billing</a>
+        <a href="#">Help</a>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>© 2026 Metro Football. metrofootball.co.uk</span>
+      <span>
+        <a href="./privacy-policy">Privacy</a>
+        ·
+        <a href="./terms">Terms</a>
+      </span>
+    </div>
+  </footer>
+
+  <script type="module" src="./js/pick.js"></script>
+</body>
+</html>

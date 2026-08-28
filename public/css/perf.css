@@ -1,0 +1,33 @@
+/* Performance — keep above-the-fold visible before Motion loads */
+
+.hero-reveal,
+.auth-reveal {
+  opacity: 1;
+}
+
+.reveal,
+.tools-grid .tool {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-reveal {
+    transform: translateY(1.75rem);
+  }
+
+  .reveal {
+    transform: translateY(1.25rem);
+  }
+
+  .tools-grid .tool {
+    transform: translateY(1.1rem) scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-reveal,
+  .reveal,
+  .tools-grid .tool {
+    transform: none;
+  }
+}

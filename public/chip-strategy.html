@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chip Strategy Planner | Metro Football</title>
+  <meta name="description" content="Plan when to play your FPL chips based on your squad on Metro Football Premium.">
+  <link rel="canonical" href="https://metrofootball.co.uk/chip-strategy">
+  <link rel="icon" href="./images/metro-football-favicon.png" type="image/png" sizes="500x500">
+  <link rel="apple-touch-icon" href="./images/metro-football-favicon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Metro Football">
+  <meta property="og:title" content="Chip Strategy Planner | Metro Football">
+  <meta property="og:description" content="Plan when to play your FPL chips based on your squad on Metro Football Premium.">
+  <meta property="og:url" content="https://metrofootball.co.uk/chip-strategy">
+  <meta property="og:image" content="https://metrofootball.co.uk/images/metro-football-favicon.png">
+  <meta property="og:image:width" content="500">
+  <meta property="og:image:height" content="500">
+  <meta property="og:locale" content="en_GB">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Chip Strategy Planner | Metro Football">
+  <meta name="twitter:description" content="Plan when to play your FPL chips based on your squad on Metro Football Premium.">
+  <meta name="twitter:image" content="https://metrofootball.co.uk/images/metro-football-favicon.png">
+  <link rel="stylesheet" href="./css/app.css">
+</head>
+<body class="team-tool-page csp-page" data-auth-page="team-tool" data-tool="chip-strategy">
+  <div
+    class="mf-live-progress"
+    data-csp-progress
+    hidden
+    aria-hidden="true"
+  >
+    <div
+      class="mf-live-progress__bar"
+      data-csp-progress-bar
+      role="progressbar"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="0"
+      aria-label="Loading chip strategy"
+    ></div>
+  </div>
+
+  <header class="site-header" data-header>
+    <nav class="site-nav" aria-label="Main">
+      <div class="site-nav__left">
+        <a href="./" class="site-logo" aria-label="Metro Football home">
+          <img class="site-logo__img" src="./images/metro-football-logo-dark.png" alt="" width="320" height="107" decoding="async">
+        </a>
+
+        <div class="nav-menu desktop-only">
+          <div class="nav-item" data-nav-item>
+            <button type="button" class="nav-trigger" data-nav-trigger aria-expanded="false" aria-haspopup="true">
+              Tools
+              <svg class="nav-caret" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="nav-panel" data-nav-panel hidden>
+              <div class="nav-panel__card">
+                <ul class="nav-list nav-list--grid">
+                  <li>
+                    <a class="list-item" href="./gameweek-recap">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Rate My Team</span>
+                        <span class="list-item__desc">Score your squad and pick a captain</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./ai-tips">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">AI Transfers</span>
+                        <span class="list-item__desc">Get the best transfer for your squad</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./chip-strategy">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Chip Strategy Planner</span>
+                        <span class="list-item__desc">Find the best weeks for each chip</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./ai-tips#snipers">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Differential Finder</span>
+                        <span class="list-item__desc">Spot low owned high scorers</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./fixture-difficulty">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Fixture Difficulty Ticker</span>
+                        <span class="list-item__desc">See easy and hard fixture runs</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./mini-leagues">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Mini League Tracker</span>
+                        <span class="list-item__desc">Watch rivals and rank swings</span>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+                <div class="nav-panel__note">
+                  <p>Interested? <a href="./join">Go premium from £2 a month</a></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="nav-item" data-nav-item>
+            <button type="button" class="nav-trigger" data-nav-trigger aria-expanded="false" aria-haspopup="true">
+              Reports
+              <svg class="nav-caret" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="nav-panel nav-panel--reports" data-nav-panel hidden>
+              <div class="nav-company">
+                <ul class="nav-list nav-list--stack">
+                  <li>
+                    <a class="list-item" href="./gameweek-recap">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Gameweek Recap</span>
+                        <span class="list-item__desc">What just happened in FPL</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./price-changes">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Price Change Predictions</span>
+                        <span class="list-item__desc">See who may rise or fall</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./fpl-injury-news">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Injury Risk Digest</span>
+                        <span class="list-item__desc">Who may miss the next match</span>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+                <ul class="nav-list nav-list--stack">
+                  <li>
+                    <a class="list-item" href="#">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Players</span>
+                        <span class="list-item__desc">Search players and season stats</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./league-table">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">League Table</span>
+                        <span class="list-item__desc">See the table and recent form</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./fpl-gameweek-2-tips" data-nav-gw-tips-link>
+                      <span class="list-item__copy">
+                        <span class="list-item__title" data-nav-gw-tips-label>Gameweek Tips</span>
+                        <span class="list-item__desc">Picks and advice for this gameweek</span>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <a data-pricing-nav class="nav-link" href="./join">Pricing</a>
+          <a class="nav-link" href="#">About</a>
+          <a class="nav-link" href="#">Contact</a>
+        </div>
+      </div>
+
+      <div class="site-nav__right desktop-only">
+        <a class="mf-btn mf-btn--ink mf-btn--sm" href="./login" data-guest-only>
+          <span class="mf-btn__label">Sign In</span>
+          <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+        <a class="mf-btn mf-btn--primary mf-btn--sm" href="./join" data-guest-only>
+          <span class="mf-btn__label">Get Started</span>
+          <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+        <button type="button" class="mf-btn mf-btn--ink mf-btn--sm" data-auth-only data-sign-out hidden>
+          <span class="mf-btn__label">Sign Out</span>
+          <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+      </div>
+
+      <button
+        type="button"
+        class="btn-nav btn-nav--icon mobile-only"
+        data-mobile-toggle
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label="Toggle menu"
+      >
+        <span class="menu-toggle-icon" data-menu-icon aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+      </button>
+    </nav>
+  </header>
+
+  <div id="mobile-menu" class="mobile-menu" data-mobile-menu hidden>
+    <div class="mobile-menu__inner" data-mobile-inner>
+      <div class="mobile-menu__scroll" data-mobile-scroll>
+        <nav class="mobile-menu__nav" data-mobile-nav aria-label="Mobile navigation"></nav>
+      </div>
+      <div class="mobile-menu__actions">
+        <a class="mf-btn mf-btn--ink mf-btn--block" href="./login" data-guest-only>
+          <span class="mf-btn__label">Sign In</span>
+          <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+        <a class="mf-btn mf-btn--primary mf-btn--block" href="./join" data-guest-only>
+          <span class="mf-btn__label">Get Started</span>
+          <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+        <button type="button" class="mf-btn mf-btn--ink mf-btn--block" data-auth-only data-sign-out hidden>
+          <span class="mf-btn__label">Sign Out</span>
+          <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="team-tabs" aria-label="My Team" data-team-tabs>
+    <div class="container team-tabs__shell">
+      <div class="team-tabs__root" data-team-tabs-root>
+        <div class="team-tabs__hover" data-team-tabs-hover aria-hidden="true"></div>
+        <div class="team-tabs__active" data-team-tabs-active aria-hidden="true"></div>
+        <div class="team-tabs__list">
+          <a class="team-tabs__tab" href="./live" data-team-tab>Live</a>
+          <a class="team-tabs__tab" href="./pick" data-team-tab>Pick</a>
+          <a class="team-tabs__tab" href="./ai-tips" data-team-tab>AI Tips</a>
+          <a class="team-tabs__tab" href="./ai-teams" data-team-tab>AI Teams</a>
+          <a class="team-tabs__tab" href="./mini-leagues" data-team-tab>Mini Leagues</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="team-tool-main csp-main" data-csp-main>
+    <div class="container csp-shell">
+      <section class="premium-lock" data-premium-lock aria-labelledby="premium-lock-title">
+        <div class="premium-lock__banner">
+          <span class="premium-lock__gem" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5 3.5 9.2 12 21.5 20.5 9.2 12 2.5Zm0 2.4 5.4 4.3L12 18.2 6.6 9.2 12 4.9Z"/></svg>
+          </span>
+          <p class="premium-lock__banner-text">Exclusive content for members only</p>
+        </div>
+        <div class="premium-lock__body">
+          <div class="premium-lock__intro">
+            <span class="premium-lock__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" stroke-linecap="round"/></svg>
+            </span>
+            <div class="premium-lock__copy">
+              <h1 class="premium-lock__title" id="premium-lock-title">Unlock exclusive content</h1>
+              <p class="premium-lock__lead">Upgrade for access to this tool</p>
+            </div>
+          </div>
+          <a class="mf-btn mf-btn--primary" href="./join" data-upgrade-cta>
+            <span class="mf-btn__label">Upgrade</span>
+            <span class="mf-btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </a>
+        </div>
+      </section>
+
+      <section class="csp-unlocked" data-premium-unlocked hidden>
+        <div class="live-load pick-load csp-load" data-csp-load hidden>
+          <div class="live-load__meta">
+            <p class="live-load__label" data-csp-load-label>Reading your squad</p>
+            <p class="live-load__pct" data-csp-load-pct aria-hidden="true">0%</p>
+          </div>
+          <div
+            class="live-load__track"
+            role="progressbar"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="0"
+            aria-labelledby="csp-load-label"
+            data-csp-load-track
+          >
+            <div class="live-load__fill" data-csp-load-fill></div>
+            <div class="live-load__sheen" aria-hidden="true"></div>
+          </div>
+          <p class="live-load__hint">We score the next few gameweeks for each chip.</p>
+        </div>
+        <p id="csp-load-label" class="sr-only" data-csp-load-sr>Reading your squad</p>
+
+        <p class="csp-error auth-form__error" data-csp-error hidden></p>
+
+        <div class="csp-board" data-csp-board hidden>
+          <section class="csp-hero">
+            <header class="csp-header">
+              <p class="csp-header__kicker" data-csp-event>Gameweek</p>
+              <h1 class="csp-header__title">Chip Strategy Planner</h1>
+              <p class="csp-header__lead">We show the best week to play each chip for your team.</p>
+            </header>
+
+            <div class="csp-meta" role="group" aria-label="Squad overview">
+              <div class="csp-stat">
+                <span class="csp-stat__label">Team</span>
+                <span class="csp-stat__value" data-csp-team>Your team</span>
+              </div>
+              <div class="csp-stat">
+                <span class="csp-stat__label">Strength</span>
+                <span class="csp-stat__value" data-csp-strength>0%</span>
+              </div>
+              <div class="csp-stat">
+                <span class="csp-stat__label">Predicted</span>
+                <span class="csp-stat__value" data-csp-predicted>0 pts</span>
+              </div>
+            </div>
+          </section>
+
+          <article class="csp-summary" data-csp-summary>
+            <h2 class="csp-summary__title" data-csp-summary-headline>Your chip plan</h2>
+            <p class="csp-summary__lead" data-csp-summary-lead></p>
+          </article>
+
+          <section class="csp-chips-section" aria-labelledby="csp-chips-title">
+            <h2 class="csp-section-title" id="csp-chips-title">Your chips</h2>
+            <div class="csp-chips" data-csp-chips role="tablist" aria-label="Your chips"></div>
+          </section>
+
+          <section class="csp-timeline-wrap" aria-labelledby="csp-timeline-title">
+            <div class="csp-timeline-head">
+              <h2 class="csp-timeline__title" id="csp-timeline-title">Week by week</h2>
+            </div>
+            <div class="csp-legend" data-csp-legend aria-label="Chip colours"></div>
+            <div class="csp-timeline" data-csp-timeline tabindex="0" role="img" aria-label="Chip plan by gameweek"></div>
+          </section>
+
+          <article class="csp-detail" data-csp-detail>
+            <h2 class="csp-detail__title" data-csp-detail-title>What we are watching</h2>
+            <ul class="csp-detail__metrics" data-csp-detail-metrics></ul>
+            <p class="csp-detail__reason" data-csp-detail-reason></p>
+          </article>
+        </div>
+      </section>
+    </div>
+  </main>
+
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="./">
+          <img class="site-logo__img site-logo__img--light" src="./images/metro-football-logo-light.png" alt="" width="320" height="107" decoding="async">
+        </a>
+        <p>Metro Football builds FPL tools and auto reports for managers who want clear answers before the deadline.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <a href="./">Home</a>
+        <a href="#">Players</a>
+        <a href="./league-table">League Table</a>
+        <a href="#">Dashboard</a>
+        <a href="./join">Upgrade</a>
+      </div>
+      <div class="footer-col">
+        <h4>Tools</h4>
+        <a href="./fixture-difficulty">Fixture Difficulty Ticker</a>
+        <a href="./ai-tips#snipers">Differential Finder</a>
+        <a href="./mini-leagues">Mini League Tracker</a>
+        <a href="./pick">Rate My Team</a>
+        <a href="#">Transfer Planner</a>
+        <a href="./ai-tips">AI Transfers</a>
+        <a href="./chip-strategy">Chip Strategy Planner</a>
+      </div>
+      <div class="footer-col">
+        <h4>Account</h4>
+        <a href="#">Log in</a>
+        <a href="#">Register</a>
+        <a href="#">Settings</a>
+        <a href="#">Billing</a>
+        <a href="#">Help</a>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>© 2026 Metro Football. metrofootball.co.uk</span>
+      <span>
+        <a href="./privacy-policy">Privacy</a>
+        ·
+        <a href="./terms">Terms</a>
+      </span>
+    </div>
+  </footer>
+
+  <script type="module" src="./js/chip-strategy.js"></script>
+</body>
+</html>

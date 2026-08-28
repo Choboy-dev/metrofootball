@@ -1,0 +1,24 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Never expose /public in the browser
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteCond %{THE_REQUEST} \s/+([^\s?]*)/public/([^\s?]+)\.html [NC]
+  RewriteRule ^ /%1/%2 [R=301,L,NE]
+
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteCond %{THE_REQUEST} \s/+([^\s?]*)/public/?([^\s?]*) [NC]
+  RewriteRule ^ /%1/%2 [R=301,L,NE]
+
+  # Extensionless URLs: redirect visible .html requests
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteCond %{THE_REQUEST} \s/+([^\s?]+)\.html[\s?] [NC]
+  RewriteRule ^ /%1 [R=301,L,NE]
+
+  # Gameweek tips archive URLs: /fpl-gameweek-2-tips
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^fpl-gameweek-([0-9]+)-tips/?$ public/fpl-gameweek-tips.html [L]
+
+  # Route all requests into the public web root
+  RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

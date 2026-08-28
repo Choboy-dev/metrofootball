@@ -1,0 +1,53 @@
+<IfModule mod_rewrite.c>
+  Options -MultiViews
+  RewriteEngine On
+
+  # Catch direct /public/ hits (when Apache maps into this folder)
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteCond %{THE_REQUEST} \s/+([^\s?]*)/public/([^\s?]+)\.html [NC]
+  RewriteRule ^ /%1/%2 [R=301,L,NE]
+
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteCond %{THE_REQUEST} \s/+([^\s?]*)/public/?([^\s?]*) [NC]
+  RewriteRule ^ /%1/%2 [R=301,L,NE]
+
+  # Extensionless URLs for pages served from this folder
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteCond %{THE_REQUEST} \s/+([^\s?]+)\.html[\s?] [NC]
+  RewriteRule ^ /%1 [R=301,L,NE]
+
+  # Gameweek tips archive URLs: /fpl-gameweek-2-tips
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^fpl-gameweek-([0-9]+)-tips/?$ fpl-gameweek-tips.html [L]
+
+  # Serve real files and directories (css, js, images, php)
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Map clean API paths to PHP
+  RewriteCond %{REQUEST_FILENAME}.php -f
+  RewriteRule ^(.+?)/?$ $1.php [L]
+
+  # Map clean paths to HTML pages
+  RewriteCond %{REQUEST_FILENAME}.html -f
+  RewriteRule ^(.+?)/?$ $1.html [L]
+</IfModule>
+
+DirectoryIndex index.html
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 7 days"
+  ExpiresByType application/javascript "access plus 7 days"
+  ExpiresByType image/png "access plus 30 days"
+  ExpiresByType image/jpeg "access plus 30 days"
+  ExpiresByType image/webp "access plus 30 days"
+  ExpiresByType image/svg+xml "access plus 30 days"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|js|png|jpg|jpeg|webp|svg)$">
+    Header set Cache-Control "public, max-age=604800, immutable"
+  </FilesMatch>
+</IfModule>

@@ -1,0 +1,43 @@
+# Secrets and environment
+.env
+.env.*
+!.env.example
+config/.env
+config/.env.*
+!config/.env.example
+
+# Local database (restore from backup or seed scripts)
+database/*.sqlite
+database/*.sqlite-journal
+
+# Runtime storage (cache, logs, uploads)
+storage/cache/
+storage/logs/
+storage/data/
+!storage/cache/.gitkeep
+!storage/logs/.gitkeep
+!storage/data/.gitkeep
+
+# OS and editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+*.log
+
+# Dependencies (if added later)
+node_modules/
+vendor/
+
+# Hostinger / local tooling
+config/sftp.json
+.filebrowser/
+
+# One-time web runners (should not live in repo)
+public/setup-perf-assets.php
+
+# Compiled / generated assets (optional regen via scripts)
+public/fonts/
+public/js/vendor/

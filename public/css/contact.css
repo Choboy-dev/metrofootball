@@ -1,0 +1,321 @@
+/* Contact page — standalone sheet so styles always load with the page */
+
+.contact-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-background);
+}
+
+.contact-page .site-header {
+  border-bottom: 1px solid var(--color-border);
+  background: rgba(244, 246, 248, 0.96);
+}
+
+.contact-main {
+  flex: 1;
+  padding: clamp(2rem, 5vw, 3.5rem) 0 clamp(2.5rem, 6vw, 4rem);
+}
+
+.contact-shell {
+  width: min(100% - 2rem, 68rem);
+  margin-inline: auto;
+  display: grid;
+  gap: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+.contact-hero {
+  display: grid;
+  gap: 0.65rem;
+  max-width: 36rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.contact-hero__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.85rem, 5vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  color: var(--color-ink);
+}
+
+.contact-hero__lead {
+  margin: 0;
+  font-size: clamp(0.98rem, 2vw, 1.08rem);
+  line-height: 1.6;
+  color: var(--color-muted-foreground);
+}
+
+.contact-grid {
+  display: grid;
+  gap: 1rem;
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .contact-grid {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: 1.25rem;
+  }
+}
+
+.contact-side {
+  display: grid;
+  gap: 1rem;
+}
+
+.contact-mail {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1.25rem 1.2rem;
+  border-radius: 1rem;
+  background: linear-gradient(160deg, #111827 0%, #0b1220 100%);
+  color: #fff;
+  box-shadow: var(--shadow-md);
+}
+
+.contact-mail__label {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.contact-mail__copy {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.contact-mail__link {
+  display: inline-block;
+  margin-top: 0.15rem;
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.5vw, 1.12rem);
+  font-weight: 700;
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  word-break: break-word;
+}
+
+.contact-mail__link:hover {
+  color: #fecaca;
+}
+
+.contact-mail__note {
+  margin: 0;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.contact-help {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.contact-help__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.contact-help__list {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contact-help__link {
+  display: grid;
+  gap: 0.12rem;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.85rem;
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.contact-help__link:hover {
+  border-color: rgba(220, 38, 38, 0.25);
+  box-shadow: var(--shadow-md);
+}
+
+.contact-help__link-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.contact-help__link-desc {
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--color-muted-foreground);
+}
+
+.contact-card {
+  padding: 1.35rem 1.2rem 1.45rem;
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: var(--shadow-md);
+  overflow: visible;
+}
+
+@media (min-width: 640px) {
+  .contact-card {
+    padding: 1.55rem 1.45rem 1.65rem;
+  }
+}
+
+.contact-card__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 3vw, 1.55rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--color-ink);
+}
+
+.contact-card__copy {
+  margin: 0.35rem 0 1.1rem;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--color-muted-foreground);
+}
+
+.contact-form {
+  display: grid;
+  gap: 0.9rem;
+  overflow: visible;
+}
+
+.contact-form .auth-field {
+  gap: 0.35rem;
+}
+
+.contact-form .auth-input,
+.contact-form .contact-textarea,
+.contact-form .mf-select__trigger {
+  font-size: 1rem;
+}
+
+.contact-textarea {
+  min-height: 8.5rem;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.contact-form .mf-select__trigger {
+  width: 100%;
+  min-width: 0;
+  border-radius: 0.55rem;
+  box-shadow: inset 0 0 0 1px var(--color-border);
+}
+
+.contact-form .mf-select__label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.contact-form .mf-select {
+  position: relative;
+  z-index: 1;
+}
+
+.contact-form .mf-select.is-open {
+  z-index: 80;
+}
+
+.contact-form .mf-select__panel {
+  padding: 0 !important;
+  gap: 0 !important;
+  overflow: hidden !important;
+  background: #ffffff !important;
+  background-image: none !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: var(--shadow-lg) !important;
+  isolation: isolate;
+}
+
+.contact-form .mf-select__panel[hidden] {
+  display: none !important;
+}
+
+.contact-form .mf-select__list {
+  display: grid;
+  gap: 0.15rem;
+  max-height: 10.5rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.35rem;
+  background: #ffffff;
+}
+
+.contact-form .mf-select__option {
+  flex-shrink: 0;
+  background-color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+.contact-form .mf-select__option:hover,
+.contact-form .mf-select__option:focus-visible {
+  background-color: var(--color-muted) !important;
+}
+
+.contact-form .mf-select__option.is-selected {
+  background-color: rgba(220, 38, 38, 0.08) !important;
+}
+
+.contact-success {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1.5rem 1.25rem;
+  border: 1px solid rgba(21, 128, 61, 0.2);
+  border-radius: 1rem;
+  background: #f0fdf4;
+}
+
+.contact-success__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.contact-success__copy {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.55;
+  color: var(--color-muted-foreground);
+}
+
+@media (max-width: 899px) {
+  .contact-side {
+    order: 2;
+  }
+
+  .contact-panel {
+    order: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-help__link {
+    transition: none;
+  }
+}

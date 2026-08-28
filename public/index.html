@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Metro Football | FPL tools that help you win</title>
+  <meta name="description" content="Metro Football gives you clear Fantasy Premier League tools and reports from about £2.50 a month.">
+  <link rel="canonical" href="https://metrofootball.co.uk/">
+  <link rel="icon" href="./images/metro-football-favicon.png" type="image/png" sizes="500x500">
+  <link rel="apple-touch-icon" href="./images/metro-football-favicon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Metro Football">
+  <meta property="og:title" content="Metro Football | FPL tools that help you win">
+  <meta property="og:description" content="Metro Football gives you clear Fantasy Premier League tools and reports from about £2.50 a month.">
+  <meta property="og:url" content="https://metrofootball.co.uk/">
+  <meta property="og:image" content="https://metrofootball.co.uk/images/metro-football-favicon.png">
+  <meta property="og:image:width" content="500">
+  <meta property="og:image:height" content="500">
+  <meta property="og:locale" content="en_GB">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Metro Football | FPL tools that help you win">
+  <meta name="twitter:description" content="Metro Football gives you clear Fantasy Premier League tools and reports from about £2.50 a month.">
+  <meta name="twitter:image" content="https://metrofootball.co.uk/images/metro-football-favicon.png">
+  <link rel="stylesheet" href="./css/app.css">
+</head>
+<body>
+  <header class="site-header" data-header>
+    <nav class="site-nav" aria-label="Main">
+      <div class="site-nav__left">
+        <a href="./" class="site-logo" aria-label="Metro Football home">
+          <img class="site-logo__img" src="./images/metro-football-logo-dark.png" alt="" width="320" height="107" decoding="async">
+        </a>
+
+        <div class="nav-menu desktop-only">
+          <div class="nav-item" data-nav-item>
+            <button type="button" class="nav-trigger" data-nav-trigger aria-expanded="false" aria-haspopup="true">
+              Tools
+              <svg class="nav-caret" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="nav-panel" data-nav-panel hidden>
+              <div class="nav-panel__card">
+                <ul class="nav-list nav-list--grid">
+                  <li>
+                    <a class="list-item" href="./pick" data-auth-tool>
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Rate My Team</span>
+                        <span class="list-item__desc">Score your squad and pick a captain</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./ai-tips" data-auth-tool>
+                      <span class="list-item__copy">
+                        <span class="list-item__title">AI Transfers</span>
+                        <span class="list-item__desc">Get the best transfer for your squad</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./chip-strategy" data-auth-tool>
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Chip Strategy Planner</span>
+                        <span class="list-item__desc">Find the best weeks for each chip</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./ai-tips#snipers" data-auth-tool>
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Differential Finder</span>
+                        <span class="list-item__desc">Spot low owned high scorers</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./fixture-difficulty" data-auth-tool>
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Fixture Difficulty Ticker</span>
+                        <span class="list-item__desc">See easy and hard fixture runs</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./mini-leagues" data-auth-tool>
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Mini League Tracker</span>
+                        <span class="list-item__desc">Watch rivals and rank swings</span>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+                <div class="nav-panel__note">
+                  <p>Interested? <a href="./join">Go premium from £2 a month</a></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="nav-item" data-nav-item>
+            <button type="button" class="nav-trigger" data-nav-trigger aria-expanded="false" aria-haspopup="true">
+              Reports
+              <svg class="nav-caret" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="nav-panel nav-panel--reports" data-nav-panel hidden>
+              <div class="nav-company">
+                <ul class="nav-list nav-list--stack">
+                  <li>
+                    <a class="list-item" href="./gameweek-recap">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Gameweek Recap</span>
+                        <span class="list-item__desc">What just happened in FPL</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./price-changes">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Price Change Predictions</span>
+                        <span class="list-item__desc">See who may rise or fall</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./fpl-injury-news">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Injury Risk Digest</span>
+                        <span class="list-item__desc">Who may miss the next match</span>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+                <ul class="nav-list nav-list--stack">
+                  <li>
+                    <a class="list-item" href="#">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">Players</span>
+                        <span class="list-item__desc">Search players and season stats</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./league-table">
+                      <span class="list-item__copy">
+                        <span class="list-item__title">League Table</span>
+                        <span class="list-item__desc">See the table and recent form</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="list-item" href="./fpl-gameweek-2-tips" data-nav-gw-tips-link>
+                      <span class="list-item__copy">
+                        <span class="list-item__title" data-nav-gw-tips-label>Gameweek Tips</span>
+                        <span class="list-item__desc">Picks and advice for this gameweek</span>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <a data-pricing-nav class="nav-link" href="./join">Pricing</a>
+          <a class="nav-link" href="#">About</a>
+          <a class="nav-link" href="./contact">Contact</a>
+        </div>
+      </div>
+
+      <div class="site-nav__right desktop-only">
+        <a class="mf-btn mf-btn--ink mf-btn--sm" href="./login">
+          <span class="mf-btn__label">Sign In</span>
+          <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+        <a class="mf-btn mf-btn--primary mf-btn--sm" href="./join">
+          <span class="mf-btn__label">Get Started</span>
+          <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+      </div>
+
+      <button
+        type="button"
+        class="btn-nav btn-nav--icon mobile-only"
+        data-mobile-toggle
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label="Toggle menu"
+      >
+        <span class="menu-toggle-icon" data-menu-icon aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+      </button>
+    </nav>
+  </header>
+
+  <div id="mobile-menu" class="mobile-menu" data-mobile-menu hidden>
+    <div class="mobile-menu__inner" data-mobile-inner>
+      <div class="mobile-menu__scroll" data-mobile-scroll>
+        <nav class="mobile-menu__nav" data-mobile-nav aria-label="Mobile navigation"></nav>
+      </div>
+      <div class="mobile-menu__actions">
+        <a class="mf-btn mf-btn--ink mf-btn--block" href="./login" data-guest-only>
+          <span class="mf-btn__label">Sign In</span>
+          <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+        <a class="mf-btn mf-btn--primary mf-btn--block" href="./join" data-guest-only>
+          <span class="mf-btn__label">Get Started</span>
+          <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+        <button type="button" class="mf-btn mf-btn--ink mf-btn--block" data-auth-only data-sign-out hidden>
+          <span class="mf-btn__label">Sign Out</span>
+          <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-brand">
+      <div class="hero-shell">
+        <div class="hero-copy">
+          <h1 class="hero-title hero-reveal" id="hero-brand">We help you win your mini league</h1>
+          <p class="hero-lead hero-reveal">For just £2.50 a month, if you don't win your mini league, we give you your money back at the end of the season.</p>
+          <div class="hero-ctas hero-reveal">
+            <a class="mf-btn mf-btn--primary" href="./join">
+              <span class="mf-btn__label">Start for free</span>
+              <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-accordion" data-hero-accordion>
+          <div
+            class="hero-slider__viewport"
+            data-hero-slider-viewport
+            role="region"
+            aria-label="Product preview"
+            aria-live="polite"
+          >
+          <div class="hero-accordion__track" role="list" data-hero-slider-track>
+            <a
+              class="hero-card"
+              role="listitem"
+              href="./ai-tips"
+              data-auth-tool
+              data-hero-card
+              data-index="0"
+              aria-label="Transfer Planner"
+            >
+              <img
+                src="./images/hero/hero-1.jpg"
+                alt=""
+                data-hero-image
+              >
+              <div class="hero-card__shade" aria-hidden="true"></div>
+              <span class="hero-card__title">Transfer Planner</span>
+            </a>
+
+            <a
+              class="hero-card"
+              role="listitem"
+              href="./ai-tips#snipers"
+              data-auth-tool
+              data-hero-card
+              data-index="1"
+              aria-label="Differential Finder"
+            >
+              <img
+                src="./images/hero/hero-2.jpg"
+                alt=""
+                data-hero-image
+              >
+              <div class="hero-card__shade" aria-hidden="true"></div>
+              <span class="hero-card__title">Differential Finder</span>
+            </a>
+
+            <a
+              class="hero-card"
+              role="listitem"
+              href="./pick"
+              data-auth-tool
+              data-hero-card
+              data-index="2"
+              aria-label="Rate My Team"
+            >
+              <img
+                src="./images/hero/hero-3.jpg"
+                alt=""
+                data-hero-image
+              >
+              <div class="hero-card__shade" aria-hidden="true"></div>
+              <span class="hero-card__title">Rate My Team</span>
+            </a>
+
+            <a
+              class="hero-card"
+              role="listitem"
+              href="./chip-strategy"
+              data-auth-tool
+              data-hero-card
+              data-index="3"
+              aria-label="Chip Strategy Planner"
+            >
+              <img
+                src="./images/hero/hero-4.jpg"
+                alt=""
+                data-hero-image
+              >
+              <div class="hero-card__shade" aria-hidden="true"></div>
+              <span class="hero-card__title">Chip Strategy Planner</span>
+            </a>
+
+            <a
+              class="hero-card"
+              role="listitem"
+              href="./fixture-difficulty"
+              data-auth-tool
+              data-hero-card
+              data-index="4"
+              aria-label="Fixture Difficulty Ticker"
+            >
+              <img
+                src="./images/hero/hero-5.jpg"
+                alt=""
+                data-hero-image
+              >
+              <div class="hero-card__shade" aria-hidden="true"></div>
+              <span class="hero-card__title">Fixture Difficulty Ticker</span>
+            </a>
+          </div>
+          </div>
+          <div
+            class="hero-slider__dots"
+            data-hero-slider-dots
+            role="tablist"
+            aria-label="Product slides"
+          ></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section testimonials" aria-labelledby="testimonials-heading">
+      <div class="container">
+        <div class="testimonials-intro reveal">
+          <h2 id="testimonials-heading" class="section-title">What players say</h2>
+          <p class="section-lead">Here's what others who use Metro Football in their FPL mini leagues say about us.</p>
+        </div>
+
+        <div
+          class="testimonials-mask"
+          role="region"
+          aria-label="Player stories"
+          data-testimonials
+        >
+          <div class="testimonials-column" style="--marquee-duration: 18s">
+            <ul class="testimonials-column__track">
+              <li class="testimonial-card">
+                <blockquote>
+                  <p>I used to pick transfers on a hunch. Now I open Transfer Planner first and I feel sure before I hit confirm.</p>
+                  <footer>
+                    <img src="./images/avatars/avatar-1.jpg" width="40" height="40" alt="" loading="lazy">
+                    <div>
+                      <cite>Sophie Clarke</cite>
+                      <span class="review-time" data-review-person="0"></span>
+                    </div>
+                  </footer>
+                </blockquote>
+              </li>
+              <li class="testimonial-card">
+                <blockquote>
+                  <p>My work league was eating me alive. Rate My Team showed me my weak spots and I climbed five places in two weeks.</p>
+                  <footer>
+                    <img src="./images/avatars/avatar-2.jpg" width="40" height="40" alt="" loading="lazy">
+                    <div>
+                      <cite>James Whitfield</cite>
+                      <span class="review-time" data-review-person="1"></span>
+                    </div>
+                  </footer>
+                </blockquote>
+              </li>
+              <li class="testimonial-card">
+                <blockquote>
+                  <p>I check Fixture Difficulty Ticker on Sunday night. It helps me set my defence for the weeks ahead.</p>
+                  <footer>
+                    <img src="./images/avatars/avatar-3.jpg" width="40" height="40" alt="" loading="lazy">
+                    <div>
+                      <cite>Megan Walsh</cite>
+                      <span class="review-time" data-review-person="2"></span>
+                    </div>
+                  </footer>
+                </blockquote>
+              </li>
+              <li class="testimonial-card" aria-hidden="true">
+                <blockquote>
+                  <p>I used to pick transfers on a hunch. Now I open Transfer Planner first and I feel sure before I hit confirm.</p>
+                  <footer>
+                    <img src="./images/avatars/avatar-1.jpg" width="40" height="40" alt="" loading="lazy">
+                    <div>
+                      <cite>Sophie Clarke</cite>
+                      <span class="review-time" data-review-person="0"></span>
+                    </div>
+                  </footer>
+                </blockquote>
+              </li>
+              <li class="testimonial-card" aria-hidden="true">
+                <blockquote>
+                  <p>My work league was eating me alive. Rate My Team showed me my weak spots and I climbed five places in two weeks.</p>
+                  <footer>
+                    <img src="./images/avatars/avatar-2.jpg" width="40" height="40" alt="" loading="lazy">
+                    <div>
+                      <cite>James Whitfield</cite>
+                      <span class="review-time" data-review-person="1"></span>
+                    </div>
+                  </footer>
+                </blockquote>
+              </li>
+              <li class="testimonial-card" aria-hidden="true">
+                <blockquote>
+                  <p>I check Fixture Difficulty Ticker on Sunday night. It helps me set my defence for the weeks ahead.</p>
+                  <footer>
+                    <img src="./images/avatars/avatar-3.jpg" width="40" height="40" alt="" loading="lazy">
+                    <div>
+                      <cite>Megan Walsh</cite>
+                      <span class="review-time" data-review-person="2"></span>
+                    </div>
+                  </footer>
+                </blockquote>
+              </li>
+            </ul>
+          </div>
+
+          <div class="testimonials-column testimonials-column--md" style="--marquee-duration: 22s">
+            <ul class="testimonials-column__track">
+              <li class="testimonial-card">
+                <blockquote>
+                  <p>Everyone in my league copies the same stars. Differential Finder helped me find players they ignore and I finally won a month.</p>
+                  <footer>
+                    <img src="./images/avatars/avatar-4.jpg" width="40" height="40" alt="" loading="lazy">
+                    <div>
+                      <cite>Callum Reid</cite>
+                      <span class="review-time" data-review-person="3"></span>
+                    </div>
+                  </footer>
+                </blockquote>
+              </li>
+              <li class="testimonial-card">
+                <blockquote>
+                  <p>I kept burning my chips too early. Chip Strategy Planner told me when to wait and I used my Bench Boost on a better week.</p>
+                  <footer>
+                    <img src="./images/avatars/avatar-5.jpg" width="40" height="40" alt="" loading="lazy">
+                    <div>
+                      <cite>Aisha Rahman</cite>
+                      <span class="review-time" data-review-person="4"></span>
+                    </div>
+                  </footer>
+                </blockquote>
+              </li>
+              <li class="testimonial-card">
+                <blockquote>
+                  <p>I am new to FPL. The weekly reports use plain words so I can follow along without feeling lost.</p>
+                  <footer>
+                    <img src="./images/avatars/avatar-6.jpg" width="40" height="40" alt="" loading="lazy">
+                    <div>
+                      <cite>Lucy Bennett</cite>
+                      <span class="review-time" data-review-person="5"></span>
+                    </div>
+                  </footer>
+                </blockquote>
+              </li>
+              <li class="testimonial-card" aria-hidden="true">
+                <blockquote>
+                  <p>Everyone in my league copies the same stars. Differential Finder helped me find players they ignore and I finally won a month.</p>
+                  <footer>
+                    <img src="./images/avatars/avatar-4.jpg" width="40" height="40" alt="" loading="lazy">
+                    <div>
+                      <cite>Callum Reid</cite>
+                      <span class="review-time" data-review-person="3"></span>
+                    </div>
+                  </footer>
+                </blockquote>
+              </li>
+              <li class="testimonial-card" aria-hidden="true">
+                <blockquote>
+                  <p>I kept burning my chips too early. Chip Strategy Planner told me when to wait and I used my Bench Boost on a better week.</p>
+                  <footer>
+                    <img src="./images/avatars/avatar-5.jpg" width="40" height="40" alt="" loading="lazy">
+                    <div>
+                      <cite>Aisha Rahman</cite>
+                      <span class="review-time" data-review-person="4"></span>
+                    </div>
+                  </footer>
+                </blockquote>
+              </li>
+              <li class="testimonial-card" aria-hidden="true">
+                <blockquote>
+                  <p>I am new to FPL. The weekly reports use plain words so I can follow along without feeling lost.</p>
+                  <footer>
+                    <img src="./images/avatars/avatar-6.jpg" width="40" height="40" alt="" loading="lazy">
+                    <div>
+                      <cite>Lucy Bennett</cite>
+                      <span class="review-time" data-review-person="5"></span>
+                    </div>
+                  </footer>
+                </blockquote>
+              </li>
+            </ul>
+          </div>
+
+          <div class="testimonials-column testimonials-column--lg" style="--marquee-duration: 20s">
+            <ul class="testimonials-column__track">
+              <li class="testimonial-card">
+                <blockquote>
+                  <p>I read the price change note before bed. It stops me selling someone who may go up overnight.</p>
+                  <footer>
+                    <img src="./images/avatars/avatar-7.jpg" width="40" height="40" alt="" loading="lazy">
+                    <div>
+                      <cite>Tom O'Brien</cite>
+                      <span class="review-time" data-review-person="6"></span>
+                    </div>
+                  </footer>
+                </blockquote>
+              </li>
+              <li class="testimonial-card">
+                <blockquote>
+                  <p>I pay about a pound a month. That feels fair for tools I open every gameweek.</p>
+                  <footer>
+                    <img src="./images/avatars/avatar-8.jpg" width="40" height="40" alt="" loading="lazy">
+                    <div>
+                      <cite>Hannah Brooks</cite>
+                      <span class="review-time" data-review-person="7"></span>
+                    </div>
+                  </footer>
+                </blockquote>
+              </li>
+              <li class="testimonial-card">
+                <blockquote>
+                  <p>I watch my mini league on here. Seeing who is catching me keeps me from going lazy.</p>
+                  <footer>
+                    <img src="./images/avatars/avatar-9.jpg" width="40" height="40" alt="" loading="lazy">
+                    <div>
+                      <cite>Daniel Foster</cite>
+                      <span class="review-time" data-review-person="8"></span>
+                    </div>
+                  </footer>
+                </blockquote>
+              </li>
+              <li class="testimonial-card" aria-hidden="true">
+                <blockquote>
+                  <p>I read the price change note before bed. It stops me selling someone who may go up overnight.</p>
+                  <footer>
+                    <img src="./images/avatars/avatar-7.jpg" width="40" height="40" alt="" loading="lazy">
+                    <div>
+                      <cite>Tom O'Brien</cite>
+                      <span class="review-time" data-review-person="6"></span>
+                    </div>
+                  </footer>
+                </blockquote>
+              </li>
+              <li class="testimonial-card" aria-hidden="true">
+                <blockquote>
+                  <p>I pay about a pound a month. That feels fair for tools I open every gameweek.</p>
+                  <footer>
+                    <img src="./images/avatars/avatar-8.jpg" width="40" height="40" alt="" loading="lazy">
+                    <div>
+                      <cite>Hannah Brooks</cite>
+                      <span class="review-time" data-review-person="7"></span>
+                    </div>
+                  </footer>
+                </blockquote>
+              </li>
+              <li class="testimonial-card" aria-hidden="true">
+                <blockquote>
+                  <p>I watch my mini league on here. Seeing who is catching me keeps me from going lazy.</p>
+                  <footer>
+                    <img src="./images/avatars/avatar-9.jpg" width="40" height="40" alt="" loading="lazy">
+                    <div>
+                      <cite>Daniel Foster</cite>
+                      <span class="review-time" data-review-person="8"></span>
+                    </div>
+                  </footer>
+                </blockquote>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reports" aria-labelledby="reports-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2 id="reports-title" class="section-title">Let our tools do the hard work</h2>
+        </div>
+        <div class="report-list">
+          <a class="report-row reveal" href="./gameweek-recap">
+            <div class="report-copy">
+              <h3>What just happened in FPL</h3>
+              <p>We walk through top scorers, big bonus moments, and who beat their expected stats.</p>
+            </div>
+            <span class="report-arrow" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </a>
+          <a class="report-row reveal" href="./price-changes">
+            <div class="report-copy">
+              <h3>Who may rise or fall tonight</h3>
+              <p>We show overnight price predictions, how close each player is, and how last night went.</p>
+            </div>
+            <span class="report-arrow" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </a>
+          <a class="report-row reveal" href="./fpl-injury-news">
+            <div class="report-copy">
+              <h3>Who may miss the next match</h3>
+              <p>We flag rotation and fitness risk from the latest player status news.</p>
+            </div>
+            <span class="report-arrow" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </a>
+          <a class="report-row reveal" href="#">
+            <div class="report-copy">
+              <h3>Search players and season stats</h3>
+              <p>We are building a player search with season stats. It will be free for everyone when it launches.</p>
+            </div>
+            <span class="report-arrow" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </a>
+          <a class="report-row reveal" href="./league-table">
+            <div class="report-copy">
+              <h3>See the table and recent form</h3>
+              <p>We show the live Premier League table plus goals, assists, and clean sheet leaders.</p>
+            </div>
+            <span class="report-arrow" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </a>
+          <a class="report-row reveal" href="./fpl-gameweek-2-tips" data-nav-gw-tips-link>
+            <div class="report-copy">
+              <h3 data-nav-gw-tips-label>Gameweek Tips</h3>
+              <p>We share picks and advice for the upcoming gameweek before the deadline.</p>
+            </div>
+            <span class="report-arrow" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section tools" aria-labelledby="tools-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2 id="tools-title" class="section-title">Pick a tool and get stuck in</h2>
+        </div>
+        <div class="tools-grid">
+          <button class="tool reveal" type="button" data-auth-tool-href="./fixture-difficulty">
+            <div class="tool-top">
+              <span class="tool-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h10M4 17h7" stroke-linecap="round"/></svg>
+              </span>
+              <span class="tool-badge premium">Premium</span>
+            </div>
+            <h3>Fixture Difficulty Ticker</h3>
+            <p>We colour code the next run of fixtures so hard and easy weeks are easy to spot.</p>
+          </button>
+          <button class="tool reveal" type="button" data-auth-tool-href="./ai-tips#snipers">
+            <div class="tool-top">
+              <span class="tool-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="14" r="3"/><circle cx="16" cy="9" r="4"/><path d="M4 19h16" stroke-linecap="round"/></svg>
+              </span>
+              <span class="tool-badge free">Free</span>
+            </div>
+            <h3>Differential Finder</h3>
+            <p>We plot ownership against points so low owned haul merchants stand out.</p>
+          </button>
+          <button class="tool reveal" type="button" data-auth-tool-href="./mini-leagues">
+            <div class="tool-top">
+              <span class="tool-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 18V8m4 10V5m4 13v-6" stroke-linecap="round"/></svg>
+              </span>
+              <span class="tool-badge free">Free</span>
+            </div>
+            <h3>Mini League Tracker</h3>
+            <p>We track one league for free so you can see who moved and who to chase.</p>
+          </button>
+          <button class="tool reveal" type="button" data-auth-tool-href="./pick">
+            <div class="tool-top">
+              <span class="tool-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2.2 4.5L19 8.3l-3.5 3.4.8 4.8L12 14.2 7.7 16.5l.8-4.8L5 8.3l4.8-.8L12 3z" stroke-linejoin="round"/></svg>
+              </span>
+              <span class="tool-badge premium">Premium</span>
+            </div>
+            <h3>Rate My Team</h3>
+            <p>We score your squad and rank your best captain picks for the next gameweek.</p>
+          </button>
+          <button class="tool reveal" type="button" data-auth-tool-href="./ai-tips">
+            <div class="tool-top">
+              <span class="tool-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span class="tool-badge premium">Premium</span>
+            </div>
+            <h3>Transfer Planner</h3>
+            <p>We compare before and after points so you can test a transfer before you hit confirm.</p>
+          </button>
+          <button class="tool reveal" type="button" data-auth-tool-href="./ai-tips">
+            <div class="tool-top">
+              <span class="tool-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 19h14" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span class="tool-badge premium">Premium</span>
+            </div>
+            <h3>AI Transfers</h3>
+            <p>Our artificial intelligence recommends the best transfer for every Gameweek based on your team.</p>
+          </button>
+          <button class="tool reveal" type="button" data-auth-tool-href="./chip-strategy">
+            <div class="tool-top">
+              <span class="tool-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16" stroke-linecap="round"/></svg>
+              </span>
+              <span class="tool-badge premium">Premium</span>
+            </div>
+            <h3>Chip Strategy Planner</h3>
+            <p>We suggest the best weeks for Wildcard, Free Hit, Bench Boost, and Triple Captain.</p>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section pricing" aria-labelledby="pricing-title" data-pricing>
+      <div class="container">
+        <div class="pricing-shell">
+          <div class="pricing-intro reveal">
+            <h2 id="pricing-title" class="section-title">Start free. Upgrade when you are ready.</h2>
+            <div class="pricing-toggle">
+              <span data-billing-label="monthly">Monthly</span>
+              <button
+                type="button"
+                class="pricing-switch"
+                role="switch"
+                aria-checked="true"
+                aria-label="Toggle yearly billing"
+                data-billing-toggle
+              >
+                <span class="pricing-switch__thumb" aria-hidden="true"></span>
+              </button>
+              <span data-billing-label="yearly">Yearly</span>
+            </div>
+          </div>
+
+          <div class="pricing-cards">
+            <article class="pricing-card reveal">
+              <header class="pricing-card__header">
+                <h3 class="pricing-card__name">Free</h3>
+                <p class="pricing-card__desc">Reports, player pages, and core discovery tools.</p>
+                <p class="pricing-card__price" data-price data-monthly="£0" data-yearly="£0">£0</p>
+              </header>
+              <div class="pricing-card__body">
+                <div class="pricing-card__rule" aria-hidden="true"></div>
+                <ul class="pricing-card__features">
+                  <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span>Gameweek Recap and Price Change Predictions</span>
+                  </li>
+                  <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span>Fixture Difficulty Ticker</span>
+                  </li>
+                  <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span>One mini league to track</span>
+                  </li>
+                </ul>
+              </div>
+              <footer class="pricing-card__footer">
+                <a class="mf-btn mf-btn--ink mf-btn--block" href="./register?plan=free">
+                  <span class="mf-btn__label">Create free account</span>
+                  <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </a>
+              </footer>
+            </article>
+
+            <article class="pricing-card reveal">
+              <header class="pricing-card__header">
+                <h3 class="pricing-card__name">Premium</h3>
+                <p class="pricing-card__desc">We unlock your personal team tools.</p>
+                <p class="pricing-card__price">
+                  <span class="pricing-card__amount" data-price data-monthly="£2.50" data-yearly="£2">£2</span>
+                  <span class="pricing-card__period" data-period data-monthly="/ month" data-yearly="/ month">/ month</span>
+                </p>
+                <p class="pricing-card__billing-note" data-billing-note data-monthly="" data-yearly="£22/year billed yearly · 1 month free" hidden>£22/year billed yearly · 1 month free</p>
+              </header>
+              <div class="pricing-card__body">
+                <div class="pricing-card__rule" aria-hidden="true"></div>
+                <p class="pricing-card__extra">Everything in Free, and:</p>
+                <ul class="pricing-card__features">
+                  <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span>Rate My Team and Captain Picker</span>
+                  </li>
+                  <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span>AI Transfers for your squad</span>
+                  </li>
+                  <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span>Transfer, chip, and budget builders</span>
+                  </li>
+                  <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span>Unlimited mini leagues plus rival alerts</span>
+                  </li>
+                </ul>
+              </div>
+              <footer class="pricing-card__footer">
+                <a class="mf-btn mf-btn--primary mf-btn--block" href="./register?plan=premium">
+                  <span class="mf-btn__label">Go premium</span>
+                  <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </a>
+              </footer>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section final-cta" aria-labelledby="final-title">
+      <div class="container final-cta-inner">
+        <div class="final-cta-copy reveal">
+          <h2 id="final-title" class="section-title">Come make better FPL calls with Metro Football</h2>
+          <p class="section-lead">Our users love us because we win them their mini-league.</p>
+          <div class="hero-ctas">
+            <a class="mf-btn mf-btn--primary" href="./join">
+              <span class="mf-btn__label">Start for free</span>
+              <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </a>
+          </div>
+        </div>
+        <div class="final-cta-media reveal">
+          <img
+            src="./images/final-cta-phone.png"
+            alt="Mini league tracker on a phone showing live standings"
+            width="764"
+            height="1466"
+            loading="lazy"
+          >
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="./">
+          <img class="site-logo__img site-logo__img--light" src="./images/metro-football-logo-light.png" alt="" width="320" height="107" decoding="async">
+        </a>
+        <p>Metro Football builds FPL tools and auto reports for managers who want clear answers before the deadline.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Reports</h4>
+        <a href="./gameweek-recap">Gameweek Recap</a>
+        <a href="./price-changes">Price Change Predictions</a>
+        <a href="./fpl-injury-news">Injury Risk Digest</a>
+        <a href="#">Players</a>
+        <a href="./league-table">League Table</a>
+        <a href="./fpl-gameweek-2-tips" data-nav-gw-tips-link>Gameweek Tips</a>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <a href="./">Home</a>
+        <a href="./join">Pricing</a>
+        <a href="./live">Dashboard</a>
+        <a href="./contact">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Tools</h4>
+        <a href="./fixture-difficulty" data-auth-tool>Fixture Difficulty Ticker</a>
+        <a href="./ai-tips#snipers" data-auth-tool>Differential Finder</a>
+        <a href="./mini-leagues" data-auth-tool>Mini League Tracker</a>
+        <a href="./pick" data-auth-tool>Rate My Team</a>
+        <a href="./ai-tips" data-auth-tool>Transfer Planner</a>
+        <a href="./ai-tips" data-auth-tool>AI Transfers</a>
+        <a href="./chip-strategy" data-auth-tool>Chip Strategy Planner</a>
+      </div>
+      <div class="footer-col">
+        <h4>Account</h4>
+        <a href="./login">Log in</a>
+        <a href="./join">Register</a>
+        <a href="./payment">Billing</a>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>© 2026 Metro Football. metrofootball.co.uk</span>
+      <span>
+        <a href="./privacy-policy">Privacy</a>
+        ·
+        <a href="./terms">Terms</a>
+      </span>
+    </div>
+  </footer>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

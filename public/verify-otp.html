@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Enter your code | Metro Football</title>
+  <meta name="description" content="Enter the code we sent to your email to finish creating your Metro Football account.">
+  <link rel="canonical" href="https://metrofootball.co.uk/verify-otp">
+  <link rel="icon" href="./images/metro-football-favicon.png" type="image/png" sizes="500x500">
+  <link rel="apple-touch-icon" href="./images/metro-football-favicon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Metro Football">
+  <meta property="og:title" content="Enter your code | Metro Football">
+  <meta property="og:description" content="Enter the code we sent to your email to finish creating your Metro Football account.">
+  <meta property="og:url" content="https://metrofootball.co.uk/verify-otp">
+  <meta property="og:image" content="https://metrofootball.co.uk/images/metro-football-favicon.png">
+  <meta property="og:image:width" content="500">
+  <meta property="og:image:height" content="500">
+  <meta property="og:locale" content="en_GB">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Enter your code | Metro Football">
+  <meta name="twitter:description" content="Enter the code we sent to your email to finish creating your Metro Football account.">
+  <meta name="twitter:image" content="https://metrofootball.co.uk/images/metro-football-favicon.png">
+  <link rel="stylesheet" href="./css/app.css">
+</head>
+<body class="auth-page">
+  <section class="auth-shell">
+    <div class="auth-card auth-reveal">
+      <div class="auth-card__brand">
+        <a href="./" class="site-logo" aria-label="Metro Football home">
+          <img class="site-logo__img" src="./images/metro-football-logo-dark.png" alt="" width="320" height="107" decoding="async">
+        </a>
+        <h1 class="auth-card__title">Enter your code</h1>
+        <p class="auth-card__lead">We sent a 6 digit code to <strong data-otp-email></strong>.</p>
+      </div>
+
+      <form class="auth-form" data-otp-form novalidate>
+        <p class="auth-form__error" data-form-error hidden role="alert"></p>
+
+        <div class="auth-field">
+          <label class="auth-label" for="code">One time code</label>
+          <input
+            class="auth-input auth-input--otp"
+            id="code"
+            name="code"
+            type="text"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            pattern="[0-9]{6}"
+            maxlength="6"
+            required
+            placeholder="123456"
+          >
+        </div>
+
+        <button type="submit" class="mf-btn mf-btn--primary mf-btn--block">
+          <span class="mf-btn__label">Verify code</span>
+          <span class="mf-btn__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </button>
+
+        <button type="button" class="mf-btn mf-btn--ink mf-btn--block" data-resend-otp>
+          <span class="mf-btn__label">Send code again</span>
+          <span class="mf-btn__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </button>
+      </form>
+
+      <p class="auth-card__footer">
+        Wrong email?
+        <a href="./register">Start again</a>
+      </p>
+    </div>
+  </section>
+
+  <script type="module" src="./js/verify-otp.js"></script>
+</body>
+</html>
