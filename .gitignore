@@ -31,6 +31,11 @@ Thumbs.db
 node_modules/
 vendor/
 
+# Internal planning notes
+product_info.md
+MOBILE_APP_PROMPT.txt
+MAIL_CREATOR_GUIDE.md
+
 # Hostinger / local tooling
 config/sftp.json
 .filebrowser/
