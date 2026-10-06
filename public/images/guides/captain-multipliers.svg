@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 360" role="img" aria-label="FPL captain and chip multipliers: captain doubles, Triple Captain triples, Bench Boost scores all fifteen players">
+  <rect width="700" height="360" rx="16" fill="#0b1220"/>
+  <text x="36" y="44" fill="#94a3b8" font-family="Inter, sans-serif" font-size="13" font-weight="600" letter-spacing="0.08em">MULTIPLIERS</text>
+  <text x="36" y="78" fill="#f8fafc" font-family="Google Sans, sans-serif" font-size="26" font-weight="700">Captain and chip multipliers</text>
+
+  <g transform="translate(36 108)">
+    <rect width="140" height="200" rx="16" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+    <text x="70" y="48" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="12">Normal</text>
+    <text x="70" y="110" fill="#f8fafc" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="40" font-weight="700">1x</text>
+    <text x="70" y="170" fill="#64748b" text-anchor="middle" font-family="Inter, sans-serif" font-size="12">Starting XI</text>
+  </g>
+  <g transform="translate(196 108)">
+    <rect width="140" height="200" rx="16" fill="#1e293b" stroke="#dc2626" stroke-width="2"/>
+    <text x="70" y="48" fill="#fecaca" text-anchor="middle" font-family="Inter, sans-serif" font-size="12">Captain</text>
+    <text x="70" y="110" fill="#dc2626" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="40" font-weight="700">2x</text>
+    <text x="70" y="170" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="12">Every week</text>
+  </g>
+  <g transform="translate(356 108)">
+    <rect width="140" height="200" rx="16" fill="#1e293b" stroke="#7c3aed" stroke-width="2"/>
+    <text x="70" y="48" fill="#ddd6fe" text-anchor="middle" font-family="Inter, sans-serif" font-size="12">Triple Captain</text>
+    <text x="70" y="110" fill="#a78bfa" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="40" font-weight="700">3x</text>
+    <text x="70" y="170" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="12">Once per season</text>
+  </g>
+  <g transform="translate(516 108)">
+    <rect width="148" height="200" rx="16" fill="#1e293b" stroke="#059669" stroke-width="2"/>
+    <text x="74" y="48" fill="#6ee7b7" text-anchor="middle" font-family="Inter, sans-serif" font-size="12">Bench Boost</text>
+    <text x="74" y="100" fill="#34d399" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="28" font-weight="700">15</text>
+    <text x="74" y="128" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="12">players score</text>
+    <text x="74" y="170" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="12">Bench included</text>
+  </g>
+
+  <rect x="36" y="324" width="628" height="24" rx="8" fill="#1e293b"/>
+  <text x="350" y="341" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="12">Vice captain doubles only if captain plays 0 minutes</text>
+</svg>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" role="img" aria-label="The four FPL chips: Wildcard, Free Hit, Bench Boost, and Triple Captain">
+  <rect width="700" height="420" rx="16" fill="#0b1220"/>
+  <text x="36" y="44" fill="#94a3b8" font-family="Inter, sans-serif" font-size="13" font-weight="600" letter-spacing="0.08em">CHIPS</text>
+  <text x="36" y="78" fill="#f8fafc" font-family="Google Sans, sans-serif" font-size="26" font-weight="700">The four FPL chips</text>
+  <text x="36" y="104" fill="#94a3b8" font-family="Inter, sans-serif" font-size="14">One chip per gameweek. Each can be used once per season.</text>
+
+  <g transform="translate(36 130)">
+    <rect width="300" height="118" rx="16" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+    <rect x="16" y="16" width="56" height="56" rx="14" fill="#dc2626"/>
+    <text x="44" y="52" fill="#fff" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="22" font-weight="700">W</text>
+    <text x="88" y="42" fill="#f8fafc" font-family="Google Sans, sans-serif" font-size="18" font-weight="700">Wildcard</text>
+    <text x="88" y="66" fill="#94a3b8" font-family="Inter, sans-serif" font-size="13">Unlimited transfers. Changes stay.</text>
+    <text x="88" y="88" fill="#cbd5e1" font-family="Inter, sans-serif" font-size="12">Full squad rebuild</text>
+  </g>
+
+  <g transform="translate(364 130)">
+    <rect width="300" height="118" rx="16" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+    <rect x="16" y="16" width="56" height="56" rx="14" fill="#b45309"/>
+    <text x="44" y="52" fill="#fff" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="20" font-weight="700">FH</text>
+    <text x="88" y="42" fill="#f8fafc" font-family="Google Sans, sans-serif" font-size="18" font-weight="700">Free Hit</text>
+    <text x="88" y="66" fill="#94a3b8" font-family="Inter, sans-serif" font-size="13">Team for one gameweek only</text>
+    <text x="88" y="88" fill="#cbd5e1" font-family="Inter, sans-serif" font-size="12">Old squad returns next gameweek</text>
+  </g>
+
+  <g transform="translate(36 264)">
+    <rect width="300" height="118" rx="16" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+    <rect x="16" y="16" width="56" height="56" rx="14" fill="#059669"/>
+    <text x="44" y="52" fill="#fff" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="18" font-weight="700">BB</text>
+    <text x="88" y="42" fill="#f8fafc" font-family="Google Sans, sans-serif" font-size="18" font-weight="700">Bench Boost</text>
+    <text x="88" y="66" fill="#94a3b8" font-family="Inter, sans-serif" font-size="13">Bench players score too</text>
+    <text x="88" y="88" fill="#cbd5e1" font-family="Inter, sans-serif" font-size="12">Best for double gameweeks</text>
+  </g>
+
+  <g transform="translate(364 264)">
+    <rect width="300" height="118" rx="16" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+    <rect x="16" y="16" width="56" height="56" rx="14" fill="#7c3aed"/>
+    <text x="44" y="52" fill="#fff" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="18" font-weight="700">TC</text>
+    <text x="88" y="42" fill="#f8fafc" font-family="Google Sans, sans-serif" font-size="18" font-weight="700">Triple Captain</text>
+    <text x="88" y="66" fill="#94a3b8" font-family="Inter, sans-serif" font-size="13">Captain points count three times</text>
+    <text x="88" y="88" fill="#cbd5e1" font-family="Inter, sans-serif" font-size="12">Best for double gameweeks</text>
+  </g>
+</svg>

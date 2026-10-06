@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="/css/fonts.css?v=20260830perf">
+  <link rel="stylesheet" href="/css/app.css?v=20260904nav2">
+  <link rel="stylesheet" href="/admin/css/admin.css?v=20260902adm4">
+  <title>Admin | Metro Football</title>
+  <link rel="icon" href="/images/metro-football-favicon.png" type="image/png">
+</head>
+<body class="adm-body">
+  <div class="adm-shell">
+    <aside class="adm-sidebar">
+      <div class="adm-sidebar__brand">
+        <img src="/images/metro-football-logo-light-315.webp?v=20260830logo" srcset="/images/metro-football-logo-light-315.webp?v=20260830logo 315w, /images/metro-football-logo-light-630.webp?v=20260830logo 630w" sizes="(min-width: 768px) 204px, 180px" alt="" width="938" height="313" decoding="async">
+        <span>Admin</span>
+      </div>
+
+      <nav class="adm-nav" aria-label="Admin sections">
+        <button type="button" class="adm-nav__btn is-active" data-adm-nav="overview">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 3h8v8H3zM13 3h8v5h-8zM13 10h8v11h-8zM3 13h8v8H3z"/></svg>
+          Overview
+        </button>
+        <button type="button" class="adm-nav__btn" data-adm-nav="users">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Users
+        </button>
+        <button type="button" class="adm-nav__btn" data-adm-nav="revenue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          Revenue
+        </button>
+        <button type="button" class="adm-nav__btn" data-adm-nav="ai">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3 2 9l10 6 10-6-10-6Z"/><path d="m2 15 10 6 10-6"/></svg>
+          AI costs
+        </button>
+        <button type="button" class="adm-nav__btn" data-adm-nav="system">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+          System
+        </button>
+        <a class="adm-nav__btn" href="/admin/guides.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 5h16M4 12h10M4 19h16"/></svg>
+          FPL Guides
+        </a>
+        <a class="adm-nav__btn" href="/admin/emails.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
+          Emails
+        </a>
+      </nav>
+
+      <div class="adm-sidebar__foot">
+        <p data-adm-admin-email>Signed in</p>
+        <button type="button" class="adm-btn-sm" data-adm-logout style="margin-top:0.5rem">Sign out</button>
+      </div>
+    </aside>
+
+    <main class="adm-main">
+      <header class="adm-topbar">
+        <div>
+          <h1 class="adm-topbar__title" data-adm-page-title>Overview</h1>
+          <p class="adm-topbar__meta" data-adm-updated>Loading…</p>
+        </div>
+        <a class="mf-btn mf-btn--ink mf-btn--sm" href="/">
+          <span class="mf-btn__label">View site</span>
+          <span class="mf-btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+      </header>
+
+      <section class="adm-panel" data-adm-panel="overview">
+        <div class="adm-kpi-grid" data-adm-kpi-overview></div>
+        <div class="adm-grid-2">
+          <article class="adm-card adm-card--chart">
+            <div class="adm-card__head adm-chart__head">
+              <div>
+                <h2 class="adm-card__title">Signups</h2>
+                <p class="adm-chart__meta" data-adm-chart-signups-meta>Last 30 days</p>
+              </div>
+            </div>
+            <div class="adm-card__body">
+              <div class="adm-chart" data-adm-chart-signups></div>
+            </div>
+          </article>
+          <article class="adm-card adm-card--chart">
+            <div class="adm-card__head adm-chart__head">
+              <div>
+                <h2 class="adm-card__title">Revenue</h2>
+                <p class="adm-chart__meta" data-adm-chart-revenue-meta>Last 30 days · GBP</p>
+              </div>
+            </div>
+            <div class="adm-card__body">
+              <div class="adm-chart" data-adm-chart-revenue></div>
+            </div>
+          </article>
+        </div>
+        <div class="adm-grid-2">
+          <article class="adm-card adm-card--chart">
+            <div class="adm-card__head adm-chart__head">
+              <div>
+                <h2 class="adm-card__title">AI cost</h2>
+                <p class="adm-chart__meta" data-adm-chart-ai-meta>Last 30 days · USD</p>
+              </div>
+            </div>
+            <div class="adm-card__body">
+              <div class="adm-chart" data-adm-chart-ai></div>
+            </div>
+          </article>
+          <article class="adm-card adm-card--chart">
+            <div class="adm-card__head adm-chart__head">
+              <div>
+                <h2 class="adm-card__title">AI by service</h2>
+                <p class="adm-chart__meta" data-adm-chart-ai-services-meta>Last 30 days · USD</p>
+              </div>
+            </div>
+            <div class="adm-card__body" data-adm-ai-services></div>
+          </article>
+        </div>
+        <article class="adm-card">
+          <div class="adm-card__head"><h2 class="adm-card__title">Recent admin actions</h2></div>
+          <div class="adm-card__body adm-table-wrap" data-adm-audit></div>
+        </article>
+      </section>
+
+      <section class="adm-panel" data-adm-panel="users" hidden>
+        <div class="adm-users-panel">
+          <div class="adm-users-toolbar">
+            <label class="adm-search-wrap">
+              <svg class="adm-search-wrap__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5" stroke-linecap="round"/></svg>
+              <input class="adm-search adm-search--icon" type="search" placeholder="Search email, name, or FPL manager" data-adm-user-search autocomplete="off">
+            </label>
+            <div class="adm-filter-chips" data-adm-user-filters role="group" aria-label="Filter users">
+              <button type="button" class="adm-filter-chip is-active" data-adm-user-filter="" aria-pressed="true">All</button>
+              <button type="button" class="adm-filter-chip" data-adm-user-filter="premium" aria-pressed="false">Premium</button>
+              <button type="button" class="adm-filter-chip" data-adm-user-filter="restricted" aria-pressed="false">Restricted</button>
+              <button type="button" class="adm-filter-chip" data-adm-user-filter="admin" aria-pressed="false">Admins</button>
+              <button type="button" class="adm-filter-chip" data-adm-user-filter="unverified" aria-pressed="false">Unverified</button>
+            </div>
+          </div>
+          <article class="adm-card adm-card--flush">
+            <div class="adm-card__head adm-users-card__head">
+              <div>
+                <h2 class="adm-card__title">All users</h2>
+                <p class="adm-users-card__sub" data-adm-users-summary>Loading users…</p>
+              </div>
+            </div>
+            <div class="adm-card__body adm-table-wrap adm-users-table-wrap" data-adm-users-table></div>
+            <div class="adm-pagination adm-pagination--card" data-adm-users-pagination></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="adm-panel" data-adm-panel="revenue" hidden>
+        <div class="adm-kpi-grid" data-adm-kpi-revenue></div>
+        <article class="adm-card">
+          <div class="adm-card__head"><h2 class="adm-card__title">Payments</h2></div>
+          <div class="adm-card__body adm-table-wrap" data-adm-payments-table></div>
+          <div class="adm-pagination" data-adm-payments-pagination></div>
+        </article>
+      </section>
+
+      <section class="adm-panel" data-adm-panel="ai" hidden>
+        <div class="adm-kpi-grid" data-adm-kpi-ai></div>
+        <article class="adm-card">
+          <div class="adm-card__head"><h2 class="adm-card__title">AI usage log</h2></div>
+          <div class="adm-card__body adm-table-wrap" data-adm-ai-table></div>
+          <div class="adm-pagination" data-adm-ai-pagination></div>
+        </article>
+      </section>
+
+      <section class="adm-panel" data-adm-panel="system" hidden>
+        <article class="adm-card">
+          <div class="adm-card__head"><h2 class="adm-card__title">Integrations</h2></div>
+          <div class="adm-card__body adm-status-list" data-adm-system></div>
+        </article>
+        <article class="adm-card" style="margin-top:0.85rem">
+          <div class="adm-card__head"><h2 class="adm-card__title">Content tools</h2></div>
+          <div class="adm-card__body">
+            <p style="margin:0 0 0.75rem;color:var(--adm-muted);font-size:0.875rem">These pages use your existing generate and edit endpoints.</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem">
+              <a class="mf-btn mf-btn--ink mf-btn--sm" href="/fpl-injury-news"><span class="mf-btn__label">Injury news</span><span class="mf-btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+              <a class="mf-btn mf-btn--ink mf-btn--sm" href="/fpl-gameweek-tips"><span class="mf-btn__label">Gameweek tips</span><span class="mf-btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <div class="adm-modal" data-adm-modal hidden>
+    <div class="adm-modal__backdrop" data-adm-modal-close aria-hidden="true"></div>
+    <div class="adm-modal__card adm-user-modal" role="dialog" aria-modal="true" aria-labelledby="adm-modal-title">
+      <header class="adm-user-modal__head">
+        <div class="adm-user-modal__identity" data-adm-modal-identity></div>
+        <button type="button" class="adm-modal-close" data-adm-modal-close aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" stroke-linecap="round"/></svg>
+        </button>
+      </header>
+      <div class="adm-user-modal__meta" data-adm-modal-meta></div>
+      <div class="adm-user-modal__body" data-adm-modal-body></div>
+      <div class="adm-user-modal__actions" data-adm-modal-actions></div>
+    </div>
+  </div>
+
+  <script type="module" src="/admin/js/admin.js?v=20260902adm4"></script>
+</body>
+</html>

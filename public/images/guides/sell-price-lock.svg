@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 340" role="img" aria-label="FPL sell price stays at purchase price while market value can rise above it">
+  <rect width="700" height="340" rx="16" fill="#0b1220"/>
+  <text x="36" y="44" fill="#94a3b8" font-family="Inter, sans-serif" font-size="13" font-weight="600" letter-spacing="0.08em">SELL PRICE</text>
+  <text x="36" y="78" fill="#f8fafc" font-family="Google Sans, sans-serif" font-size="26" font-weight="700">Buy price vs market price</text>
+
+  <g transform="translate(36 110)">
+    <rect width="280" height="180" rx="16" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+    <text x="140" y="44" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">You bought at</text>
+    <text x="140" y="88" fill="#f8fafc" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="36" font-weight="700">&#163;6.5m</text>
+    <text x="140" y="120" fill="#cbd5e1" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">Sell button shows</text>
+    <text x="140" y="148" fill="#dc2626" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="24" font-weight="700">&#163;6.5m</text>
+  </g>
+
+  <path d="M340 200h40" stroke="#475569" stroke-width="3"/>
+  <polygon points="380,200 368,192 368,208" fill="#475569"/>
+
+  <g transform="translate(400 110)">
+    <rect width="264" height="180" rx="16" fill="#1e293b" stroke="#059669" stroke-width="2"/>
+    <text x="132" y="44" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">Market price now</text>
+    <text x="132" y="88" fill="#34d399" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="36" font-weight="700">&#163;7.2m</text>
+    <text x="132" y="120" fill="#cbd5e1" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">Gain locked in</text>
+    <text x="132" y="148" fill="#6ee7b7" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="24" font-weight="700">+&#163;0.7m value</text>
+  </g>
+
+  <text x="350" y="318" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">You always sell at the price you paid, not the current market price</text>
+</svg>

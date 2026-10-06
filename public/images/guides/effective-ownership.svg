@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 360" role="img" aria-label="Effective ownership includes captaincy so a fifty percent owned captain can exceed seventy percent effective ownership">
+  <rect width="700" height="360" rx="16" fill="#0b1220"/>
+  <text x="36" y="44" fill="#94a3b8" font-family="Inter, sans-serif" font-size="13" font-weight="600" letter-spacing="0.08em">RANK SWINGS</text>
+  <text x="36" y="78" fill="#f8fafc" font-family="Google Sans, sans-serif" font-size="26" font-weight="700">Effective ownership</text>
+  <text x="36" y="104" fill="#94a3b8" font-family="Inter, sans-serif" font-size="14">Raw ownership plus captaincy impact on rivals</text>
+
+  <g transform="translate(36 130)">
+    <text x="0" y="0" fill="#cbd5e1" font-family="Inter, sans-serif" font-size="14">Raw ownership</text>
+    <rect x="0" y="12" width="280" height="28" rx="8" fill="#1e293b"/>
+    <rect x="0" y="12" width="140" height="28" rx="8" fill="#64748b"/>
+    <text x="300" y="32" fill="#f8fafc" font-family="Google Sans, sans-serif" font-size="18" font-weight="700">50%</text>
+  </g>
+
+  <text x="350" y="175" fill="#dc2626" font-family="Google Sans, sans-serif" font-size="28" font-weight="700">+ captain doubles</text>
+
+  <g transform="translate(36 200)">
+    <text x="0" y="0" fill="#fecaca" font-family="Inter, sans-serif" font-size="14" font-weight="600">Effective ownership</text>
+    <rect x="0" y="12" width="420" height="28" rx="8" fill="#1e293b"/>
+    <rect x="0" y="12" width="294" height="28" rx="8" fill="#dc2626"/>
+    <text x="440" y="32" fill="#fecaca" font-family="Google Sans, sans-serif" font-size="18" font-weight="700">70%+</text>
+  </g>
+
+  <rect x="36" y="280" width="628" height="56" rx="14" fill="#1e293b"/>
+  <text x="350" y="306" fill="#cbd5e1" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">When a popular captain scores big, most rivals gain with you.</text>
+  <text x="350" y="326" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">A different captain choice creates bigger rank swings.</text>
+</svg>

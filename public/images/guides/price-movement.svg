@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 380" role="img" aria-label="FPL player price rises when many managers buy and falls when many sell">
+  <rect width="700" height="380" rx="16" fill="#0b1220"/>
+  <text x="36" y="44" fill="#94a3b8" font-family="Inter, sans-serif" font-size="13" font-weight="600" letter-spacing="0.08em">PRICES</text>
+  <text x="36" y="78" fill="#f8fafc" font-family="Google Sans, sans-serif" font-size="26" font-weight="700">How prices move</text>
+
+  <g transform="translate(36 110)">
+    <rect width="300" height="220" rx="16" fill="#1e293b" stroke="#059669" stroke-width="2"/>
+    <text x="150" y="40" fill="#6ee7b7" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="18" font-weight="700">Price rise</text>
+    <path d="M60 170 L120 140 L180 120 L240 80" fill="none" stroke="#34d399" stroke-width="4" stroke-linecap="round"/>
+    <polygon points="240,80 228,88 232,96" fill="#34d399"/>
+    <text x="150" y="196" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">More managers buying than selling</text>
+  </g>
+
+  <g transform="translate(364 110)">
+    <rect width="300" height="220" rx="16" fill="#1e293b" stroke="#dc2626" stroke-width="2"/>
+    <text x="150" y="40" fill="#fecaca" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="18" font-weight="700">Price fall</text>
+    <path d="M60 90 L120 120 L180 145 L240 175" fill="none" stroke="#f87171" stroke-width="4" stroke-linecap="round"/>
+    <polygon points="240,175 228,167 232,159" fill="#f87171"/>
+    <text x="150" y="196" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">More managers selling than buying</text>
+  </g>
+
+  <rect x="36" y="348" width="628" height="24" rx="8" fill="#1e293b"/>
+  <text x="350" y="365" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="12">Prices update overnight. Team value grows when your players rise.</text>
+</svg>

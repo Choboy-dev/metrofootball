@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="/css/fonts.css?v=20260830perf">
+  <link rel="stylesheet" href="/css/app.css?v=20260904nav2">
+  <link rel="stylesheet" href="/admin/css/admin.css?v=20260902adm4">
+  <link rel="stylesheet" href="/admin/css/admin-emails.css?v=20260905mail3">
+  <title>Emails | Admin | Metro Football</title>
+  <link rel="icon" href="/images/metro-football-favicon.png" type="image/png">
+</head>
+<body class="adm-body">
+  <div class="adm-shell">
+    <aside class="adm-sidebar">
+      <div class="adm-sidebar__brand">
+        <img src="/images/metro-football-logo-light-315.webp?v=20260830logo" alt="" width="938" height="313" decoding="async">
+        <span>Admin</span>
+      </div>
+      <nav class="adm-nav" aria-label="Admin sections">
+        <a class="adm-nav__btn" href="/admin/">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 9.5 12 3l9 6.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V9.5Z"/></svg>
+          Dashboard
+        </a>
+        <a class="adm-nav__btn" href="/admin/guides.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 5h16M4 12h10M4 19h16"/></svg>
+          FPL Guides
+        </a>
+        <a class="adm-nav__btn is-active" href="/admin/emails.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
+          Emails
+        </a>
+      </nav>
+      <div class="adm-sidebar__foot">
+        <button type="button" class="adm-btn-sm" data-ae-back>Back to dashboard</button>
+      </div>
+    </aside>
+
+    <main class="adm-main">
+      <header class="adm-topbar">
+        <div>
+          <h1 class="adm-topbar__title">Emails</h1>
+          <p class="adm-topbar__meta">Write once. Send to the right segment of Metro Football users.</p>
+        </div>
+        <button type="button" class="mf-btn mf-btn--primary mf-btn--sm" data-ae-scroll-compose>
+          <span class="mf-btn__label">Compose</span>
+          <span class="mf-btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+      </header>
+
+      <section class="adm-panel ae-layout">
+        <div class="ae-stats" data-ae-stats aria-live="polite"></div>
+
+        <div class="ae-grid">
+          <article class="adm-card ae-card" id="ae-compose">
+            <div class="adm-card__head">
+              <h2 class="adm-card__title">Compose email</h2>
+            </div>
+            <div class="adm-card__body ae-compose">
+              <div class="ae-field">
+                <label for="ae-subject">Subject</label>
+                <input id="ae-subject" type="text" data-ae-subject maxlength="180" placeholder="Finish setting up your Metro Football account" autocomplete="off">
+              </div>
+
+              <div class="ae-field">
+                <label for="ae-body">Message</label>
+                <div class="ae-editor">
+                  <div class="ae-editor__toolbar" role="toolbar" aria-label="Text formatting">
+                    <button type="button" class="ae-editor__btn" data-ae-cmd="bold" title="Bold"><strong>B</strong></button>
+                    <button type="button" class="ae-editor__btn" data-ae-cmd="italic" title="Italic"><em>I</em></button>
+                    <button type="button" class="ae-editor__btn" data-ae-cmd="underline" title="Underline"><u>U</u></button>
+                    <span class="ae-editor__sep" aria-hidden="true"></span>
+                    <button type="button" class="ae-editor__btn" data-ae-cmd="insertUnorderedList" title="Bullet list">• List</button>
+                    <button type="button" class="ae-editor__btn" data-ae-cmd="insertOrderedList" title="Numbered list">1. List</button>
+                    <span class="ae-editor__sep" aria-hidden="true"></span>
+                    <button type="button" class="ae-editor__btn" data-ae-cmd="createLink" title="Add link">Link</button>
+                    <button type="button" class="ae-editor__btn" data-ae-cmd="unlink" title="Remove link">Unlink</button>
+                  </div>
+                  <div
+                    id="ae-body"
+                    class="ae-editor__body"
+                    contenteditable="true"
+                    role="textbox"
+                    aria-multiline="true"
+                    data-ae-body
+                    data-placeholder="Write your message. Use the toolbar for bold, lists, and links."
+                  ></div>
+                </div>
+                <p class="ae-hint">We wrap this in the Metro Football email template and add Dear Firstname (or Dear user) automatically.</p>
+              </div>
+
+              <div class="ae-cta-row">
+                <div class="ae-field">
+                  <label for="ae-cta-label">Button label (optional)</label>
+                  <input id="ae-cta-label" type="text" data-ae-cta-label maxlength="60" placeholder="Confirm email" autocomplete="off">
+                </div>
+                <div class="ae-field">
+                  <label for="ae-cta-url">Button URL (optional)</label>
+                  <input id="ae-cta-url" type="text" data-ae-cta-url maxlength="400" placeholder="/verify-email or https://…" autocomplete="off">
+                </div>
+              </div>
+
+              <div class="ae-field">
+                <span class="ae-label">Audience segments</span>
+                <p class="ae-hint">Select one or more. Overlaps are merged so each email address only gets one send.</p>
+                <div class="ae-segments" data-ae-segments role="group" aria-label="Audience segments"></div>
+              </div>
+
+              <div class="ae-audience" data-ae-audience>
+                <div class="ae-audience__head">
+                  <strong data-ae-count>0 recipients</strong>
+                  <span class="ae-hint" data-ae-count-note>Select a segment to preview who will receive this email.</span>
+                </div>
+                <div class="ae-audience__list" data-ae-recipients></div>
+              </div>
+
+              <div class="ae-actions">
+                <p class="ae-error" data-ae-error hidden></p>
+                <p class="ae-success" data-ae-success hidden></p>
+                <button type="button" class="mf-btn mf-btn--primary" data-ae-send disabled>
+                  <span class="mf-btn__label">Send email</span>
+                  <span class="mf-btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <aside class="ae-side">
+            <article class="adm-card ae-card">
+              <div class="adm-card__head">
+                <h2 class="adm-card__title">Live preview</h2>
+              </div>
+              <div class="adm-card__body">
+                <div class="ae-preview" data-ae-preview>
+                  <div class="ae-preview__logo">Metro Football</div>
+                  <div class="ae-preview__body" data-ae-preview-body>
+                    <p>Your message will appear here.</p>
+                  </div>
+                  <div class="ae-preview__cta" data-ae-preview-cta hidden></div>
+                  <p class="ae-preview__signoff">Best regards,<br>The Metro Football team</p>
+                </div>
+              </div>
+            </article>
+
+            <article class="adm-card ae-card">
+              <div class="adm-card__head">
+                <h2 class="adm-card__title">Recent sends</h2>
+              </div>
+              <div class="adm-card__body ae-history" data-ae-history>
+                <p class="adm-muted">No campaigns yet.</p>
+              </div>
+            </article>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="ae-confirm" data-ae-confirm hidden>
+    <div class="ae-confirm__card" role="dialog" aria-labelledby="ae-confirm-title">
+      <h2 id="ae-confirm-title" class="ae-confirm__title">Send this email</h2>
+      <p class="ae-confirm__text" data-ae-confirm-text></p>
+      <div class="ae-confirm__actions">
+        <button type="button" class="adm-btn-sm" data-ae-confirm-cancel>Cancel</button>
+        <button type="button" class="mf-btn mf-btn--primary mf-btn--sm" data-ae-confirm-go>
+          <span class="mf-btn__label">Send now</span>
+          <span class="mf-btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/admin/js/admin-emails.js?v=20260905mail3"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 360" role="img" aria-label="Template players owned by many managers versus low-owned differential picks">
+  <rect width="700" height="360" rx="16" fill="#0b1220"/>
+  <text x="36" y="44" fill="#94a3b8" font-family="Inter, sans-serif" font-size="13" font-weight="600" letter-spacing="0.08em">OWNERSHIP</text>
+  <text x="36" y="78" fill="#f8fafc" font-family="Google Sans, sans-serif" font-size="26" font-weight="700">Template vs differential</text>
+
+  <g transform="translate(36 120)">
+    <rect width="300" height="180" rx="16" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+    <text x="150" y="40" fill="#cbd5e1" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="18" font-weight="700">Template</text>
+    <rect x="40" y="70" width="220" height="24" rx="8" fill="#0f172a"/>
+    <rect x="40" y="70" width="176" height="24" rx="8" fill="#64748b"/>
+    <text x="150" y="88" fill="#f8fafc" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="14" font-weight="700">40%+ owned</text>
+    <text x="150" y="140" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">Protects overall rank</text>
+  </g>
+
+  <g transform="translate(364 120)">
+    <rect width="300" height="180" rx="16" fill="#1e293b" stroke="#dc2626" stroke-width="2"/>
+    <text x="150" y="40" fill="#fecaca" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="18" font-weight="700">Differential</text>
+    <rect x="40" y="70" width="220" height="24" rx="8" fill="#0f172a"/>
+    <rect x="40" y="70" width="22" height="24" rx="8" fill="#dc2626"/>
+    <text x="150" y="88" fill="#f8fafc" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="14" font-weight="700">Under 5% owned</text>
+    <text x="150" y="140" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">Helps win mini-leagues when they score big</text>
+  </g>
+
+  <text x="350" y="330" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">Build a core of template players plus a few differentials around them</text>
+</svg>

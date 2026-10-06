@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 360" role="img" aria-label="Blank gameweek with zero fixtures versus double gameweek with two fixtures per team">
+  <rect width="700" height="360" rx="16" fill="#0b1220"/>
+  <text x="36" y="44" fill="#94a3b8" font-family="Inter, sans-serif" font-size="13" font-weight="600" letter-spacing="0.08em">CALENDAR</text>
+  <text x="36" y="78" fill="#f8fafc" font-family="Google Sans, sans-serif" font-size="26" font-weight="700">Blank vs double gameweek</text>
+
+  <g transform="translate(36 108)">
+    <rect width="300" height="200" rx="16" fill="#1e293b" stroke="#dc2626" stroke-width="2"/>
+    <text x="150" y="40" fill="#fecaca" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="18" font-weight="700">Blank gameweek</text>
+    <g transform="translate(50 70)">
+      <rect width="60" height="60" rx="10" fill="#0f172a" stroke="#475569" stroke-width="2" stroke-dasharray="6 4"/>
+      <text x="30" y="38" fill="#64748b" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="24" font-weight="700">0</text>
+      <text x="30" y="56" fill="#64748b" text-anchor="middle" font-family="Inter, sans-serif" font-size="10">fixtures</text>
+    </g>
+    <text x="150" y="170" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">Team has no league match</text>
+  </g>
+
+  <g transform="translate(364 108)">
+    <rect width="300" height="200" rx="16" fill="#1e293b" stroke="#059669" stroke-width="2"/>
+    <text x="150" y="40" fill="#6ee7b7" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="18" font-weight="700">Double gameweek</text>
+    <g transform="translate(40 70)">
+      <rect width="60" height="60" rx="10" fill="#064e3b" stroke="#34d399" stroke-width="2"/>
+      <text x="30" y="38" fill="#6ee7b7" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="24" font-weight="700">2</text>
+      <text x="30" y="56" fill="#6ee7b7" text-anchor="middle" font-family="Inter, sans-serif" font-size="10">fixtures</text>
+    </g>
+    <g transform="translate(120 70)">
+      <rect width="60" height="60" rx="10" fill="#064e3b" stroke="#34d399" stroke-width="2"/>
+      <text x="30" y="38" fill="#6ee7b7" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="24" font-weight="700">2</text>
+    </g>
+    <text x="150" y="170" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">Team plays twice in one gameweek</text>
+  </g>
+
+  <rect x="36" y="324" width="628" height="24" rx="8" fill="#1e293b"/>
+  <text x="350" y="341" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="12">Plan chips and transfers four gameweeks before blanks and doubles arrive</text>
+</svg>

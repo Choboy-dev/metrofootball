@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 400" role="img" aria-label="Wildcard keeps your new squad permanently while Free Hit reverts after one gameweek">
+  <rect width="700" height="400" rx="16" fill="#0b1220"/>
+  <text x="36" y="44" fill="#94a3b8" font-family="Inter, sans-serif" font-size="13" font-weight="600" letter-spacing="0.08em">CHIPS COMPARED</text>
+  <text x="36" y="78" fill="#f8fafc" font-family="Google Sans, sans-serif" font-size="26" font-weight="700">Wildcard vs Free Hit</text>
+
+  <g transform="translate(36 110)">
+    <rect width="300" height="240" rx="16" fill="#1e293b" stroke="#dc2626" stroke-width="2"/>
+    <text x="150" y="40" fill="#fecaca" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="20" font-weight="700">Wildcard</text>
+    <rect x="40" y="70" width="220" height="50" rx="10" fill="#dc2626" opacity="0.9"/>
+    <text x="150" y="102" fill="#fff" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="600">New squad this gameweek</text>
+    <path d="M150 130v30" stroke="#475569" stroke-width="2"/>
+    <rect x="40" y="160" width="220" height="50" rx="10" fill="#dc2626"/>
+    <text x="150" y="192" fill="#fff" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="600">Same squad next gameweek</text>
+    <text x="150" y="228" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="12">Permanent rebuild</text>
+  </g>
+
+  <g transform="translate(364 110)">
+    <rect width="300" height="240" rx="16" fill="#1e293b" stroke="#b45309" stroke-width="2"/>
+    <text x="150" y="40" fill="#fde68a" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="20" font-weight="700">Free Hit</text>
+    <rect x="40" y="70" width="220" height="50" rx="10" fill="#b45309" opacity="0.9"/>
+    <text x="150" y="102" fill="#fff" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="600">Temporary squad this gameweek</text>
+    <path d="M150 130v30" stroke="#475569" stroke-width="2"/>
+    <rect x="40" y="160" width="220" height="50" rx="10" fill="#334155" stroke="#475569" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <text x="150" y="192" fill="#cbd5e1" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="600">Old squad returns</text>
+    <text x="150" y="228" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="12">One-week fix only</text>
+  </g>
+
+  <text x="350" y="378" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">Both allow unlimited transfers before the deadline. Only Wildcard keeps the new team.</text>
+</svg>

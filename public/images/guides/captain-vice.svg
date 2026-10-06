@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 400" role="img" aria-label="FPL captain earns double points and vice captain replaces captain if they play zero minutes">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#0b1220"/>
+    </linearGradient>
+  </defs>
+  <rect width="700" height="400" rx="16" fill="url(#bg)"/>
+  <text x="36" y="44" fill="#94a3b8" font-family="Inter, sans-serif" font-size="13" font-weight="600" letter-spacing="0.08em">CAPTAINCY</text>
+  <text x="36" y="78" fill="#f8fafc" font-family="Google Sans, sans-serif" font-size="26" font-weight="700">Captain and vice captain</text>
+
+  <g transform="translate(36 110)">
+    <rect width="280" height="220" rx="18" fill="#1e293b" stroke="#dc2626" stroke-width="3"/>
+    <circle cx="140" cy="56" r="22" fill="#dc2626"/>
+    <text x="140" y="63" fill="#fff" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="16" font-weight="700">C</text>
+    <text x="140" y="104" fill="#f8fafc" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="20" font-weight="700">Captain</text>
+    <text x="140" y="132" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="14">Gets double points</text>
+    <rect x="78" y="152" width="124" height="44" rx="22" fill="#dc2626"/>
+    <text x="140" y="180" fill="#fff" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="22" font-weight="700">Double points</text>
+  </g>
+
+  <path d="M332 220h36" stroke="#475569" stroke-width="3" stroke-linecap="round"/>
+  <polygon points="368,220 356,212 356,228" fill="#475569"/>
+
+  <g transform="translate(384 110)">
+    <rect width="280" height="220" rx="18" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+    <circle cx="140" cy="56" r="22" fill="#334155"/>
+    <text x="140" y="63" fill="#e2e8f0" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="14" font-weight="700">VC</text>
+    <text x="140" y="104" fill="#f8fafc" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="20" font-weight="700">Vice captain</text>
+    <text x="140" y="132" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="14">Only doubles if captain</text>
+    <text x="140" y="152" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="14">plays 0 minutes</text>
+    <rect x="58" y="168" width="164" height="36" rx="18" fill="#0f172a" stroke="#475569" stroke-width="1.5"/>
+    <text x="140" y="192" fill="#cbd5e1" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">Backup captain</text>
+  </g>
+
+  <rect x="36" y="352" width="628" height="36" rx="10" fill="rgba(220,38,38,0.12)" stroke="rgba(220,38,38,0.35)" stroke-width="1"/>
+  <text x="350" y="375" fill="#fecaca" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">Always pick a vice captain who is likely to start</text>
+</svg>

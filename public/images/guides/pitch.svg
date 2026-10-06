@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-label="Football pitch diagram">
+  <defs>
+    <linearGradient id="pitchGrass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1f7a3f"/>
+      <stop offset="100%" stop-color="#145c2f"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="400" rx="16" fill="url(#pitchGrass)"/>
+  <rect x="32" y="32" width="576" height="336" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="3"/>
+  <line x1="320" y1="32" x2="320" y2="368" stroke="rgba(255,255,255,0.45)" stroke-width="3"/>
+  <circle cx="320" cy="200" r="52" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="3"/>
+  <rect x="32" y="128" width="88" height="144" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="3"/>
+  <rect x="520" y="128" width="88" height="144" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="3"/>
+  <rect x="32" y="164" width="32" height="72" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="3"/>
+  <rect x="576" y="164" width="32" height="72" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="3"/>
+</svg>

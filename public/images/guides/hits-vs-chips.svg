@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 360" role="img" aria-label="FPL transfer decision tree: use free transfer, take a minus 4 hit, or play Wildcard or Free Hit">
+  <rect width="700" height="360" rx="16" fill="#0b1220"/>
+  <text x="36" y="44" fill="#94a3b8" font-family="Inter, sans-serif" font-size="13" font-weight="600" letter-spacing="0.08em">DECISION TREE</text>
+  <text x="36" y="78" fill="#f8fafc" font-family="Google Sans, sans-serif" font-size="24" font-weight="700">Hits vs chips vs hold</text>
+
+  <rect x="280" y="100" width="140" height="44" rx="12" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+  <text x="350" y="128" fill="#f8fafc" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="600">Need a change?</text>
+
+  <path d="M280 144 L180 190" stroke="#475569" stroke-width="2"/>
+  <path d="M420 144 L520 190" stroke="#475569" stroke-width="2"/>
+
+  <rect x="80" y="190" width="200" height="56" rx="12" fill="#1e293b" stroke="#059669" stroke-width="2"/>
+  <text x="180" y="216" fill="#6ee7b7" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="600">1-2 fixes</text>
+  <text x="180" y="234" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="11">Free transfer or -4 hit</text>
+
+  <rect x="420" y="190" width="200" height="56" rx="12" fill="#1e293b" stroke="#dc2626" stroke-width="2"/>
+  <text x="520" y="216" fill="#fecaca" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="600">3+ problems</text>
+  <text x="520" y="234" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="11">Consider Wildcard or Free Hit</text>
+
+  <rect x="36" y="280" width="300" height="56" rx="12" fill="#1e293b"/>
+  <text x="186" y="306" fill="#cbd5e1" text-anchor="middle" font-family="Inter, sans-serif" font-size="12">Hit only if new player beats sold player</text>
+  <text x="186" y="324" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="11">by 4+ points over two gameweeks</text>
+
+  <rect x="364" y="280" width="300" height="56" rx="12" fill="#1e293b"/>
+  <text x="514" y="306" fill="#cbd5e1" text-anchor="middle" font-family="Inter, sans-serif" font-size="12">One-week crisis? Free Hit.</text>
+  <text x="514" y="324" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="11">Long rebuild? Wildcard.</text>
+</svg>

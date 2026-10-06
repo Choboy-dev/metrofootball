@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 360" role="img" aria-label="FPL bonus points awarded 3 for first, 2 for second, and 1 for third best performer in each match">
+  <rect width="700" height="360" rx="16" fill="#0b1220"/>
+  <text x="36" y="44" fill="#94a3b8" font-family="Inter, sans-serif" font-size="13" font-weight="600" letter-spacing="0.08em">BONUS</text>
+  <text x="36" y="78" fill="#f8fafc" font-family="Google Sans, sans-serif" font-size="26" font-weight="700">Bonus Points System</text>
+  <text x="36" y="104" fill="#94a3b8" font-family="Inter, sans-serif" font-size="14">Top three performers in each match earn extra points</text>
+
+  <g transform="translate(80 140)">
+    <rect x="0" y="60" width="120" height="120" rx="12" fill="#b45309"/>
+    <text x="60" y="118" fill="#fff" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="32" font-weight="700">2</text>
+    <text x="60" y="148" fill="#fde68a" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">2nd place</text>
+    <text x="60" y="40" fill="#cbd5e1" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="28" font-weight="700">+2</text>
+  </g>
+  <g transform="translate(260 120)">
+    <rect x="0" y="60" width="140" height="150" rx="12" fill="#dc2626"/>
+    <text x="70" y="130" fill="#fff" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="40" font-weight="700">1</text>
+    <text x="70" y="168" fill="#fecaca" text-anchor="middle" font-family="Inter, sans-serif" font-size="14">1st place</text>
+    <text x="70" y="40" fill="#fff" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="36" font-weight="700">+3</text>
+  </g>
+  <g transform="translate(460 150)">
+    <rect x="0" y="60" width="120" height="110" rx="12" fill="#334155"/>
+    <text x="60" y="112" fill="#fff" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="28" font-weight="700">3</text>
+    <text x="60" y="140" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">3rd place</text>
+    <text x="60" y="40" fill="#cbd5e1" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="24" font-weight="700">+1</text>
+  </g>
+
+  <rect x="36" y="300" width="628" height="44" rx="12" fill="#1e293b"/>
+  <text x="350" y="328" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">Based on goals, assists, tackles, passes, and more in each match</text>
+</svg>

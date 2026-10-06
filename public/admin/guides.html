@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="/css/fonts.css?v=20260830perf">
+  <link rel="stylesheet" href="/css/app.css?v=20260904nav2">
+  <link rel="stylesheet" href="/admin/css/admin.css?v=20260902adm4">
+  <title>FPL Guides | Admin | Metro Football</title>
+  <link rel="icon" href="/images/metro-football-favicon.png" type="image/png">
+</head>
+<body class="adm-body">
+  <div class="adm-shell">
+    <aside class="adm-sidebar">
+      <div class="adm-sidebar__brand">
+        <img src="/images/metro-football-logo-light-315.webp?v=20260830logo" alt="" width="938" height="313" decoding="async">
+        <span>Admin</span>
+      </div>
+      <nav class="adm-nav" aria-label="Admin sections">
+        <a class="adm-nav__btn" href="/admin/">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 9.5 12 3l9 6.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V9.5Z"/></svg>
+          Dashboard
+        </a>
+        <a class="adm-nav__btn" href="/admin/guides.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 5h16M4 12h10M4 19h16"/></svg>
+          FPL Guides
+        </a>
+        <a class="adm-nav__btn" href="/admin/emails.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
+          Emails
+        </a>
+      </nav>
+      <div class="adm-sidebar__foot">
+        <button type="button" class="adm-btn-sm" data-gl-back>Back to dashboard</button>
+      </div>
+    </aside>
+
+    <main class="adm-main">
+      <header class="adm-topbar">
+        <div>
+          <h1 class="adm-topbar__title">FPL Guides</h1>
+          <p class="adm-topbar__meta">Write and publish guides to the public FPL Guides hub</p>
+        </div>
+        <button type="button" class="mf-btn mf-btn--primary mf-btn--sm" data-gl-new>
+          <span class="mf-btn__label">New guide</span>
+          <span class="mf-btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+      </header>
+
+      <section class="adm-panel">
+        <article class="adm-card">
+          <div class="adm-card__head">
+            <h2 class="adm-card__title">All guides</h2>
+          </div>
+          <div class="adm-card__body adm-table-wrap" data-gl-table></div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="/admin/js/guides-list.js?v=20260903guides"></script>
+</body>
+</html>

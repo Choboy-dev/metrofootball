@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 380" role="img" aria-label="FPL squad rules: 15 players, 100 million budget, maximum three per club">
+  <rect width="700" height="380" rx="16" fill="#0b1220"/>
+  <text x="36" y="44" fill="#94a3b8" font-family="Inter, sans-serif" font-size="13" font-weight="600" letter-spacing="0.08em">SQUAD BUILD</text>
+  <text x="36" y="78" fill="#f8fafc" font-family="Google Sans, sans-serif" font-size="26" font-weight="700">Budget and positions</text>
+
+  <rect x="36" y="104" width="628" height="44" rx="12" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+  <text x="56" y="132" fill="#94a3b8" font-family="Inter, sans-serif" font-size="14">Budget</text>
+  <text x="644" y="132" fill="#f8fafc" text-anchor="end" font-family="Google Sans, sans-serif" font-size="22" font-weight="700">&#163;100.0m</text>
+  <rect x="140" y="116" width="460" height="20" rx="10" fill="#0f172a"/>
+  <rect x="140" y="116" width="380" height="20" rx="10" fill="#dc2626"/>
+
+  <g transform="translate(36 172)">
+    <rect width="140" height="88" rx="14" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+    <text x="70" y="38" fill="#dc2626" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="28" font-weight="700">2</text>
+    <text x="70" y="64" fill="#f8fafc" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="600">Goalkeepers</text>
+  </g>
+  <g transform="translate(196 172)">
+    <rect width="140" height="88" rx="14" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+    <text x="70" y="38" fill="#dc2626" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="28" font-weight="700">5</text>
+    <text x="70" y="64" fill="#f8fafc" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="600">Defenders</text>
+  </g>
+  <g transform="translate(356 172)">
+    <rect width="140" height="88" rx="14" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+    <text x="70" y="38" fill="#dc2626" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="28" font-weight="700">5</text>
+    <text x="70" y="64" fill="#f8fafc" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="600">Midfielders</text>
+  </g>
+  <g transform="translate(516 172)">
+    <rect width="148" height="88" rx="14" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+    <text x="74" y="38" fill="#dc2626" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="28" font-weight="700">3</text>
+    <text x="74" y="64" fill="#f8fafc" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="600">Forwards</text>
+  </g>
+
+  <rect x="36" y="286" width="628" height="72" rx="14" fill="rgba(220,38,38,0.1)" stroke="rgba(220,38,38,0.3)" stroke-width="1.5"/>
+  <text x="350" y="318" fill="#fecaca" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="17" font-weight="700">Max 3 players per Premier League club</text>
+  <text x="350" y="342" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">Forces variety across your 15-man squad</text>
+</svg>

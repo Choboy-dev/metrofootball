@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 320" role="img" aria-label="FPL chip season phases from early season through blank and double gameweek peaks">
+  <rect width="700" height="320" rx="16" fill="#0b1220"/>
+  <text x="36" y="44" fill="#94a3b8" font-family="Inter, sans-serif" font-size="13" font-weight="600" letter-spacing="0.08em">SEASON PLAN</text>
+  <text x="36" y="78" fill="#f8fafc" font-family="Google Sans, sans-serif" font-size="24" font-weight="700">Chip calendar phases</text>
+
+  <rect x="36" y="110" width="628" height="48" rx="10" fill="#1e293b"/>
+  <rect x="36" y="110" width="130" height="48" rx="10" fill="#334155"/>
+  <rect x="166" y="110" width="160" height="48" fill="#475569"/>
+  <rect x="326" y="110" width="180" height="48" fill="#dc2626"/>
+  <rect x="506" y="110" width="158" height="48" rx="10" fill="#b45309"/>
+
+  <text x="101" y="140" fill="#cbd5e1" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600">GW 1-8</text>
+  <text x="246" y="140" fill="#e2e8f0" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600">GW 9-20</text>
+  <text x="416" y="140" fill="#fff" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700">GW 21-30</text>
+  <text x="585" y="140" fill="#fff" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600">GW 31-38</text>
+
+  <text x="101" y="188" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="11">Patience</text>
+  <text x="246" y="188" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="11">Form builds</text>
+  <text x="416" y="188" fill="#fecaca" text-anchor="middle" font-family="Inter, sans-serif" font-size="11">Blank and double weeks</text>
+  <text x="585" y="188" fill="#fde68a" text-anchor="middle" font-family="Inter, sans-serif" font-size="11">Use remaining chips</text>
+
+  <text x="350" y="248" fill="#cbd5e1" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">Plan Bench Boost and Triple Captain for the biggest double gameweek</text>
+  <text x="350" y="272" fill="#94a3b8" text-anchor="middle" font-family="Inter, sans-serif" font-size="13">Place Wildcard two to four weeks before. Save Free Hit for the worst blank.</text>
+</svg>

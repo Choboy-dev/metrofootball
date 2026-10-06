@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="/css/fonts.css?v=20260830perf">
+  <link rel="stylesheet" href="/css/app.css?v=20260904nav2">
+  <link rel="stylesheet" href="/admin/css/admin.css?v=20260902adm4">
+  <link rel="stylesheet" href="/admin/css/guides-editor.css?v=20260920research">
+  <title>Edit guide | Admin | Metro Football</title>
+  <link rel="icon" href="/images/metro-football-favicon.png" type="image/png">
+</head>
+<body class="ge-shell">
+  <header class="ge-topbar">
+    <div class="ge-topbar__left">
+      <button type="button" class="adm-btn-sm" data-ge-back>← Guides</button>
+      <div>
+        <h1 class="ge-topbar__title">Guide editor</h1>
+        <p class="ge-topbar__status">Status: <span data-ge-status>Draft</span></p>
+      </div>
+    </div>
+    <div class="ge-topbar__actions">
+      <button type="button" class="mf-btn mf-btn--ink mf-btn--sm" data-ge-save-draft>
+        <span class="mf-btn__label">Save draft</span>
+        <span class="mf-btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </button>
+      <button type="button" class="mf-btn mf-btn--primary mf-btn--sm" data-ge-publish>
+        <span class="mf-btn__label">Publish</span>
+        <span class="mf-btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </button>
+    </div>
+  </header>
+
+  <div class="ge-layout">
+    <div class="ge-editor-col">
+      <div class="ge-toolbar-wrap">
+        <div class="ge-toolbar" data-ge-toolbar aria-label="Formatting toolbar">
+          <button type="button" class="ge-toolbar__btn" data-cmd="undo" title="Undo" aria-label="Undo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 7H5v4"/><path d="M5 11c1.5-3 4.5-5 8-5 4.4 0 8 3.6 8 8s-3.6 8-8 8a8 8 0 0 1-6.2-3"/></svg>
+          </button>
+          <button type="button" class="ge-toolbar__btn" data-cmd="redo" title="Redo" aria-label="Redo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 7h4v4"/><path d="M19 11c-1.5-3-4.5-5-8-5-4.4 0-8 3.6-8 8s3.6 8 8 8a8 8 0 0 0 6.2-3"/></svg>
+          </button>
+          <span class="ge-toolbar__sep" aria-hidden="true"></span>
+          <button type="button" class="ge-toolbar__btn ge-toolbar__btn--text" data-cmd="bold" title="Bold"><strong>B</strong></button>
+          <button type="button" class="ge-toolbar__btn ge-toolbar__btn--text" data-cmd="italic" title="Italic"><em>I</em></button>
+          <button type="button" class="ge-toolbar__btn ge-toolbar__btn--text" data-cmd="underline" title="Underline"><u>U</u></button>
+          <span class="ge-toolbar__sep" aria-hidden="true"></span>
+          <button type="button" class="ge-toolbar__btn" data-cmd="insertUnorderedList" title="Bulleted list" aria-label="Bulleted list">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="4" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="4" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="4" cy="18" r="1" fill="currentColor" stroke="none"/></svg>
+          </button>
+          <button type="button" class="ge-toolbar__btn" data-cmd="insertOrderedList" title="Numbered list" aria-label="Numbered list">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 6h10M11 12h10M11 18h10"/><text x="2" y="8" fill="currentColor" stroke="none" font-size="7" font-family="Inter, sans-serif">1</text><text x="2" y="14" fill="currentColor" stroke="none" font-size="7" font-family="Inter, sans-serif">2</text><text x="2" y="20" fill="currentColor" stroke="none" font-size="7" font-family="Inter, sans-serif">3</text></svg>
+          </button>
+          <button type="button" class="ge-toolbar__btn" data-cmd="insertChecklist" title="Checklist" aria-label="Checklist">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 6h12M9 12h12M9 18h12"/><path d="M3.5 6.5 4.5 7.5 6.5 5.5"/><path d="M3.5 12.5 4.5 13.5 6.5 11.5"/><path d="M3.5 18.5 4.5 19.5 6.5 17.5"/></svg>
+          </button>
+          <div class="ge-toolbar__select-wrap">
+            <select data-ge-block-format aria-label="Block format">
+              <option value="paragraph">Paragraph</option>
+              <option value="quote">Quote</option>
+              <option value="h1">Heading 1</option>
+              <option value="h2">Heading 2</option>
+              <option value="h3">Heading 3</option>
+              <option value="h4">Heading 4</option>
+              <option value="h5">Heading 5</option>
+              <option value="h6">Heading 6</option>
+            </select>
+          </div>
+          <span class="ge-toolbar__sep" aria-hidden="true"></span>
+          <button type="button" class="ge-toolbar__btn" data-cmd="insertTable" title="Insert table" aria-label="Insert table">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 10h16M4 16h16M10 4v16M16 4v16"/></svg>
+          </button>
+          <button type="button" class="ge-toolbar__btn" data-cmd="insertImage" title="Insert image" aria-label="Insert image">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="1"/><circle cx="9" cy="10" r="1.5"/><path d="m4 17 5-5 3 3 3-4 5 6"/></svg>
+          </button>
+          <button type="button" class="ge-toolbar__btn" data-cmd="link" title="Create link" aria-label="Create link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10 14a3.5 3.5 0 0 0 5 0l2-2a3.5 3.5 0 1 0-5-5l-1 1"/><path d="M14 10a3.5 3.5 0 0 0-5 0l-2 2a3.5 3.5 0 1 0 5 5l1-1"/></svg>
+          </button>
+        </div>
+        <div class="ge-table-picker" data-ge-table-picker hidden aria-hidden="true" role="dialog" aria-label="Insert table">
+          <p class="ge-table-picker__title">Insert table</p>
+          <p class="ge-table-picker__size" data-ge-table-size-label>3 × 3</p>
+          <div class="ge-table-picker__grid" data-ge-table-grid role="grid" aria-label="Choose table size"></div>
+          <label class="ge-table-picker__check">
+            <input type="checkbox" data-ge-table-header checked>
+            Header row
+          </label>
+          <div class="ge-table-picker__actions">
+            <button type="button" class="adm-btn-sm" data-ge-table-cancel>Cancel</button>
+            <button type="button" class="adm-btn-sm adm-btn-sm--primary" data-ge-table-create>Create table</button>
+          </div>
+        </div>
+        <div class="ge-table-edit" data-ge-table-edit hidden aria-label="Edit table">
+          <button type="button" data-table-cmd="row-before" title="Insert row before">Row ↑</button>
+          <button type="button" data-table-cmd="row-after" title="Insert row after">Row ↓</button>
+          <button type="button" data-table-cmd="col-before" title="Insert column before">Col ←</button>
+          <button type="button" data-table-cmd="col-after" title="Insert column after">Col →</button>
+          <button type="button" data-table-cmd="del-row" title="Delete row">Del row</button>
+          <button type="button" data-table-cmd="del-col" title="Delete column">Del col</button>
+          <button type="button" data-table-cmd="header" title="Toggle header row">Header</button>
+        </div>
+      </div>
+      <div class="ge-canvas-wrap">
+        <div class="ge-canvas">
+          <textarea class="ge-title-input" rows="1" data-ge-title placeholder="Guide title" aria-label="Guide title"></textarea>
+          <div class="ge-blocks" data-ge-blocks></div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="ge-sidebar" aria-label="Document settings">
+      <h2 class="ge-sidebar__title" data-ge-sidebar-title>Document settings</h2>
+
+      <div data-ge-doc-settings>
+      <div class="ge-field">
+        <label for="ge-slug">URL slug</label>
+        <input id="ge-slug" type="text" data-ge-slug placeholder="how-to-play-fpl">
+        <p class="ge-field__hint">Public URL: /fpl-guides/<span data-ge-slug-preview>your-slug</span></p>
+      </div>
+
+      <div class="ge-field">
+        <label for="ge-description">Description</label>
+        <textarea id="ge-description" data-ge-description placeholder="Short summary for search results and the guide hub"></textarea>
+      </div>
+
+      <div class="ge-field">
+        <label for="ge-category">Category</label>
+        <select id="ge-category" data-ge-category></select>
+      </div>
+
+      <div class="ge-field">
+        <label for="ge-schema">Schema type</label>
+        <select id="ge-schema" data-ge-schema></select>
+        <p class="ge-field__hint">Used in JSON-LD for search engines (Article, BlogPosting, HowTo, FAQPage, NewsArticle)</p>
+      </div>
+
+      <div class="ge-field">
+        <label>Featured image</label>
+        <div class="ge-featured">
+          <div class="ge-featured__preview is-empty" data-ge-featured-preview>No featured image</div>
+          <div class="ge-featured__actions">
+            <button type="button" class="adm-btn-sm" data-ge-featured-upload>Upload</button>
+            <button type="button" class="adm-btn-sm" data-ge-featured-clear>Remove</button>
+            <input type="file" accept="image/*" data-ge-featured-file hidden>
+          </div>
+          <input type="url" class="ge-block__input" data-ge-featured-url placeholder="Or paste image URL" style="margin-top:0.5rem">
+        </div>
+      </div>
+
+      <div class="ge-read-mins" data-ge-read-mins>1 min read (estimated)</div>
+      </div>
+
+      <div class="ge-image-settings" data-ge-image-settings hidden>
+        <div class="ge-field">
+          <label for="ge-image-alt">Alt text</label>
+          <input id="ge-image-alt" type="text" data-ge-image-alt placeholder="Describe the image for screen readers" autocomplete="off">
+          <p class="ge-field__hint">Shown to screen readers and used when the image cannot load.</p>
+        </div>
+
+        <div class="ge-field">
+          <label for="ge-image-caption">Caption</label>
+          <textarea id="ge-image-caption" data-ge-image-caption rows="3" placeholder="Optional caption shown under the image"></textarea>
+          <p class="ge-field__hint">Updates live in the editor as you type.</p>
+        </div>
+
+        <div class="ge-field">
+          <label for="ge-image-url">Image URL</label>
+          <input id="ge-image-url" type="url" data-ge-image-url placeholder="https:// or /images/..." autocomplete="off">
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="ge-modal" data-ge-inserter-modal hidden>
+    <div class="ge-modal__card" role="dialog" aria-label="Add block">
+      <h2 class="ge-modal__title">Add block</h2>
+      <div class="ge-inserter-menu" data-ge-inserter-menu></div>
+      <button type="button" class="adm-btn-sm" data-ge-modal-close style="margin-top:0.75rem">Cancel</button>
+    </div>
+  </div>
+
+  <div class="ge-modal ge-ai-modal" data-ge-ai-modal hidden>
+    <div class="ge-modal__card ge-ai-modal__card" role="dialog" aria-labelledby="ge-ai-title" aria-modal="true">
+      <div class="ge-ai-modal__head">
+        <p class="ge-ai-modal__badge">AI Assistant</p>
+        <h2 class="ge-modal__title" id="ge-ai-title">Ask AI</h2>
+        <p class="ge-ai-modal__lead">Tell Metro Football what to build. Upload table screenshots or notes and we will insert the blocks for you.</p>
+      </div>
+
+      <label class="ge-ai-field">
+        <span class="ge-ai-field__label">Instruction</span>
+        <textarea
+          class="ge-ai-prompt"
+          data-ge-ai-prompt
+          rows="4"
+          placeholder="Please create a table in this article with these exact data, as they are."
+        ></textarea>
+      </label>
+
+      <label class="ge-ai-research">
+        <input type="checkbox" data-ge-ai-research checked>
+        <span>
+          <strong>Research verified sources</strong>
+          <em>Browse Premier League, club sites, BBC, Sky Sports, The Guardian, and other trusted desks before building blocks.</em>
+        </span>
+      </label>
+
+      <div class="ge-ai-drop" data-ge-ai-drop tabindex="0" role="button" aria-label="Upload images or text files">
+        <input type="file" accept="image/*,.heic,.heif,image/heic,image/heif,text/plain,text/csv,.csv,.txt" multiple hidden data-ge-ai-files>
+        <div class="ge-ai-drop__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4m0 0 4 4m-4-4-4 4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" stroke-linecap="round"/></svg>
+        </div>
+        <p class="ge-ai-drop__title">Drop screenshots or files here</p>
+        <p class="ge-ai-drop__hint">Optional. HEIC, JPG, PNG, WebP, CSV, or TXT. Up to 6 images.</p>
+        <button type="button" class="adm-btn-sm" data-ge-ai-browse>Browse files</button>
+      </div>
+
+      <div class="ge-ai-files" data-ge-ai-file-list hidden></div>
+      <p class="ge-ai-status" data-ge-ai-status hidden role="status" aria-live="polite"></p>
+
+      <div class="ge-ai-chips" aria-label="Quick prompts">
+        <button type="button" class="ge-ai-chip" data-ge-ai-chip="Please create a table in this article with these exact data, as they are." data-ge-ai-chip-research="0">Exact table from images</button>
+        <button type="button" class="ge-ai-chip" data-ge-ai-chip="Research verified sources and build a clean table of the top 10 Liverpool goalscorers of all time with goals and years. Keep the numbers exact." data-ge-ai-chip-research="1">Research a table</button>
+        <button type="button" class="ge-ai-chip" data-ge-ai-chip="Turn these screenshots into one clean table. Keep every value exactly as shown." data-ge-ai-chip-research="0">Merge screenshots into one table</button>
+        <button type="button" class="ge-ai-chip" data-ge-ai-chip="Research this topic from verified Premier League sources and write a short heading plus a factual table. Add a Sources callout with the URLs you used." data-ge-ai-chip-research="1">Research with sources</button>
+      </div>
+
+      <div class="ge-ai-modal__actions">
+        <button type="button" class="adm-btn-sm" data-ge-ai-cancel>Cancel</button>
+        <button type="button" class="mf-btn mf-btn--primary mf-btn--sm" data-ge-ai-run>
+          <span class="mf-btn__label">Generate</span>
+          <span class="mf-btn__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ge-modal" data-ge-link-modal hidden>
+    <div class="ge-modal__card ge-link-modal" role="dialog" aria-labelledby="ge-link-modal-title">
+      <h2 class="ge-modal__title" id="ge-link-modal-title">Add link</h2>
+      <div class="ge-field">
+        <label for="ge-link-url">Link URL</label>
+        <input id="ge-link-url" type="text" data-ge-link-url placeholder="https://example.com or /fpl-guides/your-guide" autocomplete="off">
+        <p class="ge-field__hint">Use https:// for external pages or /path for pages on Metro Football.</p>
+      </div>
+      <div class="ge-link-modal__actions">
+        <button type="button" class="adm-btn-sm" data-ge-link-remove hidden>Remove link</button>
+        <button type="button" class="adm-btn-sm" data-ge-link-cancel>Cancel</button>
+        <button type="button" class="mf-btn mf-btn--primary mf-btn--sm" data-ge-link-apply>
+          <span class="mf-btn__label">Apply link</span>
+          <span class="mf-btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <input type="file" accept="image/*" data-ge-inline-image-file hidden>
+
+  <div class="ge-toast" data-ge-toast hidden></div>
+
+  <script type="module" src="/admin/js/guides-editor.js?v=20260929keephead"></script>
+  <script>
+    document.querySelector('[data-ge-slug]')?.addEventListener('input', (e) => {
+      const preview = document.querySelector('[data-ge-slug-preview]');
+      if (preview) preview.textContent = e.target.value || 'your-slug';
+    });
+  </script>
+</body>
+</html>

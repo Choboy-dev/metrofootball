@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-label="4-4-2 FPL formation with four defenders, four midfielders, and two forwards">
+  <defs>
+    <linearGradient id="grass442" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1f7a3f"/>
+      <stop offset="100%" stop-color="#145c2f"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="400" rx="16" fill="url(#grass442)"/>
+  <rect x="32" y="32" width="576" height="336" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
+  <line x1="320" y1="32" x2="320" y2="368" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
+  <text x="320" y="24" fill="#fff" text-anchor="middle" font-family="Google Sans, sans-serif" font-size="18" font-weight="700">4-4-2</text>
+  <circle cx="240" cy="300" r="16" fill="#dc2626" stroke="#fff" stroke-width="2"/>
+  <circle cx="400" cy="300" r="16" fill="#dc2626" stroke="#fff" stroke-width="2"/>
+  <circle cx="100" cy="200" r="14" fill="#f8fafc" stroke="#0b1220" stroke-width="2"/>
+  <circle cx="220" cy="200" r="14" fill="#f8fafc" stroke="#0b1220" stroke-width="2"/>
+  <circle cx="420" cy="200" r="14" fill="#f8fafc" stroke="#0b1220" stroke-width="2"/>
+  <circle cx="540" cy="200" r="14" fill="#f8fafc" stroke="#0b1220" stroke-width="2"/>
+  <circle cx="140" cy="110" r="14" fill="#0b1220" stroke="#fff" stroke-width="2"/>
+  <circle cx="260" cy="110" r="14" fill="#0b1220" stroke="#fff" stroke-width="2"/>
+  <circle cx="380" cy="110" r="14" fill="#0b1220" stroke="#fff" stroke-width="2"/>
+  <circle cx="500" cy="110" r="14" fill="#0b1220" stroke="#fff" stroke-width="2"/>
+  <circle cx="320" cy="360" r="12" fill="#b45309" stroke="#fff" stroke-width="2"/>
+  <text x="320" y="388" fill="#fff" text-anchor="middle" font-family="Inter, sans-serif" font-size="12">Four defenders, four midfielders, two forwards</text>
+</svg>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="/css/fonts.css?v=20260830perf">
+  <link rel="stylesheet" href="/admin/css/admin.css?v=20260830adm">
+  <title>Admin sign in | Metro Football</title>
+  <link rel="icon" href="/images/metro-football-favicon.png" type="image/png">
+</head>
+<body class="adm-body adm-login-page">
+  <div class="adm-login-card">
+    <div class="adm-login-card__brand">
+      <img src="/images/metro-football-correct-dark-logo-315.webp?v=20260830logo" srcset="/images/metro-football-correct-dark-logo-315.webp?v=20260830logo 315w, /images/metro-football-correct-dark-logo-630.webp?v=20260830logo 630w" sizes="(min-width: 768px) 204px, 180px" alt="" width="938" height="313" decoding="async">
+      <h1 class="adm-login-card__title">Admin dashboard</h1>
+      <p class="adm-login-card__lead">Sign in with your admin account to manage Metro Football.</p>
+    </div>
+
+    <form data-adm-login novalidate>
+      <p class="adm-error" data-adm-error hidden role="alert"></p>
+
+      <div class="adm-field">
+        <label class="adm-label" for="adm-email">Email</label>
+        <input class="adm-input" id="adm-email" name="email" type="email" autocomplete="username" required>
+      </div>
+
+      <div class="adm-field">
+        <label class="adm-label" for="adm-password">Password</label>
+        <input class="adm-input" id="adm-password" name="password" type="password" autocomplete="current-password" required>
+      </div>
+
+      <button type="submit" class="mf-btn mf-btn--primary mf-btn--block">
+        <span class="mf-btn__label">Sign in</span>
+        <span class="mf-btn__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </button>
+    </form>
+  </div>
+
+  <link rel="stylesheet" href="/css/app.css?v=20260904nav2">
+  <script type="module" src="/admin/js/admin-login.js?v=20260830adm"></script>
+</body>
+</html>
