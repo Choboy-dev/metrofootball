@@ -30,14 +30,17 @@ $cycle = (string) ($data['cycle'] ?? 'yearly');
 AuthService::rememberReturnPath((string) ($data['next'] ?? ''));
 $intended = AuthService::resolveIntended(null);
 
-if (($user['subscription_status'] ?? '') === 'active' && ($user['plan'] ?? '') === 'premium') {
+if (($user['subscription_status'] ?? '') === 'active' && ($user['plan'] ?? '') === 'premium' && BillingService::isPremiumActive($user)) {
     Response::json(['ok' => true, 'redirect' => AuthService::postAuthPath($user, $intended)]);
 }
 
 try {
-    $link = BillingService::createCheckout($user, $cycle);
+    $checkout = BillingService::createCheckout($user, $cycle);
     Session::login(AuthService::findUserById($userId) ?: $user);
-    Response::json(['ok' => true, 'checkout_url' => $link]);
+    Response::json([
+        'ok' => true,
+        'checkout_url' => $checkout['url'],
+    ]);
 } catch (Throwable $e) {
     Response::json(['ok' => false, 'error' => $e->getMessage()], 500);
 }

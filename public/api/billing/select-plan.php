@@ -45,18 +45,9 @@ if ($plan === 'free') {
     Response::json(['ok' => true, 'redirect' => '/link-team']);
 }
 
-// Premium path: keep active subscribers on their dashboard; unpaid upgrades go straight to payment
+// Premium path: send to checkout without changing plan until payment succeeds.
 if (($user['subscription_status'] ?? '') === 'active' && ($user['plan'] ?? '') === 'premium') {
     Response::json(['ok' => true, 'redirect' => AuthService::postAuthPath($user, $intended)]);
-}
-
-Database::pdo()->prepare(
-    'UPDATE users SET plan = ?, updated_at = ? WHERE id = ?'
-)->execute(['premium', $now, $userId]);
-
-$updated = AuthService::findUserById($userId);
-if ($updated) {
-    Session::login($updated);
 }
 
 Response::json(['ok' => true, 'redirect' => AuthService::appendReturnToPath('/payment', $intended)]);

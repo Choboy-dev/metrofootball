@@ -1,17 +1,18 @@
-import { animate } from './motion.js';
 import {
   appendReturnQuery,
+  bindGoogleAuthLink,
   captureReturnFromUrl,
   getPlan,
   getReturnPath,
-  googleStartUrl,
+  hideAuthLoading,
   initPasswordToggles,
   pageUrl,
   postJson,
   setBusy,
   setPlan,
+  showAuthLoading,
   showFormError,
-} from './auth.js';
+} from './auth.js?v=20260907pub';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -23,13 +24,10 @@ const googleLink = document.querySelector('[data-google-auth]');
 
 initPasswordToggles();
 captureReturnFromUrl();
+bindGoogleAuthLink(googleLink, plan, 'signup');
 
 if (planBadge) {
   planBadge.textContent = plan === 'premium' ? 'Premium plan' : 'Free plan';
-}
-
-if (googleLink) {
-  googleLink.href = googleStartUrl(plan, 'signup', getReturnPath());
 }
 
 const loginLink = document.querySelector('[data-login-link]');
@@ -38,10 +36,14 @@ if (loginLink) {
 }
 
 if (!reduceMotion) {
-  const card = document.querySelector('.auth-card');
-  if (card) {
-    animate(card, { opacity: [0, 1], y: [18, 0] }, { duration: 0.45, easing: [0.17, 0.55, 0.55, 1] });
-  }
+  import('./motion.js?v=20260901perf')
+    .then(({ animate }) => {
+      const card = document.querySelector('.auth-card');
+      if (card) {
+        animate(card, { opacity: [0, 1], y: [18, 0] }, { duration: 0.45, easing: [0.17, 0.55, 0.55, 1] });
+      }
+    })
+    .catch(() => {});
 }
 
 form?.addEventListener('submit', async (event) => {
@@ -52,7 +54,8 @@ form?.addEventListener('submit', async (event) => {
   const email = form.querySelector('[name="email"]')?.value?.trim() || '';
   const password = form.querySelector('[name="password"]')?.value || '';
 
-  setBusy(submit, true);
+  setBusy(submit, true, 'Creating account');
+  showAuthLoading('Creating your account', 'Setting things up for you.');
   try {
     const data = await postJson('auth/register.php', { email, password, plan });
     sessionStorage.setItem('mf_otp_email', data.email);
@@ -61,8 +64,8 @@ form?.addEventListener('submit', async (event) => {
     );
     window.location.href = verifyUrl;
   } catch (error) {
+    hideAuthLoading();
     showFormError(errorEl, error.message);
-  } finally {
     setBusy(submit, false);
   }
 });

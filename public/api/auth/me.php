@@ -3,12 +3,13 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/bootstrap-auth.php';
-mf_auth_bootstrap_extras(['BillingService.php', 'Flutterwave.php']);
+mf_auth_bootstrap_extras(['VisitorCountry.php', 'BillingService.php', 'Flutterwave.php']);
 
 use App\AuthService;
 use App\BillingService;
 use App\Response;
 use App\Session;
+use App\VisitorCountry;
 
 Session::start();
 $userId = Session::userId();
@@ -21,14 +22,27 @@ if (!$userId) {
         'idle_timeout_seconds' => Session::idleSeconds(),
     ];
     Session::release();
-    Response::json($payload, 401);
+    Response::json($payload);
 }
 
 $user = AuthService::findUserById($userId);
 if (!$user) {
     Session::logout();
     Session::release();
-    Response::json(['ok' => false, 'authenticated' => false], 401);
+    Response::json(['ok' => false, 'authenticated' => false]);
+}
+
+$user = AuthService::revertUnpaidPremium($userId) ?: $user;
+
+$visitorCountry = VisitorCountry::code();
+$billingError = null;
+try {
+    $billingMonthly = BillingService::plan('monthly', $visitorCountry);
+    $billingYearly = BillingService::plan('yearly', $visitorCountry);
+} catch (Throwable $e) {
+    $billingError = $e->getMessage();
+    $billingMonthly = BillingService::plan('monthly', 'GB');
+    $billingYearly = BillingService::plan('yearly', 'GB');
 }
 
 $payload = [
@@ -51,12 +65,16 @@ $payload = [
     ],
     'redirect' => AuthService::postAuthPath($user),
     'billing' => [
-        'monthly' => BillingService::plan('monthly'),
-        'yearly' => BillingService::plan('yearly'),
-        'currency' => BillingService::CURRENCY,
+        'monthly' => $billingMonthly,
+        'yearly' => $billingYearly,
+        'currency' => BillingService::currency($visitorCountry),
         'flutterwave_ready' => \App\Flutterwave::isConfigured(),
+        'bank_transfer_available' => VisitorCountry::isNigeria(),
+        'local_nigeria' => VisitorCountry::isNigeria(),
+        'error' => $billingError,
     ],
     'notice' => Session::flash('notice'),
+    'subscription_notice' => BillingService::subscriptionNotice($user),
 ];
 Session::release();
 Response::json($payload);

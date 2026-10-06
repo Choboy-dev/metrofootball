@@ -103,10 +103,52 @@ final class Database
 
         self::ensureColumn($pdo, 'users', 'billing_cycle', 'TEXT NULL');
         self::ensureColumn($pdo, 'users', 'subscription_expires_at', 'TEXT NULL');
+        self::ensureColumn($pdo, 'users', 'subscription_reminder_7d_at', 'TEXT NULL');
+        self::ensureColumn($pdo, 'users', 'subscription_reminder_1d_at', 'TEXT NULL');
+        self::ensureColumn($pdo, 'users', 'subscription_expired_email_at', 'TEXT NULL');
         self::ensureColumn($pdo, 'users', 'fpl_team_id', 'INTEGER NULL');
         self::ensureColumn($pdo, 'users', 'fpl_team_name', 'TEXT NULL');
         self::ensureColumn($pdo, 'users', 'fpl_manager_name', 'TEXT NULL');
         self::ensureColumn($pdo, 'users', 'fpl_linked_at', 'TEXT NULL');
+        self::ensureColumn($pdo, 'users', 'is_admin', 'INTEGER NOT NULL DEFAULT 0');
+        self::ensureColumn($pdo, 'users', 'is_restricted', 'INTEGER NOT NULL DEFAULT 0');
+        self::ensureColumn($pdo, 'users', 'restricted_reason', 'TEXT NULL');
+        self::ensureColumn($pdo, 'users', 'admin_note', 'TEXT NULL');
+        self::ensureColumn($pdo, 'payments', 'charge_amount', 'REAL NULL');
+        self::ensureColumn($pdo, 'payments', 'charge_currency', 'TEXT NULL');
+        self::backfillPaymentChargeColumns($pdo);
+
+        $pdo->exec(
+            'CREATE TABLE IF NOT EXISTS ai_usage_log (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NULL,
+                service TEXT NOT NULL,
+                provider TEXT NOT NULL,
+                model TEXT NULL,
+                tokens_in INTEGER NOT NULL DEFAULT 0,
+                tokens_out INTEGER NOT NULL DEFAULT 0,
+                cost_usd REAL NOT NULL DEFAULT 0,
+                meta_json TEXT NULL,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+            )'
+        );
+
+        $pdo->exec(
+            'CREATE INDEX IF NOT EXISTS idx_ai_usage_log_created ON ai_usage_log(created_at DESC)'
+        );
+
+        $pdo->exec(
+            'CREATE TABLE IF NOT EXISTS admin_audit_log (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                admin_user_id INTEGER NOT NULL,
+                action TEXT NOT NULL,
+                target_user_id INTEGER NULL,
+                detail_json TEXT NULL,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY (admin_user_id) REFERENCES users(id) ON DELETE CASCADE
+            )'
+        );
 
         $pdo->exec(
             'CREATE TABLE IF NOT EXISTS tracked_leagues (
@@ -138,6 +180,44 @@ final class Database
                 UNIQUE(user_id, fpl_entry_id, gameweek_id)
             )'
         );
+    }
+
+    private static function backfillPaymentChargeColumns(PDO $pdo): void
+    {
+        $stmt = $pdo->query(
+            "SELECT id, amount, currency, billing_cycle, charge_amount, charge_currency
+             FROM payments
+             WHERE charge_amount IS NULL OR charge_currency IS NULL OR currency = 'NGN'"
+        );
+        if ($stmt === false) {
+            return;
+        }
+
+        $update = $pdo->prepare(
+            'UPDATE payments
+             SET amount = ?, currency = ?, charge_amount = ?, charge_currency = ?
+             WHERE id = ?'
+        );
+
+        while ($row = $stmt->fetch()) {
+            if (!is_array($row)) {
+                continue;
+            }
+
+            $storedCurrency = strtoupper((string) ($row['currency'] ?? 'GBP'));
+            $storedAmount = (float) ($row['amount'] ?? 0);
+            $cycle = strtolower((string) ($row['billing_cycle'] ?? 'monthly')) === 'yearly' ? 'yearly' : 'monthly';
+            $gbpAmount = $cycle === 'yearly' ? 38.5 : 4.0;
+
+            if ($storedCurrency === 'NGN') {
+                $update->execute([$gbpAmount, 'GBP', $storedAmount, 'NGN', (int) $row['id']]);
+                continue;
+            }
+
+            if ($row['charge_amount'] === null || $row['charge_currency'] === null) {
+                $update->execute([$storedAmount, 'GBP', $storedAmount, 'GBP', (int) $row['id']]);
+            }
+        }
     }
 
     private static function ensureColumn(PDO $pdo, string $table, string $column, string $definition): void

@@ -14,7 +14,7 @@ $token = (string) ($_GET['token'] ?? '');
 try {
     $user = AuthService::confirmEmail($token);
     Session::login($user);
-    Session::flash('notice', 'Your email is confirmed.');
+    Session::flash('notice', 'Your email is confirmed. Welcome to Metro Football.');
     Response::redirect(AppUrl::to(ltrim(AuthService::postAuthPath($user), '/')));
 } catch (Throwable $e) {
     Response::redirect(AppUrl::to('login?error=' . rawurlencode($e->getMessage())));

@@ -35,7 +35,10 @@ GOOGLE_REDIRECT_URI="http://localhost/Metro%20Football%20UK/api/auth/google/call
 
 1. Open https://dashboard.flutterwave.com/settings/apis
 2. Copy your **Public Key**, **Secret Key**, and set a **Secret Hash** for webhooks
-3. Put them in `config/.env`:
+
+### Local testing (sandbox)
+
+Use **test** keys. Checkout opens on `dev-flutterwave.com` and no real money moves:
 
 ```
 FLW_PUBLIC_KEY=FLWPUBK_TEST-...
@@ -43,20 +46,33 @@ FLW_SECRET_KEY=FLWSECK_TEST-...
 FLW_SECRET_HASH=your-random-webhook-hash
 ```
 
-4. In Flutterwave dashboard → Webhooks, set URL to:
+### Live site (metrofootball.co.uk)
+
+For **real payments**, use **live** keys on the server (no `TEST` in the key name):
 
 ```
-http://localhost/Metro%20Football%20UK/api/billing/webhook
+APP_ENV=production
+FLW_PUBLIC_KEY=FLWPUBK-xxxxxxxx
+FLW_SECRET_KEY=FLWSECK-xxxxxxxx
+FLW_SECRET_HASH=your-random-webhook-hash
 ```
 
-Local tip: use a tunnel (ngrok / Cloudflare Tunnel) so Flutterwave can reach your webhook.
+After updating `config/.env` on Hostinger, try checkout again.
+
+3. In Flutterwave dashboard → Webhooks, set URL to:
+
+```
+https://metrofootball.co.uk/api/billing/webhook
+```
 
 ## Payment flow
 
 1. Premium signup → OTP → `/link-team` → `/payment` → `/live`
-2. Choose monthly (£2.50) or yearly (£22/year, £2 per month with one month free)
+2. Choose monthly (£4) or yearly (£38.50/year, £3.50 per month)
 3. **Pay with Flutterwave** opens hosted checkout
 4. Callback verifies the transaction, marks Premium active, then opens `/dashboard`
+
+**Nigeria:** When we detect a Nigerian visitor, checkout runs in **NGN** using Flutterwave's live `/v3/rates` endpoint (GBP → NGN). Admin revenue is always stored in GBP. **Live Flutterwave keys are required** for accurate NGN amounts. Test keys return invalid sandbox rates and checkout will show an error until live keys are configured.
 
 ## Local flow
 

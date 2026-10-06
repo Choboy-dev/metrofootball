@@ -1,4 +1,4 @@
-import { apiUrl, pageUrl, postJson } from './auth.js';
+import { apiUrl, pageUrl, postJson } from './auth.js?v=20260907pub';
 
 async function guardPage(allowed) {
   try {
@@ -14,12 +14,7 @@ async function guardPage(allowed) {
 
     const redirect = String(data.redirect || '/live').replace(/^\//, '');
 
-    // Unpaid premium always pays first (even before linking a team).
-    if (allowed !== 'payment' && redirect === 'payment') {
-      window.location.href = pageUrl('payment');
-      return null;
-    }
-
+    // Unpaid premium checkout no longer blocks site navigation.
     if (allowed !== 'link-team' && redirect === 'link-team') {
       window.location.href = pageUrl('link-team');
       return null;

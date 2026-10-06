@@ -41,7 +41,10 @@ try {
     unset($_SESSION['oauth_state'], $_SESSION['oauth_plan'], $_SESSION['oauth_mode']);
 
     $intended = AuthService::resolveIntended(null);
-    Response::redirect(AppUrl::to(ltrim(AuthService::postAuthPath($user, $intended), '/')));
+    $redirect = Session::flash('signup_checkout') === '1'
+        ? AuthService::appendReturnToPath('/payment', $intended)
+        : AuthService::postAuthPath($user, $intended);
+    Response::redirect(AppUrl::to(ltrim($redirect, '/')));
 } catch (Throwable $e) {
     Response::redirect(AppUrl::to('login?error=' . rawurlencode($e->getMessage())));
 }

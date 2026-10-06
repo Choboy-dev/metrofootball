@@ -21,9 +21,26 @@ function sleep(ms) {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
+const DEFAULT_FETCH_TIMEOUT_MS = 12000;
+
+export async function fetchWithTimeout(url, options = {}, timeoutMs = DEFAULT_FETCH_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timer = window.setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    return await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+  } finally {
+    window.clearTimeout(timer);
+  }
+}
+
 export function clearSessionCache() {
   sessionCache = null;
   sessionFetchPromise = null;
+  clearAuthHint();
 }
 
 export function setPageBootstrapping(active) {
@@ -38,13 +55,16 @@ export function apiBase() {
     return path.slice(0, idx);
   }
 
-  // Strip trailing page segment for clean URLs under the project folder
-  const parts = path.replace(/\/+$/, '').split('/');
-  const last = parts[parts.length - 1] || '';
-  if (last && !last.includes('.') && last !== 'Metro%20Football%20UK' && last !== 'Metro Football UK') {
-    parts.pop();
+  const segments = path.replace(/\/+$/, '').split('/').filter(Boolean);
+  const first = segments[0] || '';
+
+  // Legacy local dev when the repo folder name is in the URL path
+  if (first === 'Metro Football UK' || first === 'Metro%20Football%20UK') {
+    return `/${first}`;
   }
-  return parts.join('/') || '';
+
+  // Production and docroot installs: API always lives at /api
+  return '';
 }
 
 export function pageUrl(path) {
@@ -55,13 +75,57 @@ export function pageUrl(path) {
 const RETURN_STORAGE_KEY = 'mf_return_to';
 const RETURN_QUERY_KEY = 'next';
 
+/** Pages anyone can open without signing in (reports, marketing, player profiles). */
+const PUBLIC_PAGE_PREFIXES = [
+  '/about',
+  '/contact',
+  '/help-center',
+  '/terms',
+  '/disclaimer',
+  '/privacy-policy',
+  '/join',
+  '/gameweek-recap',
+  '/price-changes',
+  '/fixture-difficulty',
+  '/fpl-injury-news',
+  '/league-table',
+  '/fpl-gameweek-',
+  '/fpl-guides',
+  '/players',
+];
+
+export function isPublicPagePath(path = window.location.pathname) {
+  const pathOnly = String(path || '').split(/[?#]/)[0].replace(/\/+$/, '') || '/';
+  if (pathOnly === '/' || pathOnly === '/index.html') {
+    return true;
+  }
+
+  // Hard allowlist for free tools (also match relative hrefs).
+  if (/(?:^|\/)fixture-difficulty(?:\.html)?$/i.test(pathOnly)) {
+    return true;
+  }
+
+  return PUBLIC_PAGE_PREFIXES.some((prefix) => (
+    pathOnly === prefix || pathOnly.startsWith(`${prefix}/`) || pathOnly.startsWith(prefix)
+  ));
+}
+
+function isFreeToolDestination(destination) {
+  const raw = String(destination || '');
+  if (/fixture-difficulty/i.test(raw)) {
+    return true;
+  }
+  const destPath = hrefToReturnPath(raw) || sanitizeReturnPath(raw);
+  return Boolean(destPath && isPublicPagePath(destPath));
+}
+
 export function sanitizeReturnPath(path) {
   if (!path || typeof path !== 'string') return null;
   const trimmed = path.trim();
   if (!trimmed.startsWith('/') || trimmed.startsWith('//')) return null;
 
   const pathOnly = trimmed.split(/[?#]/)[0];
-  if (/^\/(login|register|join|verify-otp|payment)(\/|$)/i.test(pathOnly)) {
+  if (/^\/(login|register|join|verify-otp|verify-email|payment)(\/|$)/i.test(pathOnly)) {
     return null;
   }
 
@@ -122,9 +186,22 @@ export function loginUrlWithReturn(destination = null) {
 }
 
 export function redirectToLogin(destination = null) {
-  const path = destination
+  const currentPath = hrefToReturnPath(window.location.href) || window.location.pathname;
+  const destPath = destination
     ? (hrefToReturnPath(destination) || sanitizeReturnPath(destination))
-    : hrefToReturnPath(window.location.href);
+    : null;
+
+  // Never bounce guests away from free public pages.
+  if (isPublicPagePath(currentPath) && !destPath) {
+    return;
+  }
+
+  if (destPath && isPublicPagePath(destPath)) {
+    window.location.href = pageUrl(String(destPath).replace(/^\//, ''));
+    return;
+  }
+
+  const path = destPath || currentPath;
   window.location.href = loginUrlWithReturn(path || undefined);
 }
 
@@ -197,6 +274,24 @@ export function setBusy(button, busy, busyLabel = 'Please wait') {
   if (!button) return;
   button.disabled = busy;
   button.classList.toggle('is-busy', busy);
+  button.setAttribute('aria-busy', busy ? 'true' : 'false');
+
+  const icon = button.querySelector('.mf-btn__icon');
+  if (icon) {
+    let spinner = icon.querySelector('.mf-btn__spinner');
+    if (busy) {
+      if (!spinner) {
+        spinner = document.createElement('span');
+        spinner.className = 'mf-btn__spinner';
+        spinner.setAttribute('aria-hidden', 'true');
+        icon.appendChild(spinner);
+      }
+      icon.classList.add('is-loading');
+    } else {
+      icon.classList.remove('is-loading');
+    }
+  }
+
   const label = button.querySelector('.mf-btn__label');
   if (!label) return;
   if (busy) {
@@ -204,7 +299,68 @@ export function setBusy(button, busy, busyLabel = 'Please wait') {
     label.textContent = busyLabel;
   } else if (button.dataset.label) {
     label.textContent = button.dataset.label;
+    delete button.dataset.label;
   }
+}
+
+let authOverlayEl = null;
+let authOverlayVisible = false;
+
+function ensureAuthOverlay() {
+  if (authOverlayEl) return authOverlayEl;
+
+  authOverlayEl = document.createElement('div');
+  authOverlayEl.className = 'mf-auth-overlay';
+  authOverlayEl.hidden = true;
+  authOverlayEl.innerHTML =
+    '<div class="mf-auth-overlay__scrim" aria-hidden="true"></div>'
+    + '<div class="mf-auth-overlay__panel" role="status" aria-live="polite" aria-busy="true">'
+    + '<div class="mf-auth-overlay__spinner" aria-hidden="true"></div>'
+    + '<p class="mf-auth-overlay__title" data-auth-loading-title></p>'
+    + '<p class="mf-auth-overlay__hint" data-auth-loading-hint></p>'
+    + '</div>';
+  document.body.appendChild(authOverlayEl);
+  return authOverlayEl;
+}
+
+export function showAuthLoading(title = 'Please wait', hint = 'This may take a few seconds.') {
+  const overlay = ensureAuthOverlay();
+  const titleEl = overlay.querySelector('[data-auth-loading-title]');
+  const hintEl = overlay.querySelector('[data-auth-loading-hint]');
+  if (titleEl) titleEl.textContent = title;
+  if (hintEl) hintEl.textContent = hint;
+  overlay.hidden = false;
+  requestAnimationFrame(() => overlay.classList.add('is-visible'));
+  document.body.classList.add('is-auth-loading');
+  authOverlayVisible = true;
+}
+
+export function hideAuthLoading() {
+  if (!authOverlayEl || !authOverlayVisible) return;
+  authOverlayEl.classList.remove('is-visible');
+  authOverlayEl.hidden = true;
+  document.body.classList.remove('is-auth-loading');
+  authOverlayVisible = false;
+}
+
+export function bindGoogleAuthLink(link, plan, mode = 'signup') {
+  if (!link) return;
+  const url = googleStartUrl(plan, mode, getReturnPath());
+  link.href = url;
+  link.setAttribute('data-same-tab', '');
+  link.addEventListener('click', () => {
+    showAuthLoading(
+      mode === 'login' ? 'Opening Google sign in' : 'Continuing with Google',
+      'We are connecting you securely.'
+    );
+  });
+}
+
+export function bindAuthNavigation(link, title = 'Loading', hint = 'Opening the next step.') {
+  if (!link) return;
+  link.addEventListener('click', () => {
+    showAuthLoading(title, hint);
+  });
 }
 
 export function googleStartUrl(plan, mode = 'signup', nextPath = null) {
@@ -244,10 +400,10 @@ async function forceIdleLogout() {
 async function verifySessionStillActive() {
   if (!idleArmed || idleLoggingOut || pageBootstrapping) return;
   try {
-    const response = await fetch(apiUrl('auth/me'), {
+    const response = await fetchWithTimeout(apiUrl('auth/me'), {
       credentials: 'same-origin',
       headers: { Accept: 'application/json' },
-    });
+    }, 8000);
     if (response.status >= 500) {
       return;
     }
@@ -316,7 +472,7 @@ export async function fetchSession(options = {}) {
   sessionFetchPromise = (async () => {
     for (let attempt = 0; attempt <= retries; attempt += 1) {
       try {
-        const response = await fetch(apiUrl('auth/me'), {
+        const response = await fetchWithTimeout(apiUrl('auth/me'), {
           credentials: 'same-origin',
           headers: { Accept: 'application/json' },
         });
@@ -329,6 +485,7 @@ export async function fetchSession(options = {}) {
 
         if (response.ok && data.authenticated) {
           sessionCache = data;
+          persistAuthHint(data);
           initIdleLogout(data);
           return data;
         }
@@ -352,6 +509,7 @@ export async function fetchSession(options = {}) {
         }
 
         sessionCache = null;
+        clearAuthHint();
         return null;
       } catch {
         if (attempt < retries) {
@@ -373,7 +531,108 @@ export async function fetchSession(options = {}) {
 }
 
 export function isPremiumActive(user) {
-  return user?.plan === 'premium' && user?.subscription_status === 'active';
+  if (user?.plan !== 'premium' || user?.subscription_status !== 'active') {
+    return false;
+  }
+
+  const expires = user?.subscription_expires_at;
+  if (!expires) {
+    return true;
+  }
+
+  const expiresAt = Date.parse(expires);
+  return Number.isFinite(expiresAt) && expiresAt > Date.now();
+}
+
+const AUTH_HINT_KEY = 'mf_auth_hint';
+
+export function clearAuthHint() {
+  try {
+    localStorage.removeItem(AUTH_HINT_KEY);
+    document.documentElement.removeAttribute('data-auth-hint');
+  } catch {
+    // ignore
+  }
+}
+
+export function persistAuthHint(session) {
+  try {
+    if (!session?.authenticated) {
+      clearAuthHint();
+      return;
+    }
+
+    const premium = isPremiumActive(session.user);
+    localStorage.setItem(AUTH_HINT_KEY, JSON.stringify({
+      authenticated: true,
+      premium,
+      ts: Date.now(),
+    }));
+    document.documentElement.dataset.authHint = premium ? 'premium' : 'signed-in';
+  } catch {
+    // ignore
+  }
+}
+
+function premiumUpgradePath() {
+  return pageUrl('join');
+}
+
+export function applyPremiumGate(session, options = {}) {
+  const reduceMotion = options.reduceMotion
+    ?? window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const freeAccess = options.freeAccess ?? document.body.dataset.toolAccess === 'free';
+  const animateReveal = options.animateReveal ?? null;
+
+  const lock = document.querySelector('[data-premium-lock]');
+  const unlocked = document.querySelector('[data-premium-unlocked]');
+  const freeTool = document.querySelector('[data-free-tool]');
+  const cta = document.querySelector('[data-upgrade-cta]');
+  const user = session?.user;
+  const premium = isPremiumActive(user);
+
+  if (cta) {
+    cta.setAttribute('href', premiumUpgradePath());
+  }
+
+  if (freeAccess) {
+    if (lock) lock.hidden = true;
+    if (unlocked) unlocked.hidden = true;
+    if (freeTool) freeTool.hidden = false;
+
+    document.body.classList.add('premium-gate-ready');
+
+    const reveal = freeTool;
+    if (reveal) {
+      reveal.hidden = false;
+      if (animateReveal && !reduceMotion) {
+        animateReveal(reveal, { opacity: [0, 1], y: [14, 0] }, { duration: 0.4, easing: [0.17, 0.55, 0.55, 1] });
+      } else {
+        reveal.style.opacity = '1';
+        reveal.style.transform = 'none';
+      }
+    }
+
+    return { premium: false, freeAccess: true };
+  }
+
+  if (lock) lock.hidden = premium;
+  if (unlocked) unlocked.hidden = !premium;
+
+  document.body.classList.add('premium-gate-ready');
+
+  const reveal = premium ? unlocked : lock;
+  if (reveal) {
+    reveal.hidden = false;
+    if (animateReveal && !reduceMotion) {
+      animateReveal(reveal, { opacity: [0, 1], y: [14, 0] }, { duration: 0.4, easing: [0.17, 0.55, 0.55, 1] });
+    } else {
+      reveal.style.opacity = '1';
+      reveal.style.transform = 'none';
+    }
+  }
+
+  return { premium, freeAccess: false };
 }
 
 export function applyAuthNav(session) {
@@ -385,6 +644,8 @@ export function applyAuthNav(session) {
 
   document.body.classList.toggle('is-authenticated', signedIn);
   document.body.classList.toggle('is-premium', premium);
+
+  persistAuthHint(session);
 
   document.querySelectorAll('.site-logo').forEach((logo) => {
     if (!(logo instanceof HTMLAnchorElement)) return;
@@ -425,11 +686,14 @@ export function bindAuthToolLinks(sessionOrGetter, root = document) {
 
     node.addEventListener('click', (event) => {
       if (readSession()?.authenticated) return;
-      event.preventDefault();
-      event.stopPropagation();
       const destination = node instanceof HTMLAnchorElement
         ? node.getAttribute('href')
         : node.getAttribute('data-auth-tool-href');
+      if (isFreeToolDestination(destination)) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
       window.location.href = loginUrlWithReturn(destination);
     });
   });
@@ -443,6 +707,12 @@ export function bindAuthToolLinks(sessionOrGetter, root = document) {
       if (!href) return;
 
       if (!readSession()?.authenticated) {
+        if (isFreeToolDestination(href)) {
+          event.preventDefault();
+          event.stopPropagation();
+          window.location.href = href;
+          return;
+        }
         event.preventDefault();
         event.stopPropagation();
         window.location.href = loginUrlWithReturn(href);

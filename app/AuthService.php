@@ -19,13 +19,12 @@ final class AuthService
         $intended = self::resolveIntended($intended);
         $nextQ = $intended !== null ? '?next=' . rawurlencode($intended) : '';
 
+        if (self::needsEmailVerification($user)) {
+            return '/verify-email' . $nextQ;
+        }
+
         $plan = (string) ($user['plan'] ?? 'free');
         $status = (string) ($user['subscription_status'] ?? 'none');
-
-        // Unpaid premium checkout always continues to payment first.
-        if ($plan === 'premium' && $status !== 'active') {
-            return '/payment' . $nextQ;
-        }
 
         if (empty($user['fpl_team_id']) && self::pathNeedsFplTeam($intended)) {
             return '/link-team' . $nextQ;
@@ -51,7 +50,7 @@ final class AuthService
 
         $pathOnly = explode('?', $path, 2)[0];
         $pathOnly = explode('#', $pathOnly, 2)[0];
-        $blocked = ['login', 'register', 'join', 'verify-otp', 'payment'];
+        $blocked = ['login', 'register', 'join', 'verify-otp', 'verify-email', 'payment'];
         foreach ($blocked as $segment) {
             if ($pathOnly === '/' . $segment || str_starts_with($pathOnly, '/' . $segment . '/')) {
                 return null;
@@ -112,10 +111,17 @@ final class AuthService
         $publicPrefixes = [
             '/gameweek-recap',
             '/price-changes',
+            '/fixture-difficulty',
             '/fpl-injury-news',
             '/league-table',
             '/fpl-gameweek-',
             '/players',
+            '/about',
+            '/contact',
+            '/help-center',
+            '/terms',
+            '/disclaimer',
+            '/privacy-policy',
         ];
 
         if ($base === '/' || $base === '/index.html') {
@@ -134,6 +140,11 @@ final class AuthService
     public static function needsTeamLink(array $user): bool
     {
         return empty($user['fpl_team_id']);
+    }
+
+    public static function needsEmailVerification(array $user): bool
+    {
+        return empty($user['email_verified_at']) && empty($user['google_id']);
     }
 
     /** Drop abandoned Premium checkout back to Free. */
@@ -165,6 +176,10 @@ final class AuthService
             throw new \InvalidArgumentException('Email or password is not correct.');
         }
 
+        if (!empty($user['is_restricted'])) {
+            throw new \InvalidArgumentException('This account has been restricted. Contact support if you think this is a mistake.');
+        }
+
         $user = self::revertUnpaidPremium((int) $user['id']) ?: $user;
         Session::login($user);
         return $user;
@@ -183,7 +198,11 @@ final class AuthService
         $stmt = Database::pdo()->prepare('SELECT * FROM users WHERE id = ? LIMIT 1');
         $stmt->execute([$id]);
         $row = $stmt->fetch();
-        return $row ?: null;
+        if (!$row) {
+            return null;
+        }
+
+        return BillingService::syncUserSubscription((int) $row['id']) ?? $row;
     }
 
     public static function startEmailSignup(string $email, string $password, string $plan): void
@@ -277,13 +296,14 @@ final class AuthService
         }
 
         $now = gmdate('c');
+        $chosenPlan = self::normalizePlan((string) $pending['plan']);
         $pdo->prepare(
             'INSERT INTO users (email, password_hash, plan, subscription_status, email_verified_at, created_at, updated_at)
              VALUES (?, ?, ?, ?, NULL, ?, ?)'
         )->execute([
             $email,
             $pending['password_hash'],
-            self::normalizePlan((string) $pending['plan']),
+            'free',
             'none',
             $now,
             $now,
@@ -298,10 +318,30 @@ final class AuthService
             throw new \RuntimeException('Could not create your account.');
         }
 
+        ResendMailer::sendWelcome((string) $user['email'], $chosenPlan);
+        AdminNotificationService::userRegistered($user, $chosenPlan, 'email');
         self::sendEmailConfirmation($user);
         Session::login($user);
 
+        if ($chosenPlan === 'premium') {
+            Session::flash('signup_checkout', '1');
+        }
+
         return $user;
+    }
+
+    public static function resendEmailConfirmation(int $userId): void
+    {
+        $user = self::findUserById($userId);
+        if (!$user) {
+            throw new \InvalidArgumentException('Account not found.');
+        }
+
+        if (!self::needsEmailVerification($user)) {
+            throw new \InvalidArgumentException('Your email is already confirmed.');
+        }
+
+        self::sendEmailConfirmation($user);
     }
 
     public static function sendEmailConfirmation(array $user): void
@@ -356,6 +396,8 @@ final class AuthService
             throw new \RuntimeException('Account not found.');
         }
 
+        AdminNotificationService::emailConfirmed($user);
+
         return $user;
     }
 
@@ -367,27 +409,31 @@ final class AuthService
         $now = gmdate('c');
 
         $existing = self::findUserByEmail($email);
+        $isNew = $existing === null;
         if ($existing) {
             $pdo->prepare(
                 'UPDATE users SET google_id = ?, name = COALESCE(?, name), email_verified_at = COALESCE(email_verified_at, ?), updated_at = ? WHERE id = ?'
             )->execute([$googleId, $name, $now, $now, (int) $existing['id']]);
-
-            if ($plan === 'premium' && ($existing['plan'] ?? '') !== 'premium') {
-                $pdo->prepare('UPDATE users SET plan = ?, updated_at = ? WHERE id = ?')
-                    ->execute(['premium', $now, (int) $existing['id']]);
-            }
 
             $user = self::findUserById((int) $existing['id']);
         } else {
             $pdo->prepare(
                 'INSERT INTO users (email, password_hash, google_id, name, plan, subscription_status, email_verified_at, created_at, updated_at)
                  VALUES (?, NULL, ?, ?, ?, ?, ?, ?, ?)'
-            )->execute([$email, $googleId, $name, $plan, 'none', $now, $now, $now]);
+            )->execute([$email, $googleId, $name, 'free', 'none', $now, $now, $now]);
             $user = self::findUserById((int) $pdo->lastInsertId());
+            if ($plan === 'premium') {
+                Session::flash('signup_checkout', '1');
+            }
         }
 
         if (!$user) {
             throw new \RuntimeException('Could not sign in with Google.');
+        }
+
+        if ($isNew) {
+            ResendMailer::sendWelcome((string) $user['email'], $plan, true);
+            AdminNotificationService::userRegistered($user, $plan, 'google');
         }
 
         Session::login($user);

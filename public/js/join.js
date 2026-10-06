@@ -1,5 +1,4 @@
-import { animate, inView, stagger } from './motion.js';
-import { initSiteNav } from './site-nav.js';
+import { initSiteNav } from './site-nav.js?v=20260907pub';
 import {
   applyAuthNav,
   applyAuthRedirect,
@@ -8,13 +7,43 @@ import {
   captureReturnFromUrl,
   fetchSession,
   getReturnPath,
+  hideAuthLoading,
   isPremiumActive,
   pageUrl,
   postJson,
   setBusy,
-} from './auth.js';
+  showAuthLoading,
+} from './auth.js?v=20260907pub';
 
+const CACHE = '20260828f';
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+let motionPromise = null;
+
+function loadMotion() {
+  if (!motionPromise) {
+    motionPromise = import('./motion.js?v=20260901perf')
+      .then((mod) => mod)
+      .catch(() => null);
+  }
+  return motionPromise;
+}
+
+function showJoinContent() {
+  const intro = document.querySelector('.join-intro');
+  const items = [
+    ...document.querySelectorAll('.compare-reveal'),
+    ...document.querySelectorAll('.faq-reveal'),
+  ];
+  if (intro) {
+    intro.style.opacity = '1';
+    intro.style.transform = 'none';
+  }
+  items.forEach((el) => {
+    el.style.opacity = '1';
+    el.style.transform = 'none';
+  });
+}
 
 function initJoinPricing() {
   const root = document.querySelector('[data-join-pricing]');
@@ -27,6 +56,8 @@ function initJoinPricing() {
   const priceNodes = [...root.querySelectorAll('[data-price]')];
   const periodNodes = [...root.querySelectorAll('[data-period]')];
   const noteNodes = [...root.querySelectorAll('[data-billing-note]')];
+  const hubPriceNodes = [...root.querySelectorAll('[data-hub-price]')];
+  const saveNodes = [...root.querySelectorAll('[data-save-pct]')];
 
   const applyBilling = (isYearly) => {
     toggle.setAttribute('aria-checked', String(isYearly));
@@ -45,6 +76,13 @@ function initJoinPricing() {
       node.textContent = note;
       node.hidden = !note;
     });
+    hubPriceNodes.forEach((node) => {
+      node.textContent = node.getAttribute(`data-${key}`) || node.textContent;
+    });
+    saveNodes.forEach((node) => {
+      const save = node.getAttribute(`data-${key}`);
+      if (save) node.textContent = `${save}%`;
+    });
   };
 
   applyBilling(toggle.getAttribute('aria-checked') === 'true');
@@ -59,7 +97,7 @@ function setPanelHeight(panel, height) {
   panel.style.height = typeof height === 'number' ? `${height}px` : height;
 }
 
-function openFaqItem(item) {
+async function openFaqItem(item) {
   const panel = item.querySelector('.faq-item__panel');
   const trigger = item.querySelector('.faq-item__trigger');
   if (!panel || !trigger) return;
@@ -74,20 +112,29 @@ function openFaqItem(item) {
     return;
   }
 
+  const motion = await loadMotion();
+  if (!motion?.animate) {
+    setPanelHeight(panel, 'auto');
+    panel.style.opacity = '1';
+    return;
+  }
+
   const targetHeight = panel.scrollHeight;
   setPanelHeight(panel, 0);
   panel.style.opacity = '0';
 
-  animate(
-    panel,
-    { height: [0, targetHeight], opacity: [0, 1] },
-    { duration: 0.3, easing: [0.4, 0, 0.2, 1] }
-  ).then(() => {
-    setPanelHeight(panel, 'auto');
-  });
+  motion
+    .animate(
+      panel,
+      { height: [0, targetHeight], opacity: [0, 1] },
+      { duration: 0.3, easing: [0.4, 0, 0.2, 1] }
+    )
+    .then(() => {
+      setPanelHeight(panel, 'auto');
+    });
 }
 
-function closeFaqItem(item) {
+async function closeFaqItem(item) {
   const panel = item.querySelector('.faq-item__panel');
   const trigger = item.querySelector('.faq-item__trigger');
   if (!panel || !trigger) return;
@@ -102,17 +149,27 @@ function closeFaqItem(item) {
     return;
   }
 
+  const motion = await loadMotion();
+  if (!motion?.animate) {
+    setPanelHeight(panel, 0);
+    panel.style.opacity = '0';
+    panel.hidden = true;
+    return;
+  }
+
   const startHeight = panel.offsetHeight;
   setPanelHeight(panel, startHeight);
 
-  animate(
-    panel,
-    { height: [startHeight, 0], opacity: [1, 0] },
-    { duration: 0.3, easing: [0.4, 0, 0.2, 1] }
-  ).then(() => {
-    panel.hidden = true;
-    setPanelHeight(panel, 0);
-  });
+  motion
+    .animate(
+      panel,
+      { height: [startHeight, 0], opacity: [1, 0] },
+      { duration: 0.3, easing: [0.4, 0, 0.2, 1] }
+    )
+    .then(() => {
+      panel.hidden = true;
+      setPanelHeight(panel, 0);
+    });
 }
 
 function initFaqAccordion() {
@@ -151,18 +208,23 @@ function initFaqAccordion() {
   });
 }
 
-function revealJoin() {
+async function revealJoin() {
   const intro = document.querySelector('.join-intro');
   const gridItems = [...document.querySelectorAll('.compare-reveal')];
   const faqItems = [...document.querySelectorAll('.faq-reveal')];
 
   if (reduceMotion) {
-    [...gridItems, ...faqItems].forEach((el) => {
-      el.style.opacity = '1';
-      el.style.transform = 'none';
-    });
+    showJoinContent();
     return;
   }
+
+  const motion = await loadMotion();
+  if (!motion?.animate || !motion?.inView) {
+    showJoinContent();
+    return;
+  }
+
+  const { animate, inView, stagger } = motion;
 
   if (intro) {
     animate(
@@ -172,7 +234,7 @@ function revealJoin() {
     );
   }
 
-  const grid = document.querySelector('.compare-grid');
+  const grid = document.querySelector('.compare-grid') || document.querySelector('.join-mobile-plans');
   if (gridItems.length && grid) {
     inView(
       grid,
@@ -224,7 +286,6 @@ async function initAuthAwareJoin() {
 
   const returnPath = getReturnPath();
 
-  // Active premium users do not need pricing. Send them to their dashboard.
   if (session?.authenticated && isPremiumActive(session.user)) {
     applyAuthRedirect(returnPath || session.redirect || '/live');
     return;
@@ -254,14 +315,20 @@ async function initAuthAwareJoin() {
   ctas.forEach((cta) => {
     cta.addEventListener('click', async (event) => {
       const plan = cta.getAttribute('data-plan-cta') === 'premium' ? 'premium' : 'free';
-      const live = await fetchSession();
 
-      // Guests keep the register links.
-      if (!live?.authenticated) {
+      if (!session?.authenticated) {
+        showAuthLoading(
+          'Opening sign up',
+          plan === 'premium' ? 'Taking you to Premium sign up.' : 'Taking you to create your account.'
+        );
         return;
       }
 
       event.preventDefault();
+      showAuthLoading(
+        plan === 'premium' ? 'Opening payment' : 'Updating your plan',
+        'Please wait while we get the next step ready.'
+      );
       setBusy(cta, true, plan === 'premium' ? 'Opening payment' : 'Please wait');
 
       try {
@@ -271,6 +338,7 @@ async function initAuthAwareJoin() {
         });
         applyAuthRedirect(result.redirect || (plan === 'premium' ? '/payment' : '/live'));
       } catch (error) {
+        hideAuthLoading();
         setBusy(cta, false);
         window.alert(error.message || 'Could not update your plan.');
       }
@@ -278,8 +346,13 @@ async function initAuthAwareJoin() {
   });
 }
 
-initSiteNav();
-initJoinPricing();
-initFaqAccordion();
-initAuthAwareJoin();
-revealJoin();
+try {
+  initSiteNav();
+  initJoinPricing();
+  initFaqAccordion();
+  initAuthAwareJoin();
+  revealJoin();
+} catch (error) {
+  console.error('Join page boot failed:', error);
+  showJoinContent();
+}

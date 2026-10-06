@@ -11,11 +11,14 @@ $root = dirname(__DIR__, 2);
 
 require_once $root . '/app/Env.php';
 require_once $root . '/app/Database.php';
+require_once $root . '/app/EmailTemplate.php';
 require_once $root . '/app/ResendMailer.php';
+require_once $root . '/app/AdminNotificationService.php';
 require_once $root . '/app/Response.php';
 require_once $root . '/app/AppUrl.php';
 require_once $root . '/app/Session.php';
 require_once $root . '/app/AuthService.php';
+require_once $root . '/app/BillingService.php';
 
 use App\Env;
 use App\Session;

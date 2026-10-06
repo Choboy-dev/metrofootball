@@ -1,14 +1,16 @@
-import { animate } from './motion.js';
+import { animate } from './motion.js?v=20260901perf';
 import {
   applyAuthRedirect,
   captureReturnFromUrl,
   getPlan,
   getReturnPath,
+  hideAuthLoading,
   pageUrl,
   postJson,
   setBusy,
+  showAuthLoading,
   showFormError,
-} from './auth.js';
+} from './auth.js?v=20260907pub';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const form = document.querySelector('[data-otp-form]');
@@ -44,7 +46,8 @@ form?.addEventListener('submit', async (event) => {
   const submit = form.querySelector('[type="submit"]');
   const code = (form.querySelector('[name="code"]')?.value || '').replace(/\s+/g, '');
 
-  setBusy(submit, true);
+  setBusy(submit, true, 'Verifying');
+  showAuthLoading('Verifying your code', 'Almost there.');
   try {
     const data = await postJson('auth/verify-otp.php', {
       email,
@@ -54,17 +57,19 @@ form?.addEventListener('submit', async (event) => {
     sessionStorage.removeItem('mf_otp_email');
     applyAuthRedirect(data.redirect || '/live');
   } catch (error) {
+    hideAuthLoading();
     showFormError(errorEl, error.message);
-  } finally {
     setBusy(submit, false);
   }
 });
 
 resendBtn?.addEventListener('click', async () => {
   showFormError(errorEl, '');
-  setBusy(resendBtn, true);
+  setBusy(resendBtn, true, 'Sending');
+  showAuthLoading('Sending a new code', 'Check your inbox in a moment.');
   try {
     await postJson('auth/resend-otp.php', { email });
+    hideAuthLoading();
     showFormError(errorEl, '');
     resendBtn.querySelector('.mf-btn__label').textContent = 'Code sent';
     setTimeout(() => {
@@ -72,6 +77,7 @@ resendBtn?.addEventListener('click', async () => {
       setBusy(resendBtn, false);
     }, 1600);
   } catch (error) {
+    hideAuthLoading();
     showFormError(errorEl, error.message);
     setBusy(resendBtn, false);
   }

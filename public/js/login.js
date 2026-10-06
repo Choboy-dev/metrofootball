@@ -1,18 +1,19 @@
-import { animate } from './motion.js';
 import {
   applyAuthRedirect,
   appendReturnQuery,
+  bindGoogleAuthLink,
   captureReturnFromUrl,
   getPlan,
   getReturnPath,
-  googleStartUrl,
+  hideAuthLoading,
   initPasswordToggles,
   pageUrl,
   postJson,
   setBusy,
   setPlan,
+  showAuthLoading,
   showFormError,
-} from './auth.js';
+} from './auth.js?v=20260907pub';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -27,6 +28,7 @@ const reason = params.get('reason');
 
 initPasswordToggles();
 captureReturnFromUrl();
+bindGoogleAuthLink(googleLink, plan, 'login');
 
 if (reason === 'idle') {
   showFormError(errorEl, 'Your session ended after a period of inactivity. Please sign in again.');
@@ -34,19 +36,19 @@ if (reason === 'idle') {
   showFormError(errorEl, queryError);
 }
 
-if (googleLink) {
-  googleLink.href = googleStartUrl(plan, 'login', getReturnPath());
-}
-
 if (registerLink) {
   registerLink.href = appendReturnQuery(pageUrl('join'));
 }
 
 if (!reduceMotion) {
-  const card = document.querySelector('.auth-card');
-  if (card) {
-    animate(card, { opacity: [0, 1], y: [18, 0] }, { duration: 0.45, easing: [0.17, 0.55, 0.55, 1] });
-  }
+  import('./motion.js?v=20260901perf')
+    .then(({ animate }) => {
+      const card = document.querySelector('.auth-card');
+      if (card) {
+        animate(card, { opacity: [0, 1], y: [18, 0] }, { duration: 0.45, easing: [0.17, 0.55, 0.55, 1] });
+      }
+    })
+    .catch(() => {});
 }
 
 form?.addEventListener('submit', async (event) => {
@@ -57,7 +59,8 @@ form?.addEventListener('submit', async (event) => {
   const email = form.querySelector('[name="email"]')?.value?.trim() || '';
   const password = form.querySelector('[name="password"]')?.value || '';
 
-  setBusy(submit, true);
+  setBusy(submit, true, 'Signing in');
+  showAuthLoading('Signing you in', 'Checking your details.');
   try {
     const data = await postJson('auth/login.php', {
       email,
@@ -66,8 +69,8 @@ form?.addEventListener('submit', async (event) => {
     });
     applyAuthRedirect(data.redirect || '/live');
   } catch (error) {
+    hideAuthLoading();
     showFormError(errorEl, error.message);
-  } finally {
     setBusy(submit, false);
   }
 });

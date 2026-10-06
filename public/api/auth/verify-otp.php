@@ -6,6 +6,7 @@ require_once dirname(__DIR__) . '/bootstrap-auth.php';
 
 use App\AuthService;
 use App\Response;
+use App\Session;
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     Response::json(['ok' => false, 'error' => 'Method not allowed'], 405);
@@ -19,9 +20,12 @@ try {
     AuthService::rememberReturnPath((string) ($data['next'] ?? ''));
     $user = AuthService::verifySignupOtp($email, $code);
     $intended = AuthService::resolveIntended(null);
+    $redirect = Session::flash('signup_checkout') === '1'
+        ? AuthService::appendReturnToPath('/payment', $intended)
+        : AuthService::postAuthPath($user, $intended);
     Response::json([
         'ok' => true,
-        'redirect' => AuthService::postAuthPath($user, $intended),
+        'redirect' => $redirect,
         'user' => [
             'email' => $user['email'],
             'plan' => $user['plan'],
