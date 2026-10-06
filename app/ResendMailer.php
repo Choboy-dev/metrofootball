@@ -56,44 +56,119 @@ final class ResendMailer
 
     public static function sendOtp(string $to, string $code): void
     {
-        $subject = 'Your Metro Football code';
-        $html = '<p style="font-family:Inter,Arial,sans-serif;font-size:16px;line-height:1.5;color:#14161c">'
-            . 'Use this code to finish creating your Metro Football account.</p>'
-            . '<p style="font-family:Google Sans,Inter,Arial,sans-serif;font-size:32px;font-weight:700;letter-spacing:0.2em;color:#0b1220">'
-            . htmlspecialchars($code, ENT_QUOTES, 'UTF-8') . '</p>'
-            . '<p style="font-family:Inter,Arial,sans-serif;font-size:14px;color:#4b5563">This code expires in 10 minutes.</p>';
-        $text = "Your Metro Football code is {$code}. It expires in 10 minutes.";
+        $subject = 'Your Metro Football verification code';
+        $inner = EmailTemplate::paragraph('Thank you for creating a Metro Football account.')
+            . EmailTemplate::paragraph('Use the code below to verify your email address and continue setting up your account.')
+            . EmailTemplate::code($code)
+            . EmailTemplate::muted('This code expires in 10 minutes.');
+        $html = EmailTemplate::render($inner);
+        $text = "Thank you for creating a Metro Football account.\n\nYour verification code is {$code}.\n\nThis code expires in 10 minutes.";
 
         self::send($to, $subject, $html, $text);
     }
 
     public static function sendConfirmEmail(string $to, string $confirmUrl): void
     {
-        $safeUrl = htmlspecialchars($confirmUrl, ENT_QUOTES, 'UTF-8');
-        $subject = 'Confirm your email address';
-        $html = '<p style="font-family:Inter,Arial,sans-serif;font-size:16px;line-height:1.5;color:#14161c">'
-            . 'Thanks for joining Metro Football. Please confirm your email address.</p>'
-            . '<p><a href="' . $safeUrl . '" style="display:inline-block;padding:12px 20px;background:#dc2626;color:#fff;'
-            . 'text-decoration:none;border-radius:999px;font-family:Inter,Arial,sans-serif;font-weight:600">'
-            . 'Confirm email</a></p>'
-            . '<p style="font-family:Inter,Arial,sans-serif;font-size:14px;color:#4b5563">Or open this link:<br>'
-            . $safeUrl . '</p>';
-        $text = "Confirm your Metro Football email: {$confirmUrl}";
+        $subject = 'Confirm your Metro Football email';
+        $inner = EmailTemplate::paragraph('Your account is almost ready.')
+            . EmailTemplate::paragraph('Click the button below to confirm your email address. After that you can finish payment or start using your Free tools.')
+            . EmailTemplate::button('Confirm email address', $confirmUrl)
+            . EmailTemplate::linkFallback($confirmUrl)
+            . EmailTemplate::muted('This link expires in 24 hours.');
+        $html = EmailTemplate::render($inner);
+        $text = "Confirm your Metro Football email: {$confirmUrl}\n\nThis link expires in 24 hours.";
+
+        self::send($to, $subject, $html, $text);
+    }
+
+    public static function sendWelcome(string $to, string $plan, bool $emailAlreadyVerified = false): void
+    {
+        $isPremium = strtolower(trim($plan)) === 'premium';
+        $subject = 'Welcome to Metro Football';
+        $homeUrl = AppUrl::to('');
+
+        if ($isPremium) {
+            $lead = $emailAlreadyVerified
+                ? 'Thanks for choosing Premium. Finish checkout to unlock personal team tools for your squad.'
+                : 'Thanks for choosing Premium. Once your email is confirmed you can finish checkout and unlock personal team tools.';
+            $ctaLabel = 'Continue to payment';
+            $ctaUrl = AppUrl::to('payment');
+        } else {
+            $lead = 'Your Free account is ready. Explore weekly reports, player pages, and core FPL tools whenever you like.';
+            $ctaLabel = 'Open Metro Football';
+            $ctaUrl = AppUrl::to('live');
+        }
+
+        $inner = EmailTemplate::paragraph('Welcome to Metro Football.')
+            . EmailTemplate::paragraph($lead)
+            . EmailTemplate::button($ctaLabel, $ctaUrl)
+            . EmailTemplate::linkFallback($ctaUrl);
+        $html = EmailTemplate::render($inner);
+        $text = "Welcome to Metro Football.\n\n{$lead}\n\n{$ctaUrl}";
+
+        self::send($to, $subject, $html, $text);
+    }
+
+    public static function sendSubscriptionThankYou(string $to, string $cycle): void
+    {
+        $linkUrl = AppUrl::to('link-team');
+        $liveUrl = AppUrl::to('live');
+        $cycleLabel = strtolower(trim($cycle)) === 'yearly' ? 'yearly' : 'monthly';
+        $subject = 'Thank you for subscribing to Metro Football Premium';
+        $inner = EmailTemplate::paragraph('Thank you. We just received your Premium payment.')
+            . EmailTemplate::paragraph('Your ' . $cycleLabel . ' subscription is active. Personal team tools are unlocked on your account.')
+            . EmailTemplate::paragraph('Next, import your FPL squad so Metro Football can score your team, track live points, and run tools on your picks.')
+            . EmailTemplate::button('Import your squad', $linkUrl)
+            . EmailTemplate::linkFallback($linkUrl)
+            . EmailTemplate::muted('Already linked your team? Open Live to see your squad.');
+        $html = EmailTemplate::render($inner);
+        $text = "Thank you. We just received your Premium payment.\n\n"
+            . "Your {$cycleLabel} subscription is active.\n\n"
+            . "Import your FPL squad: {$linkUrl}\n\n"
+            . "Live dashboard: {$liveUrl}";
 
         self::send($to, $subject, $html, $text);
     }
 
     public static function sendContactAutoReply(string $to, string $name): void
     {
-        $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
         $subject = 'We received your message';
-        $html = '<p style="font-family:Inter,Arial,sans-serif;font-size:16px;line-height:1.55;color:#14161c">'
-            . 'Hi ' . $safeName . ',</p>'
-            . '<p style="font-family:Inter,Arial,sans-serif;font-size:16px;line-height:1.55;color:#14161c">'
-            . 'Thanks for contacting Metro Football. We read every message and reply by email when we need to follow up.</p>'
-            . '<p style="font-family:Inter,Arial,sans-serif;font-size:14px;color:#4b5563">'
-            . 'For account help, you can also visit your billing page or check our pricing page for plan details.</p>';
+        $inner = EmailTemplate::paragraph('Hi ' . $name . ',')
+            . EmailTemplate::paragraph('Thanks for contacting Metro Football. We read every message and reply by email when we need to follow up.')
+            . EmailTemplate::muted('For account help, visit our Help Center or check your billing page for plan details.');
+        $html = EmailTemplate::render($inner);
         $text = "Hi {$name},\n\nThanks for contacting Metro Football. We read every message and reply by email when we need to follow up.";
+
+        self::send($to, $subject, $html, $text);
+    }
+
+    public static function sendSubscriptionRenewalReminder(string $to, string $expiresLabel, int $daysLeft): void
+    {
+        $renewUrl = AppUrl::to('payment');
+        $subject = $daysLeft <= 1
+            ? 'Your Metro Football Premium ends tomorrow'
+            : 'Your Metro Football Premium renews soon';
+        $lead = $daysLeft <= 1
+            ? 'Your Premium plan ends tomorrow (' . $expiresLabel . ').'
+            : 'Your Premium plan ends on ' . $expiresLabel . ' (' . $daysLeft . ' days left).';
+        $inner = EmailTemplate::paragraph($lead)
+            . EmailTemplate::paragraph('Metro Football does not charge your card automatically. Visit the payment page to renew and keep your personal team tools unlocked.')
+            . EmailTemplate::button('Renew Premium', $renewUrl);
+        $html = EmailTemplate::render($inner);
+        $text = $lead . ' Renew at ' . $renewUrl . ' to keep Premium active.';
+
+        self::send($to, $subject, $html, $text);
+    }
+
+    public static function sendSubscriptionExpired(string $to): void
+    {
+        $renewUrl = AppUrl::to('payment');
+        $subject = 'Your Metro Football Premium has ended';
+        $inner = EmailTemplate::paragraph('Your Premium plan has ended and your account is back on Free.')
+            . EmailTemplate::paragraph('Your account, linked FPL team, and free tools are still here. Renew any time to unlock personal team tools again.')
+            . EmailTemplate::button('Renew Premium', $renewUrl);
+        $html = EmailTemplate::render($inner);
+        $text = 'Your Premium plan has ended. Renew at ' . $renewUrl . ' whenever you are ready.';
 
         self::send($to, $subject, $html, $text);
     }

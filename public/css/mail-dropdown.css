@@ -1,0 +1,122 @@
+/* LeadBirdDropdown — custom select for admin mail pages */
+
+.lb-dropdown {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
+}
+
+.lb-dropdown__native {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.lb-dropdown__trigger {
+  width: 100%;
+  min-height: 2.625rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--mail-border, #d7dee6);
+  border-radius: 0.625rem;
+  background: #fff;
+  color: var(--mail-text, #14161c);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lb-dropdown__trigger:hover {
+  border-color: #b8c2ce;
+}
+
+.lb-dropdown__trigger:focus-visible {
+  outline: 2px solid rgb(220 38 38 / 0.4);
+  outline-offset: 1px;
+}
+
+.lb-dropdown.is-open .lb-dropdown__trigger {
+  border-color: var(--mail-primary, #dc2626);
+  box-shadow: 0 0 0 3px var(--mail-soft, rgb(220 38 38 / 0.09));
+}
+
+.lb-dropdown__label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lb-dropdown__chevron {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  opacity: 0.55;
+  transition: transform 0.18s ease;
+}
+
+.lb-dropdown.is-open .lb-dropdown__chevron {
+  transform: rotate(180deg);
+}
+
+.lb-dropdown__menu {
+  position: absolute;
+  z-index: 60;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  right: 0;
+  max-height: 14rem;
+  overflow: auto;
+  margin: 0;
+  padding: 0.35rem;
+  list-style: none;
+  border: 1px solid var(--mail-border, #d7dee6);
+  border-radius: 0.75rem;
+  background: #fff;
+  box-shadow: 0 12px 32px rgb(11 18 32 / 0.12);
+}
+
+.lb-dropdown__option {
+  display: block;
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--mail-text, #14161c);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.lb-dropdown__option:hover,
+.lb-dropdown__option.is-focused {
+  background: var(--mail-soft, rgb(220 38 38 / 0.09));
+}
+
+.lb-dropdown__option.is-selected {
+  color: var(--mail-primary, #dc2626);
+  font-weight: 600;
+}
+
+.lb-dropdown__option[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.lb-dropdown.is-disabled .lb-dropdown__trigger {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

@@ -1,0 +1,315 @@
+/* LeadBirdModal — Metro Football mail */
+
+.lb-modal-root {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.lb-modal-root.is-open {
+  pointer-events: auto;
+  opacity: 1;
+}
+
+.lb-modal-root__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgb(11 18 32 / 0.52);
+  border: 0;
+  cursor: pointer;
+}
+
+.lb-modal {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 26rem);
+  border-radius: 1rem;
+  background: #fff;
+  border: 1px solid var(--mail-border, #d7dee6);
+  box-shadow: 0 18px 48px rgb(11 18 32 / 0.18);
+  transform: translateY(8px) scale(0.98);
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lb-modal-root.is-open .lb-modal {
+  transform: translateY(0) scale(1);
+}
+
+.lb-modal__header {
+  padding: 1.25rem 1.25rem 0.5rem;
+}
+
+.lb-modal__title {
+  margin: 0;
+  font-family: var(--font-heading, 'Google Sans', 'Inter', system-ui, sans-serif);
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--mail-text, #14161c);
+}
+
+.lb-modal__body {
+  margin: 0;
+  padding: 0.35rem 1.25rem 1rem;
+  font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--mail-muted, #4b5563);
+}
+
+.lb-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem 1.25rem;
+}
+
+.lb-modal__btn {
+  min-height: 2.5rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.lb-modal__btn:focus-visible {
+  outline: 2px solid rgb(220 38 38 / 0.45);
+  outline-offset: 2px;
+}
+
+.lb-modal__btn--ghost {
+  background: #fff;
+  border-color: var(--mail-border, #d7dee6);
+  color: var(--mail-text, #14161c);
+}
+
+.lb-modal__btn--ghost:hover {
+  background: var(--mail-bg, #f4f6f8);
+}
+
+.lb-modal__btn--primary {
+  background: var(--mail-primary, #dc2626);
+  color: #fff;
+}
+
+.lb-modal__btn--primary:hover {
+  background: #b91c1c;
+}
+
+.lb-modal__btn--danger {
+  background: var(--mail-primary, #dc2626);
+  color: #fff;
+}
+
+.lb-modal__btn--danger:hover {
+  background: #991b1b;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lb-modal-root,
+  .lb-modal {
+    transition: none;
+  }
+}
+
+/* Form panel modal (admin edit mailbox) */
+
+.lb-modal-root--panel[hidden] {
+  display: none !important;
+}
+
+.lb-modal--form {
+  width: min(100%, 34rem);
+  overflow: hidden;
+}
+
+.lb-modal__header--row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.5rem 1.5rem 1.25rem;
+  border-bottom: 1px solid var(--mail-border, #d7dee6);
+}
+
+.lb-modal__header-copy {
+  min-width: 0;
+}
+
+.lb-modal__subtitle {
+  margin: 0.5rem 0 0;
+  font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--mail-muted, #4b5563);
+  word-break: break-word;
+}
+
+.lb-modal__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--mail-muted, #4b5563);
+  cursor: pointer;
+}
+
+.lb-modal__close:hover {
+  background: var(--mail-bg, #f4f6f8);
+  color: var(--mail-text, #14161c);
+}
+
+.lb-modal__close svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.lb-modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+}
+
+.lb-modal__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+}
+
+.lb-modal__form .mail-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.lb-modal__form .mail-field__label {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--mail-text, #14161c);
+}
+
+.lb-modal__form .mail-field__input {
+  width: 100%;
+}
+
+.lb-modal__form .lb-dropdown {
+  width: 100%;
+}
+
+.lb-modal__form .lb-dropdown__trigger {
+  width: 100%;
+  min-height: 2.625rem;
+}
+
+.lb-modal__footer--form {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 1.25rem 1.5rem 1.5rem;
+  border-top: 1px solid var(--mail-border, #d7dee6);
+  background: var(--mail-bg, #f4f6f8);
+}
+
+.mail-field__hint {
+  display: block;
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--mail-muted, #4b5563);
+}
+
+.mail-field--switch {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mail-switch {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--mail-border, #d7dee6);
+  border-radius: var(--mail-radius-sm, 0.625rem);
+  background: #fff;
+}
+
+.mail-switch__input {
+  position: absolute;
+  left: 0.85rem;
+  width: 2.5rem;
+  height: 1.4rem;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.mail-switch__track {
+  position: relative;
+  width: 2.5rem;
+  height: 1.4rem;
+  border-radius: 999px;
+  background: #cbd5e1;
+  transition: background 0.2s ease;
+}
+
+.mail-switch__track::after {
+  content: '';
+  position: absolute;
+  top: 0.15rem;
+  left: 0.15rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(11 18 32 / 0.18);
+  transition: transform 0.2s ease;
+}
+
+.mail-switch__input:checked + .mail-switch__track {
+  background: var(--mail-primary, #dc2626);
+}
+
+.mail-switch__input:checked + .mail-switch__track::after {
+  transform: translateX(1.1rem);
+}
+
+.mail-switch__input:focus-visible + .mail-switch__track {
+  outline: 2px solid rgb(220 38 38 / 0.45);
+  outline-offset: 2px;
+}
+
+.mail-switch__label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--mail-text, #14161c);
+}
