@@ -95,7 +95,7 @@ final class FplClient
      */
     public static function fetchBootstrapPick(): array
     {
-        return FplCache::rememberFreshOrStale('bootstrap-pick-v4', 6 * 3600, 24 * 3600, static function () {
+        return FplCache::rememberFreshOrStale('bootstrap-pick-v5', 2 * 3600, 12 * 3600, static function () {
             $data = self::fetchBootstrapStatic();
             if (empty($data['elements']) || empty($data['teams']) || empty($data['events'])) {
                 throw new \RuntimeException('The FPL bootstrap data is unavailable right now.');

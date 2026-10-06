@@ -16,7 +16,16 @@ ini_set('max_execution_time', '180');
 
 try {
     $auth = PickPageService::authenticate();
-    $enriched = PickPageService::enrich($auth['user_id'], $auth['entry_id'], $auth['premium']);
+    $gameweekId = isset($_GET['gw']) ? (int) $_GET['gw'] : null;
+    if ($gameweekId !== null && $gameweekId < 1) {
+        $gameweekId = null;
+    }
+    $enriched = PickPageService::enrich(
+        $auth['user_id'],
+        $auth['entry_id'],
+        $auth['premium'],
+        $gameweekId
+    );
 
     http_response_code(200);
     header('Content-Type: application/json; charset=utf-8');

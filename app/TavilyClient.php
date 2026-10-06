@@ -62,6 +62,14 @@ final class TavilyClient
         'twitter.com',
     ];
 
+    /** Career / match stats desks used by guide Ask AI research. */
+    public const STATS_DOMAINS = [
+        'transfermarkt.com',
+        'transfermarkt.co.uk',
+        'fbref.com',
+        'soccerbase.com',
+    ];
+
     /** @var array<string, string> FPL short code → club domain */
     public const CLUB_DOMAIN_BY_SHORT = [
         'ARS' => 'arsenal.com',
@@ -101,7 +109,8 @@ final class TavilyClient
         string $query,
         int $maxResults = 6,
         string $searchDepth = 'advanced',
-        ?array $includeDomains = null
+        ?array $includeDomains = null,
+        array $meta = []
     ): array {
         if (!self::configured()) {
             throw new \RuntimeException('Tavily is not configured. Add TAVILY_API_KEY in config/.env');
@@ -172,6 +181,12 @@ final class TavilyClient
 
         usort($out, static fn (array $a, array $b): int => $b['score'] <=> $a['score']);
 
+        AiUsageLogger::logTavily(
+            (string) ($meta['service'] ?? 'tavily'),
+            isset($meta['user_id']) ? (int) $meta['user_id'] : null,
+            ['query' => mb_substr($query, 0, 120)]
+        );
+
         return array_slice($out, 0, $maxResults);
     }
 
@@ -190,6 +205,9 @@ final class TavilyClient
         if (self::hostInList($host, self::TIER2_DOMAINS)) {
             return 'tier2_desk';
         }
+        if (self::hostInList($host, self::STATS_DOMAINS)) {
+            return 'stats_desk';
+        }
         if (self::hostInList($host, self::SOCIAL_DOMAINS)) {
             return 'social_official';
         }
@@ -207,7 +225,8 @@ final class TavilyClient
         return array_values(array_unique(array_merge(
             self::TIER1_DOMAINS,
             self::TIER2_DOMAINS,
-            self::SOCIAL_DOMAINS
+            self::SOCIAL_DOMAINS,
+            self::STATS_DOMAINS
         )));
     }
 

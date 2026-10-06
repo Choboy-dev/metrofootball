@@ -81,6 +81,25 @@ final class AiTipsService
             $chip['why'] = $narration['chip_why'];
         }
 
+        $sections = [
+            'transfers' => $transfers,
+            'captain' => $captain,
+            'drop_watch' => $dropWatch,
+            'chip' => $chip,
+            'snipers' => $snipers,
+        ];
+
+        $extras = AiTipsExtrasService::buildAll(
+            $userId,
+            $entryId,
+            $pick,
+            $squad,
+            $catalogue,
+            $strength,
+            $predicted,
+            $sections
+        );
+
         $payload = [
             'event' => $pick['event'] ?? null,
             'entry' => [
@@ -92,13 +111,7 @@ final class AiTipsService
             'free_transfers' => $ft,
             'strength' => $strength,
             'predicted_points' => $predicted,
-            'sections' => [
-                'transfers' => $transfers,
-                'captain' => $captain,
-                'drop_watch' => $dropWatch,
-                'chip' => $chip,
-                'snipers' => $snipers,
-            ],
+            'sections' => array_merge($sections, $extras),
             'model' => OpenAiClient::configured() ? OpenAiClient::model() : 'scout-only',
             'generated_at' => gmdate('c'),
             'cache_key' => $cacheKey,
@@ -284,7 +297,7 @@ final class AiTipsService
             $photo = (string) ($player['photo'] ?? '');
             $photoId = $photo !== '' ? preg_replace('/\.jpg$/i', '', $photo) : '';
             $headshot = $photoId !== ''
-                ? 'https://resources.premierleague.com/premierleague/photos/players/250x250/p' . $photoId . '.png'
+                ? 'https://resources.premierleague.com/premierleague/photos/players/110x140/p' . $photoId . '.png'
                 : null;
         }
 

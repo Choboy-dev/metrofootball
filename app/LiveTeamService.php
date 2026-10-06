@@ -17,7 +17,7 @@ final class LiveTeamService
      */
     public static function buildForEntry(int $entryId, ?int $userId = null): array
     {
-        $key = 'live-entry-v2-' . $entryId;
+        $key = 'live-entry-v3-' . $entryId;
         $hit = FplCache::inspect($key, self::LIVE_FRESH_SECONDS, self::LIVE_STALE_SECONDS);
 
         if ($hit !== null && $hit['fresh']) {
@@ -49,8 +49,8 @@ final class LiveTeamService
     public static function refreshEntry(int $entryId, ?int $userId = null): void
     {
         $live = self::buildFresh($entryId, $userId);
+        FplCache::put('live-entry-v3-' . $entryId, $live);
         FplCache::put('live-entry-v2-' . $entryId, $live);
-        FplCache::put('live-entry-' . $entryId, $live);
     }
 
     /** @return array<string, mixed> */
@@ -75,11 +75,29 @@ final class LiveTeamService
             throw new \InvalidArgumentException('We could not find an FPL team with that ID.');
         }
 
-        $resolved = FplEntryPicksService::resolveActiveSquad($entryId, $events, $userId);
+        $resolved = ($current !== null && empty($current['finished']))
+            ? FplEntryPicksService::resolveForGameweek(
+                $entryId,
+                $events,
+                (int) $current['id'],
+                $userId
+            )
+            : FplEntryPicksService::resolveActiveSquad($entryId, $events, $userId);
+
         $picksPayload = $resolved['payload'];
         $squadEventId = $resolved['event_id'];
-        $scoresEventId = $resolved['scores_event_id'] ?? $squadEventId;
+        $scoresEventId = ($current !== null && empty($current['finished']))
+            ? (int) $current['id']
+            : (int) ($resolved['scores_event_id'] ?? $squadEventId);
         $showPlanningSquad = $squadEventId !== $scoresEventId;
+
+        $scoresEventFinished = false;
+        foreach ($events as $event) {
+            if ((int) ($event['id'] ?? 0) === $scoresEventId) {
+                $scoresEventFinished = !empty($event['finished']);
+                break;
+            }
+        }
 
         $live = FplCache::get('event-live-' . $scoresEventId, 300);
         if ($live === null) {
@@ -110,7 +128,7 @@ final class LiveTeamService
 
         $xi = [];
         $bench = [];
-        $gwPoints = 0;
+        $xiPointsSum = 0;
 
         foreach ($picks as $pick) {
             $player = self::mapPlayer(
@@ -119,12 +137,27 @@ final class LiveTeamService
                 $teamsById,
                 $showPlanningSquad ? [] : $liveByElement
             );
-            $gwPoints += (int) $player['team_points'];
             if ((int) $pick['position'] <= 11) {
+                $xiPointsSum += (int) $player['team_points'];
                 $xi[] = $player;
             } else {
                 $bench[] = $player;
             }
+        }
+
+        $picksGwPoints = isset($entryHistory['points']) ? (int) $entryHistory['points'] : null;
+        if ($scoresEventFinished) {
+            $gwPoints = $xiPointsSum;
+            foreach ($historyCurrent as $row) {
+                if ((int) ($row['event'] ?? 0) === $scoresEventId) {
+                    $gwPoints = (int) ($row['points'] ?? $gwPoints);
+                    break;
+                }
+            }
+        } elseif ($picksGwPoints !== null && (int) ($entryHistory['event'] ?? $scoresEventId) === $scoresEventId) {
+            $gwPoints = $picksGwPoints;
+        } else {
+            $gwPoints = $xiPointsSum;
         }
 
         $rows = [
@@ -150,15 +183,16 @@ final class LiveTeamService
             }
         }
 
-        if ($liveRank === null && isset($entry['summary_overall_rank'])) {
-            $liveRank = (int) $entry['summary_overall_rank'];
+        if (
+            !$scoresEventFinished
+            && isset($entryHistory['overall_rank'])
+            && (int) ($entryHistory['event'] ?? $scoresEventId) === $scoresEventId
+        ) {
+            $liveRank = (int) $entryHistory['overall_rank'];
         }
 
-        foreach ($historyCurrent as $row) {
-            if ((int) ($row['event'] ?? 0) === $scoresEventId) {
-                $gwPoints = (int) ($row['points'] ?? $gwPoints);
-                break;
-            }
+        if ($liveRank === null && isset($entry['summary_overall_rank'])) {
+            $liveRank = (int) $entry['summary_overall_rank'];
         }
 
         if ($lastGwRank !== null && $liveRank !== null) {

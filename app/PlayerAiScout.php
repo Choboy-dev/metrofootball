@@ -98,7 +98,13 @@ final class PlayerAiScout
     public static function ensureScores(int $eventId, ?array $bootstrap = null, ?array $fixtures = null): array
     {
         $map = PlayerAiScoreStore::loadMap($eventId);
-        if (count($map) >= 100 && self::mapUsesEngine($map) && self::mapHasHorizon($map)) {
+        // Prefer any complete horizon sheet over a thin no-history rebuild.
+        // Model upgrades must run scripts/build-player-ai-scores.php (with summaries).
+        if (count($map) >= 100 && self::mapHasHorizon($map)) {
+            if (self::mapUsesEngine($map)) {
+                return $map;
+            }
+            // Stale model still beats empty past-ppg sheets on the hot web path.
             return $map;
         }
 
@@ -419,6 +425,75 @@ PROMPT;
     }
 
     /**
+     * Fixture projections for an individual player profile page.
+     *
+     * @param array<string, mixed> $element
+     * @param array<string, mixed> $summary
+     * @param array<int, array<string, mixed>> $teamsById
+     * @param list<array<string, mixed>> $events
+     * @param list<array<string, mixed>> $allFixtures
+     * @return array{projections:list<float>,projections_by_event:array<int,float>,expected_minutes:int,model:string}
+     */
+    public static function profileProjections(
+        array $element,
+        array $summary,
+        array $teamsById,
+        array $events,
+        array $allFixtures
+    ): array {
+        $eventId = 1;
+        foreach ($events as $event) {
+            if (!is_array($event)) {
+                continue;
+            }
+            if (!empty($event['is_next'])) {
+                $eventId = (int) ($event['id'] ?? 1);
+                break;
+            }
+            if (!empty($event['is_current'])) {
+                $eventId = (int) ($event['id'] ?? 1);
+            }
+        }
+
+        $fixtureCtx = self::buildFixtureContext($allFixtures, $eventId, $teamsById, $events);
+        $card = self::buildPlayerCard($element, $teamsById, $fixtureCtx, $summary);
+        $score = self::deterministicScore($card);
+        $teamId = (int) ($element['team'] ?? 0);
+
+        $fixtures = array_values($fixtureCtx['by_team'][$teamId] ?? []);
+        $fixtures = array_slice($fixtures, 0, PlayerProjectionEngine::HORIZON);
+        $projections = array_values($score['projections'] ?? []);
+        $projectionsByEvent = [];
+        foreach ($fixtures as $i => $fx) {
+            $event = (int) ($fx['event'] ?? 0);
+            if ($event > 0 && array_key_exists($i, $projections)) {
+                $projectionsByEvent[$event] = (float) $projections[$i];
+            }
+        }
+
+        return [
+            'projections' => $projections,
+            'projections_by_event' => $projectionsByEvent,
+            'expected_minutes' => self::profileExpectedMinutes($element),
+            'model' => (string) ($score['model'] ?? PlayerProjectionEngine::MODEL),
+        ];
+    }
+
+    /** @param array<string, mixed> $element */
+    private static function profileExpectedMinutes(array $element): int
+    {
+        $starts = max(1, (int) ($element['starts'] ?? 0));
+        $minutes = (int) ($element['minutes'] ?? 0);
+        $avg = (int) round($minutes / $starts);
+        $chance = $element['chance_of_playing_next_round'] ?? null;
+        if ($chance !== null && $chance !== '') {
+            $avg = (int) round($avg * max(0.0, min(1.0, ((float) $chance) / 100.0)));
+        }
+
+        return max(0, min(90, $avg));
+    }
+
+    /**
      * @param list<array<string, mixed>> $history
      * @param list<array<string, mixed>> $fixtures
      * @return array<int, array{games:int,avg_pts:float,cs_rate:float}>
@@ -572,6 +647,11 @@ PROMPT;
         $score = 0.55;
         $avgMins = (float) ($recent['avg_mins'] ?? 0);
         $games = (int) ($recent['games'] ?? 0);
+        $minutesTotal = (int) ($element['minutes'] ?? 0);
+        $price = ((int) ($element['now_cost'] ?? 0)) / 10.0;
+        $epNext = (float) ($element['ep_next'] ?? 0);
+        $pos = (int) ($element['element_type'] ?? 0);
+
         if ($games >= 3) {
             if ($avgMins >= 80) {
                 $score = 0.95;
@@ -587,16 +667,13 @@ PROMPT;
         } else {
             // Early season: lean on starts_per_90, price/EP, and recent full appearances.
             $startsPer90 = (float) ($element['starts_per_90'] ?? 0);
-            $minutes = (int) ($element['minutes'] ?? 0);
-            $price = ((int) ($element['now_cost'] ?? 0)) / 10.0;
-            $epNext = (float) ($element['ep_next'] ?? 0);
             if ($games >= 1 && $avgMins >= 85) {
                 $score = 0.9;
-            } elseif ($minutes >= 90 && $startsPer90 >= 0.9) {
+            } elseif ($minutesTotal >= 90 && $startsPer90 >= 0.9) {
                 $score = 0.85;
-            } elseif ($minutes >= 60) {
+            } elseif ($minutesTotal >= 60) {
                 $score = 0.68;
-            } elseif ($minutes > 0) {
+            } elseif ($minutesTotal > 0) {
                 // Short cameo: premiums still projected as likely involved (hub-style).
                 if ($price >= 7.0 || $epNext >= 4.0) {
                     $score = 0.74;
@@ -612,6 +689,21 @@ PROMPT;
                 $score = 0.64;
             } else {
                 $score = 0.35;
+            }
+        }
+
+        // Unused backup GK / out-of-squad: Hub shows 0.0 across the horizon.
+        if ($pos === 1 && $minutesTotal === 0 && $epNext < 1.5 && $price <= 4.5) {
+            $score = min($score, 0.08);
+        }
+
+        // Rotational DEF who has already featured: Hub still projects starter-like
+        // minutes (Konsa-class), not a 1.8 ghost.
+        if ($pos === 2 && $status === 'a' && $minutesTotal >= 45 && $games >= 1 && $avgMins < 55) {
+            if ($price >= 4.0 && $price <= 5.5) {
+                $score = max($score, 0.78);
+            } elseif ($price > 5.5) {
+                $score = max($score, 0.82);
             }
         }
 
@@ -641,6 +733,7 @@ PROMPT;
         }
         $eventIds = array_slice(array_values(array_unique($eventIds)), 0, 8);
         $teamForm = self::teamFormFromFixtures($fixtures);
+        $scoring = self::teamScoringRatesFromFixtures($fixtures);
 
         /** @var array<int, array<int, int>> $counts */
         $counts = [];
@@ -663,6 +756,8 @@ PROMPT;
             $kickoff = (string) ($fx['kickoff_time'] ?? '');
             $homeTeam = $teamsById[$home] ?? [];
             $awayTeam = $teamsById[$away] ?? [];
+            $homeRates = $scoring[$home] ?? ['gf' => 1.2, 'ga' => 1.2];
+            $awayRates = $scoring[$away] ?? ['gf' => 1.2, 'ga' => 1.2];
 
             $rawByTeam[$home][] = [
                 'event' => $event,
@@ -675,6 +770,10 @@ PROMPT;
                 'opp_def' => self::teamStrength($awayTeam, 'defence', false),
                 'team_att' => self::teamStrength($homeTeam, 'attack', true),
                 'team_def' => self::teamStrength($homeTeam, 'defence', true),
+                'opp_gf' => $awayRates['gf'],
+                'opp_ga' => $awayRates['ga'],
+                'team_gf' => $homeRates['gf'],
+                'team_ga' => $homeRates['ga'],
                 'opp_form' => $teamForm[$away] ?? 1.0,
                 'team_form' => $teamForm[$home] ?? 1.0,
             ];
@@ -689,6 +788,10 @@ PROMPT;
                 'opp_def' => self::teamStrength($homeTeam, 'defence', true),
                 'team_att' => self::teamStrength($awayTeam, 'attack', false),
                 'team_def' => self::teamStrength($awayTeam, 'defence', false),
+                'opp_gf' => $homeRates['gf'],
+                'opp_ga' => $homeRates['ga'],
+                'team_gf' => $awayRates['gf'],
+                'team_ga' => $awayRates['ga'],
                 'opp_form' => $teamForm[$home] ?? 1.0,
                 'team_form' => $teamForm[$away] ?? 1.0,
             ];
@@ -752,15 +855,15 @@ PROMPT;
                 $first['blank'] = false;
                 $first['leg_rows'] = $legs;
                 $slots[] = $first;
-                if (count($slots) >= 5) {
+                if (count($slots) >= PlayerProjectionEngine::HORIZON) {
                     break;
                 }
             }
 
             // If event list was short, fall back to raw fixtures.
-            if (count($slots) < 5) {
+            if (count($slots) < PlayerProjectionEngine::HORIZON) {
                 foreach ($rows as $row) {
-                    if (count($slots) >= 5) {
+                    if (count($slots) >= PlayerProjectionEngine::HORIZON) {
                         break;
                     }
                     $already = false;
@@ -788,6 +891,50 @@ PROMPT;
      * @param list<array<string, mixed>> $fixtures
      * @return array<int, float>
      */
+    /**
+     * Season goals for / against per game from finished fixtures.
+     * Hub-style CS and attack EV need this when FPL zeroes attack/defence strengths.
+     *
+     * @param list<array<string, mixed>> $fixtures
+     * @return array<int, array{gf:float,ga:float}>
+     */
+    private static function teamScoringRatesFromFixtures(array $fixtures): array
+    {
+        /** @var array<int, list<int>> $gf */
+        $gf = [];
+        /** @var array<int, list<int>> $ga */
+        $ga = [];
+        foreach ($fixtures as $fx) {
+            if (empty($fx['finished'])) {
+                continue;
+            }
+            $home = (int) ($fx['team_h'] ?? 0);
+            $away = (int) ($fx['team_a'] ?? 0);
+            if ($home < 1 || $away < 1) {
+                continue;
+            }
+            $hs = (int) ($fx['team_h_score'] ?? 0);
+            $as = (int) ($fx['team_a_score'] ?? 0);
+            $gf[$home][] = $hs;
+            $ga[$home][] = $as;
+            $gf[$away][] = $as;
+            $ga[$away][] = $hs;
+        }
+
+        $out = [];
+        $teamIds = array_unique(array_merge(array_keys($gf), array_keys($ga)));
+        foreach ($teamIds as $teamId) {
+            $gfs = $gf[$teamId] ?? [];
+            $gas = $ga[$teamId] ?? [];
+            $n = max(1, count($gfs));
+            $out[(int) $teamId] = [
+                'gf' => round(array_sum($gfs) / $n, 3),
+                'ga' => round(array_sum($gas) / $n, 3),
+            ];
+        }
+        return $out;
+    }
+
     private static function teamFormFromFixtures(array $fixtures): array
     {
         /** @var array<int, list<float>> $points */

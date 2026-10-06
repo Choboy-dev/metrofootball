@@ -29,14 +29,16 @@ final class PickTeamService
     /**
      * @return array{pick: array<string, mixed>, cache: string}
      */
-    public static function buildForEntry(int $entryId): array
+    public static function buildForEntry(int $entryId, ?int $gameweekId = null): array
     {
-        $key = 'pick-entry-v6-' . $entryId;
+        $gwKey = $gameweekId !== null && $gameweekId > 0 ? (string) $gameweekId : 'auto';
+        $key = 'pick-entry-v7-' . $entryId . '-gw-' . $gwKey;
         $hit = FplCache::inspect($key, self::FRESH_SECONDS, self::STALE_SECONDS);
         if ($hit !== null) {
             $cached = $hit['value'];
             $liveStale = is_array($cached)
                 && !empty($cached['is_live_locked'])
+                && ($cached['view_mode'] ?? '') !== 'history'
                 && $hit['age'] >= self::LIVE_FRESH_SECONDS;
             if (!$liveStale) {
                 return [
@@ -47,7 +49,7 @@ final class PickTeamService
         }
 
         try {
-            $pick = self::buildFresh($entryId);
+            $pick = self::buildFresh($entryId, $gameweekId);
             FplCache::put($key, $pick);
 
             return [
@@ -68,7 +70,7 @@ final class PickTeamService
 
     public static function refreshEntry(int $entryId): void
     {
-        FplCache::put('pick-entry-v6-' . $entryId, self::buildFresh($entryId));
+        FplCache::put('pick-entry-v7-' . $entryId . '-gw-auto', self::buildFresh($entryId, null));
     }
 
     /**
@@ -148,27 +150,18 @@ final class PickTeamService
     }
 
     /** @return array<string, mixed> */
-    public static function buildFresh(int $entryId): array
+    public static function buildFresh(int $entryId, ?int $requestedGameweekId = null): array
     {
         $bootstrap = FplClient::fetchBootstrapPick();
         $elementsById = $bootstrap['elements'];
         $teamsById = $bootstrap['teams'];
         $events = $bootstrap['events'];
 
-        $previous = null;
-        foreach ($events as $event) {
-            if (!empty($event['is_previous'])) {
-                $previous = $event;
-            }
-        }
-
         $context = FplEntryPicksService::resolveContext($events);
         $current = $context['current'];
-        $next = $context['next'];
         $planningEvent = $context['planning_event'];
-        $editable = $context['editable'];
+        $editablePlanning = $context['editable'];
         $isLiveLocked = $context['is_live_locked'];
-        $lockedReason = $isLiveLocked ? 'live_gameweek' : null;
 
         $urls = [
             'entry' => self::BASE . '/entry/' . $entryId . '/',
@@ -180,8 +173,35 @@ final class PickTeamService
             throw new \InvalidArgumentException('We could not find an FPL team with that ID.');
         }
 
+        $historyCurrent = is_array($bundle['history']['current'] ?? null)
+            ? $bundle['history']['current']
+            : [];
+
         $planningEventId = (int) ($planningEvent['id'] ?? 0);
-        $resolved = FplEntryPicksService::resolveForGameweek($entryId, $events, $planningEventId);
+        $gameweekOptions = self::buildGameweekOptions($events, $historyCurrent, $planningEventId);
+        $selectedGw = self::resolveSelectedGameweek($requestedGameweekId, $gameweekOptions, $planningEventId);
+
+        $selectedEvent = null;
+        foreach ($events as $event) {
+            if (!is_array($event)) {
+                continue;
+            }
+            if ((int) ($event['id'] ?? 0) === $selectedGw) {
+                $selectedEvent = $event;
+                break;
+            }
+        }
+        if ($selectedEvent === null) {
+            $selectedEvent = $planningEvent;
+            $selectedGw = $planningEventId;
+        }
+
+        $isPlanningView = $selectedGw === $planningEventId;
+        $viewMode = !$isPlanningView
+            ? 'history'
+            : ($isLiveLocked ? 'live' : 'plan');
+
+        $resolved = FplEntryPicksService::resolveForGameweek($entryId, $events, $selectedGw);
         $picksPayload = $resolved['payload'];
         $picksEventId = $resolved['event_id'];
         $picksFallback = $resolved['fallback'];
@@ -193,35 +213,81 @@ final class PickTeamService
         }
 
         $fixtures = FplClient::fetchFixtures();
-        $fixturesByTeam = self::fixturesByTeam(
-            $fixtures,
-            (int) $planningEvent['id'],
-            $teamsById
-        );
+        $fixturesByTeam = $viewMode === 'plan'
+            ? self::fixturesByTeam($fixtures, $planningEventId, $teamsById)
+            : self::fixturesForEventByTeam($fixtures, $selectedGw, $teamsById);
 
         self::$lastFetchContext = [
             'bootstrap' => $bootstrap,
             'fixtures' => $fixtures,
         ];
 
+        $liveByElement = [];
+        if ($viewMode !== 'plan') {
+            $finished = !empty($selectedEvent['finished']);
+            try {
+                $live = FplClient::fetchEventLive($selectedGw, $finished);
+                foreach (($live['elements'] ?? []) as $row) {
+                    if (is_array($row)) {
+                        $liveByElement[(int) ($row['id'] ?? 0)] = $row;
+                    }
+                }
+            } catch (\Throwable) {
+                $liveByElement = [];
+            }
+        }
+
         $squad = [];
+        $xiPointsSum = 0;
         foreach ($picksPayload['picks'] as $pick) {
-            $elementId = (int) $pick['element'];
+            $elementId = (int) ($pick['element'] ?? 0);
             $element = $elementsById[$elementId] ?? null;
             if (!$element) {
                 continue;
             }
-            $squad[] = self::mapSquadPlayer($pick, $element, $teamsById, $fixturesByTeam);
+            $mapped = self::mapSquadPlayer($pick, $element, $teamsById, $fixturesByTeam);
+            if ($viewMode !== 'plan') {
+                $liveStats = $liveByElement[$elementId]['stats'] ?? [];
+                $basePoints = $liveByElement === []
+                    ? (int) ($element['event_points'] ?? 0)
+                    : (isset($liveStats['total_points'])
+                        ? (int) $liveStats['total_points']
+                        : (int) ($element['event_points'] ?? 0));
+                $multiplier = (int) ($mapped['multiplier'] ?? 1);
+                $mapped['points'] = $basePoints;
+                $mapped['team_points'] = $basePoints * max(0, $multiplier);
+                if ((int) ($mapped['position'] ?? 0) <= 11) {
+                    $xiPointsSum += (int) $mapped['team_points'];
+                }
+            }
+            $squad[] = $mapped;
         }
 
         usort($squad, static fn ($a, $b) => $a['position'] <=> $b['position']);
 
+        $entryHistory = is_array($picksPayload['entry_history'] ?? null)
+            ? $picksPayload['entry_history']
+            : [];
+
         $bankTenths = (int) ($entry['last_deadline_bank'] ?? 0);
-        if (isset($picksPayload['entry_history']['bank'])) {
-            $bankTenths = (int) $picksPayload['entry_history']['bank'];
+        if (isset($entryHistory['bank'])) {
+            $bankTenths = (int) $entryHistory['bank'];
         }
 
-        $freeTransfers = self::estimateFreeTransfers($bundle['history'] ?? [], $planningEvent);
+        $freeTransfers = $viewMode === 'plan'
+            ? self::estimateFreeTransfers($bundle['history'] ?? [], $planningEvent)
+            : max(0, (int) ($entryHistory['event_transfers'] ?? 0));
+
+        $gwPoints = null;
+        if ($viewMode !== 'plan') {
+            $gwPoints = isset($entryHistory['points']) ? (int) $entryHistory['points'] : $xiPointsSum;
+            foreach ($historyCurrent as $row) {
+                if (is_array($row) && (int) ($row['event'] ?? 0) === $selectedGw) {
+                    $gwPoints = (int) ($row['points'] ?? $gwPoints);
+                    break;
+                }
+            }
+        }
 
         $catalogue = [];
         foreach ($elementsById as $element) {
@@ -230,15 +296,29 @@ final class PickTeamService
 
         usort($catalogue, static fn ($a, $b) => $b['now_cost'] <=> $a['now_cost']);
 
-        $eventMeta = self::formatEventMeta($planningEvent);
+        $eventMeta = self::formatEventMeta($selectedEvent);
         $currentEvent = $current ? self::formatEventMeta($current) : null;
+        $editable = $viewMode === 'plan' && $editablePlanning && !$isLiveLocked;
+        $lockedReason = null;
+        if ($isLiveLocked && $viewMode === 'live') {
+            $lockedReason = 'live_gameweek';
+        } elseif ($viewMode === 'history') {
+            $lockedReason = 'past_gameweek';
+        } elseif (!$editable && $viewMode === 'plan') {
+            $lockedReason = 'live_gameweek';
+        }
 
         return [
             'entry' => FplClient::summariseEntry($entry),
             'event' => $eventMeta,
             'current_event' => $currentEvent,
+            'gameweek' => [
+                'selected_id' => $selectedGw,
+                'options' => $gameweekOptions,
+            ],
+            'view_mode' => $viewMode,
             'editable' => $editable,
-            'is_live_locked' => $isLiveLocked,
+            'is_live_locked' => $isLiveLocked && $viewMode !== 'history',
             'locked_reason' => $lockedReason,
             'picks_event' => [
                 'id' => $picksEventId,
@@ -250,7 +330,7 @@ final class PickTeamService
             'free_transfers' => $freeTransfers,
             'transfer_cost' => 4,
             'active_chip' => $picksPayload['active_chip'] ?? null,
-            // Strength + predicted points come from OpenAI (TeamAiService), never heuristics.
+            'gw_points' => $gwPoints,
             'strength' => null,
             'predicted_points' => null,
             'squad' => $squad,
@@ -265,6 +345,132 @@ final class PickTeamService
             ],
             'updated_at' => gmdate('c'),
         ];
+    }
+
+    /**
+     * @param list<array<string, mixed>> $events
+     * @param list<array<string, mixed>> $historyCurrent
+     * @return list<array<string, mixed>>
+     */
+    private static function buildGameweekOptions(
+        array $events,
+        array $historyCurrent,
+        int $planningEventId
+    ): array {
+        $pointsByEvent = [];
+        foreach ($historyCurrent as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+            $eventId = (int) ($row['event'] ?? 0);
+            if ($eventId > 0) {
+                $pointsByEvent[$eventId] = (int) ($row['points'] ?? 0);
+            }
+        }
+
+        $options = [];
+        foreach ($events as $event) {
+            if (!is_array($event)) {
+                continue;
+            }
+            $id = (int) ($event['id'] ?? 0);
+            if ($id < 1) {
+                continue;
+            }
+
+            $inHistory = array_key_exists($id, $pointsByEvent);
+            $isPlanning = $id === $planningEventId;
+            $isCurrent = !empty($event['is_current']);
+            if (!$inHistory && !$isPlanning && !$isCurrent) {
+                continue;
+            }
+
+            $options[] = [
+                'id' => $id,
+                'name' => (string) ($event['name'] ?? ('GW' . $id)),
+                'finished' => !empty($event['finished']),
+                'is_current' => $isCurrent,
+                'is_planning' => $isPlanning,
+                'points' => $pointsByEvent[$id] ?? null,
+            ];
+        }
+
+        usort($options, static fn (array $a, array $b): int => ((int) $a['id']) <=> ((int) $b['id']));
+
+        return $options;
+    }
+
+    /**
+     * @param list<array<string, mixed>> $options
+     */
+    private static function resolveSelectedGameweek(
+        ?int $requestedGameweekId,
+        array $options,
+        int $planningEventId
+    ): int {
+        $ids = [];
+        foreach ($options as $option) {
+            $ids[(int) ($option['id'] ?? 0)] = true;
+        }
+
+        if ($requestedGameweekId !== null && $requestedGameweekId > 0 && isset($ids[$requestedGameweekId])) {
+            return $requestedGameweekId;
+        }
+
+        if (isset($ids[$planningEventId])) {
+            return $planningEventId;
+        }
+
+        if ($options !== []) {
+            return (int) ($options[array_key_last($options)]['id'] ?? $planningEventId);
+        }
+
+        return max(1, $planningEventId);
+    }
+
+    /**
+     * Fixtures for one finished or live gameweek (for historical pitch labels).
+     *
+     * @param list<array<string, mixed>> $fixtures
+     * @param array<int, array<string, mixed>> $teamsById
+     * @return array<int, list<array<string, mixed>>>
+     */
+    private static function fixturesForEventByTeam(array $fixtures, int $eventId, array $teamsById): array
+    {
+        $byTeam = [];
+        foreach ($fixtures as $fx) {
+            if ((int) ($fx['event'] ?? 0) !== $eventId) {
+                continue;
+            }
+
+            $home = (int) ($fx['team_h'] ?? 0);
+            $away = (int) ($fx['team_a'] ?? 0);
+            if ($home < 1 || $away < 1) {
+                continue;
+            }
+
+            $homeShort = (string) ($teamsById[$home]['short_name'] ?? '');
+            $awayShort = (string) ($teamsById[$away]['short_name'] ?? '');
+
+            $byTeam[$home][] = [
+                'event' => $eventId,
+                'opponent' => $awayShort,
+                'opponent_id' => $away,
+                'was_home' => true,
+                'fdr' => (int) ($fx['team_h_difficulty'] ?? 3),
+                'label' => $awayShort . ' (H)',
+            ];
+            $byTeam[$away][] = [
+                'event' => $eventId,
+                'opponent' => $homeShort,
+                'opponent_id' => $home,
+                'was_home' => false,
+                'fdr' => (int) ($fx['team_a_difficulty'] ?? 3),
+                'label' => $homeShort . ' (A)',
+            ];
+        }
+
+        return $byTeam;
     }
 
     public static function estimateFreeTransfersPublic(array $history, array $planningEvent): int
@@ -419,7 +625,7 @@ final class PickTeamService
         $photo = (string) ($element['photo'] ?? '');
         $photoId = $photo !== '' ? preg_replace('/\.jpg$/i', '', $photo) : '';
         $headshot = $photoId !== ''
-            ? 'https://resources.premierleague.com/premierleague/photos/players/250x250/p'
+            ? 'https://resources.premierleague.com/premierleague/photos/players/110x140/p'
                 . $photoId
                 . '.png'
             : null;

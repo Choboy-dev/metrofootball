@@ -168,6 +168,28 @@ final class InjuryNewsService
             );
         }
 
+        return self::publishResearchPack($research, true);
+    }
+
+    /**
+     * @param array<string, mixed> $research
+     * @return array<string, mixed>
+     */
+    private static function publishResearchPack(array $research, bool $forceWrite = false): array
+    {
+        $gw = (int) ($research['gameweek'] ?? self::targetGameweekId());
+        if (!$forceWrite) {
+            $existingPost = FplCache::get(self::CACHE_PREFIX . $gw, self::STORE_SECONDS);
+            if (is_array($existingPost) && ($existingPost['model'] ?? '') === self::MODEL) {
+                FplCache::put(self::LIVE_KEY, $existingPost);
+                return $existingPost;
+            }
+        }
+
+        if (!OpenAiClient::configured()) {
+            throw new \RuntimeException('OpenAI is not configured. Add OPENAI_API_KEY in config/.env');
+        }
+
         $target = [
             'id' => $gw,
             'name' => $research['gameweek_name'] ?? ('Gameweek ' . $gw),
@@ -208,7 +230,8 @@ final class InjuryNewsService
         }
 
         $research = self::research($forceResearch);
-        $post = self::publishFromResearch(true);
+        // Write from the in-memory pack so a failed disk write cannot orphan research.
+        $post = self::publishResearchPack($research, true);
         $post['cost_controls']['tavily_calls'] = (int) ($research['tavily_calls'] ?? 0);
         $post['cost_controls']['used_stored_research'] = !$forceResearch && isset($research['researched_at']);
         FplCache::put(self::CACHE_PREFIX . $gw, $post);
@@ -413,7 +436,7 @@ final class InjuryNewsService
                 : 'https://fantasy.premierleague.com/dist/img/shirts/standard/shirt_' . $teamCode . '-110.webp';
         }
         $photoUrl = $photoCode !== ''
-            ? 'https://resources.premierleague.com/premierleague/photos/players/250x250/p' . $photoCode . '.png'
+            ? 'https://resources.premierleague.com/premierleague/photos/players/110x140/p' . $photoCode . '.png'
             : null;
 
         return [
@@ -1150,7 +1173,7 @@ TXT;
                 : 'https://fantasy.premierleague.com/dist/img/shirts/standard/shirt_' . $teamCode . '-110.webp';
         }
         $photoUrl = $photoCode !== ''
-            ? 'https://resources.premierleague.com/premierleague/photos/players/250x250/p' . $photoCode . '.png'
+            ? 'https://resources.premierleague.com/premierleague/photos/players/110x140/p' . $photoCode . '.png'
             : null;
 
         return [

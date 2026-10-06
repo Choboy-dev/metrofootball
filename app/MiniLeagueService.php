@@ -61,16 +61,18 @@ final class MiniLeagueService
 
         $leader = $standings[0] ?? null;
         $stats = self::buildStats($you, $standings, $leader);
-        $rivals = self::buildRivals($you, $standings);
-        $movers = self::buildMovers($standings);
+        $leagueSlug = RivalProfileService::slugify((string) ($tracked['league_name'] ?: ($leagueMeta['name'] ?? '')));
+        $rivals = self::buildRivals($you, $standings, $leagueSlug);
+        $movers = self::buildMovers($standings, $leagueSlug);
         $activity = self::buildActivity($rivals, $entryId, $bootstrap);
-        $table = self::buildStandingsView($standings, $entryId);
+        $table = self::buildStandingsView($standings, $entryId, $leagueSlug);
         $brief = self::buildBrief($you, $stats, $rivals, $movers, $currentEvent, $tracked);
 
         return [
             'league' => [
                 'id' => $leagueId,
                 'name' => (string) ($tracked['league_name'] ?: ($leagueMeta['name'] ?? ('League ' . $leagueId))),
+                'slug' => $leagueSlug,
                 'created' => (string) ($leagueMeta['created'] ?? ''),
                 'rank_count' => count($standings),
                 'admin_entry' => (int) ($leagueMeta['admin_entry'] ?? 0),
@@ -78,7 +80,7 @@ final class MiniLeagueService
             'tracked' => $tracked,
             'event' => $currentEvent,
             'entry_id' => $entryId,
-            'you' => self::formatStandingRow($you, true),
+            'you' => self::formatStandingRow($you, true, $leagueSlug),
             'stats' => $stats,
             'brief' => $brief,
             'standings' => $table,
@@ -183,6 +185,7 @@ final class MiniLeagueService
             'gap_to_leader' => $gapToLeader,
             'gap_to_above' => $gapAbove,
             'gap_to_below' => $gapBelow,
+            'leader_name' => (string) ($leader['entry_name'] ?? ''),
             'rivals_near' => self::countRivalsNear($you, $standings),
         ];
     }
@@ -214,7 +217,7 @@ final class MiniLeagueService
      * @param list<array<string, mixed>> $standings
      * @return list<array<string, mixed>>
      */
-    private static function buildRivals(array $you, array $standings): array
+    private static function buildRivals(array $you, array $standings, string $leagueSlug = ''): array
     {
         $yourTotal = (int) ($you['total'] ?? 0);
         $yourRank = (int) ($you['rank'] ?? 0);
@@ -230,7 +233,7 @@ final class MiniLeagueService
                 continue;
             }
 
-            $formatted = self::formatStandingRow($row, false);
+            $formatted = self::formatStandingRow($row, false, $leagueSlug);
             $formatted['points_gap'] = (int) ($row['total'] ?? 0) - $yourTotal;
             $formatted['rank_gap'] = (int) ($row['rank'] ?? 0) - $yourRank;
             $rivals[] = $formatted;
@@ -247,7 +250,7 @@ final class MiniLeagueService
      * @param list<array<string, mixed>> $standings
      * @return array{up: list<array<string, mixed>>, down: list<array<string, mixed>>}
      */
-    private static function buildMovers(array $standings): array
+    private static function buildMovers(array $standings, string $leagueSlug = ''): array
     {
         $rows = [];
 
@@ -258,7 +261,7 @@ final class MiniLeagueService
                 continue;
             }
 
-            $formatted = self::formatStandingRow($row, false);
+            $formatted = self::formatStandingRow($row, false, $leagueSlug);
             $formatted['rank_change'] = $lastRank - $rank;
             $rows[] = $formatted;
         }
@@ -343,32 +346,15 @@ final class MiniLeagueService
      * @param list<array<string, mixed>> $standings
      * @return list<array<string, mixed>>
      */
-    private static function buildStandingsView(array $standings, int $entryId): array
+    private static function buildStandingsView(array $standings, int $entryId, string $leagueSlug = ''): array
     {
-        $yourIndex = null;
-        foreach ($standings as $index => $row) {
-            if ((int) ($row['entry'] ?? 0) === $entryId) {
-                $yourIndex = $index;
-                break;
-            }
-        }
-
-        if ($yourIndex === null) {
-            return array_map(
-                static fn(array $row): array => self::formatStandingRow($row, false),
-                array_slice($standings, 0, 12)
-            );
-        }
-
-        $start = max(0, $yourIndex - 4);
-        $slice = array_slice($standings, $start, 10);
-
         return array_map(
             static fn(array $row): array => self::formatStandingRow(
                 $row,
-                (int) ($row['entry'] ?? 0) === $entryId
+                (int) ($row['entry'] ?? 0) === $entryId,
+                $leagueSlug
             ),
-            $slice
+            $standings
         );
     }
 
@@ -462,14 +448,15 @@ final class MiniLeagueService
      * @param array<string, mixed> $row
      * @return array<string, mixed>
      */
-    private static function formatStandingRow(array $row, bool $isYou): array
+    private static function formatStandingRow(array $row, bool $isYou, string $leagueSlug = ''): array
     {
         $rank = (int) ($row['rank'] ?? 0);
         $lastRank = (int) ($row['last_rank'] ?? $rank);
+        $entryName = (string) ($row['entry_name'] ?? '');
 
         return [
             'entry_id' => (int) ($row['entry'] ?? 0),
-            'entry_name' => (string) ($row['entry_name'] ?? ''),
+            'entry_name' => $entryName,
             'player_name' => (string) ($row['player_name'] ?? ''),
             'rank' => $rank,
             'last_rank' => $lastRank,
@@ -477,6 +464,9 @@ final class MiniLeagueService
             'total' => (int) ($row['total'] ?? 0),
             'event_total' => (int) ($row['event_total'] ?? 0),
             'is_you' => $isYou,
+            'profile_path' => $leagueSlug !== '' && $entryName !== ''
+                ? RivalProfileService::profilePath($leagueSlug, $entryName)
+                : null,
         ];
     }
 }

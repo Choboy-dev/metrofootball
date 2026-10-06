@@ -47,6 +47,7 @@ final class AiSeasonService
         }
 
         self::syncToGameweek($state, $bootstrap, $planningId);
+        self::refreshActualGameweekScores($state, $bootstrap, $planningId);
 
         $available = self::availableGameweeks($state, $planningId);
         $view = $viewGw ?? $planningId;
@@ -185,9 +186,9 @@ final class AiSeasonService
                     continue;
                 }
                 if ($gw === self::START_GW && empty($team['gameweeks'])) {
-                    self::processGameweek($team, $gw, $bootstrap, true);
+                    self::processGameweek($team, $gw, $bootstrap, true, $targetGw);
                 } elseif ($gw > (int) ($team['synced_through'] ?? 0)) {
-                    self::processGameweek($team, $gw, $bootstrap, false);
+                    self::processGameweek($team, $gw, $bootstrap, false, $targetGw);
                 }
                 $team['synced_through'] = $gw;
             }
@@ -199,7 +200,7 @@ final class AiSeasonService
      * @param array<string, mixed> $team
      * @param array<string, mixed> $bootstrap
      */
-    private static function processGameweek(array &$team, int $gw, array $bootstrap, bool $isFirst): void
+    private static function processGameweek(array &$team, int $gw, array $bootstrap, bool $isFirst, int $planningGw): void
     {
         $philosophyId = (string) ($team['id'] ?? 'value');
         $purchasePrices = is_array($team['purchase_prices'] ?? null) ? $team['purchase_prices'] : [];
@@ -222,7 +223,7 @@ final class AiSeasonService
         $chip = self::pickChip($team, $ordered, $scores, $philosophyId, $gw);
         self::recordChipPeaks($team, $ordered);
         $ordered = self::applyChipLineup($ordered, $chip);
-        $gwPoints = self::scoreGameweek($ordered, $chip, $gw, $bootstrap);
+        $gwPoints = self::scoreGameweek($ordered, $chip, $gw, $bootstrap, $planningGw);
         $hitPoints = array_sum(array_column($transfers, 'hit_points'));
         $gwPoints['points'] = max(0, (float) $gwPoints['points'] - $hitPoints);
 
@@ -350,7 +351,27 @@ final class AiSeasonService
             'proj_delta' => (float) $best['proj_delta'],
             'bank_after' => (float) $best['bank_after'],
             'price_change' => (float) $best['price_change'],
+            'reason' => self::formatTransferReason($best),
+            'uses_free_transfer' => (int) ($best['hit_points'] ?? 0) === 0,
         ]];
+    }
+
+    /**
+     * @param array<string, mixed> $transfer
+     */
+    private static function formatTransferReason(array $transfer): string
+    {
+        $reason = trim((string) ($transfer['reason'] ?? ''));
+        if ($reason !== '') {
+            return $reason;
+        }
+
+        $delta = (float) ($transfer['proj_delta'] ?? 0);
+        if ($delta > 0) {
+            return sprintf('Expected +%.1f more projected points this gameweek', $delta);
+        }
+
+        return 'Upgrade within budget and squad rules';
     }
 
     /**
@@ -547,9 +568,9 @@ final class AiSeasonService
      * @param list<array<string, mixed>> $squad
      * @return array{points: float, predicted: float, source: string}
      */
-    private static function scoreGameweek(array $squad, ?string $chip, int $gw, array $bootstrap): array
+    private static function scoreGameweek(array $squad, ?string $chip, int $gw, array $bootstrap, int $planningGw): array
     {
-        $liveMap = self::livePointsMap($gw, $bootstrap);
+        $liveMap = self::actualPointsMap($gw, $bootstrap, $planningGw);
         $hasLive = $liveMap !== [];
         $predicted = 0.0;
         $actual = 0.0;
@@ -594,18 +615,30 @@ final class AiSeasonService
     }
 
     /**
+     * Use official FPL live points once a gameweek is no longer the upcoming planning GW.
+     */
+    private static function gameweekUsesActualPoints(int $gw, array $bootstrap, int $planningGw): bool
+    {
+        foreach ($bootstrap['events'] as $event) {
+            if (!is_array($event) || (int) ($event['id'] ?? 0) !== $gw) {
+                continue;
+            }
+            if (!empty($event['finished']) || !empty($event['data_checked'])) {
+                return true;
+            }
+
+            return $gw < $planningGw;
+        }
+
+        return $gw < $planningGw;
+    }
+
+    /**
      * @return array<int, float>
      */
-    private static function livePointsMap(int $gw, array $bootstrap): array
+    private static function actualPointsMap(int $gw, array $bootstrap, int $planningGw): array
     {
-        $finished = false;
-        foreach ($bootstrap['events'] as $event) {
-            if ((int) ($event['id'] ?? 0) === $gw && !empty($event['finished'])) {
-                $finished = true;
-                break;
-            }
-        }
-        if (!$finished) {
+        if (!self::gameweekUsesActualPoints($gw, $bootstrap, $planningGw)) {
             return [];
         }
 
@@ -625,6 +658,52 @@ final class AiSeasonService
         } catch (\Throwable) {
             return [];
         }
+    }
+
+    /**
+     * Backfill stored gameweek rows with official FPL points after the deadline passes.
+     *
+     * @param array<string, mixed> $state
+     */
+    private static function refreshActualGameweekScores(array &$state, array $bootstrap, int $planningGw): void
+    {
+        foreach ($state['teams'] as &$team) {
+            $purchasePrices = is_array($team['purchase_prices'] ?? null) ? $team['purchase_prices'] : [];
+            $seasonTotal = 0.0;
+
+            foreach ($team['gameweeks'] as $gwKey => &$snap) {
+                if (!is_array($snap)) {
+                    continue;
+                }
+                $gw = (int) $gwKey;
+                if (!self::gameweekUsesActualPoints($gw, $bootstrap, $planningGw)) {
+                    $seasonTotal += (float) ($snap['gw_points'] ?? 0);
+                    continue;
+                }
+
+                $ids = is_array($snap['player_ids'] ?? null) ? $snap['player_ids'] : [];
+                $squad = self::squadFromIds($ids, $purchasePrices, $bootstrap, $gw);
+                $ordered = AiTeamsService::optimiseXi($squad);
+                $chip = is_string($snap['chip'] ?? null) ? $snap['chip'] : null;
+                $ordered = self::applyChipLineup($ordered, $chip);
+                $scored = self::scoreGameweek($ordered, $chip, $gw, $bootstrap, $planningGw);
+                if (($scored['source'] ?? '') !== 'live') {
+                    $seasonTotal += (float) ($snap['gw_points'] ?? 0);
+                    continue;
+                }
+
+                $hitPoints = (int) ($snap['hit_points'] ?? 0);
+                $snap['gw_points'] = max(0, round($scored['points'] - $hitPoints, 1));
+                $snap['predicted_points'] = round((float) ($scored['predicted'] ?? 0), 1);
+                $snap['points_source'] = 'live';
+                $seasonTotal += (float) $snap['gw_points'];
+            }
+            unset($snap);
+
+            $team['total_points'] = round($seasonTotal, 1);
+            $team['purchase_prices'] = $purchasePrices;
+        }
+        unset($team);
     }
 
     /**
@@ -665,19 +744,22 @@ final class AiSeasonService
             }
         }
 
+        $planningId = (int) ($planning['id'] ?? $viewGw);
         $gameweeks = [];
         foreach ($available as $id) {
             $ev = $eventsById[$id] ?? [];
+            $usesActual = self::gameweekUsesActualPoints($id, $bootstrap, $planningId);
             $gameweeks[] = [
                 'id' => $id,
                 'name' => (string) ($ev['name'] ?? ('Gameweek ' . $id)),
-                'finished' => !empty($ev['finished']),
+                'finished' => $usesActual || !empty($ev['finished']),
+                'uses_actual_points' => $usesActual,
             ];
         }
 
         $teams = [];
         foreach ($state['teams'] as $teamState) {
-            $teams[] = self::buildTeamView($teamState, $bootstrap, $viewGw);
+            $teams[] = self::buildTeamView($teamState, $bootstrap, $viewGw, $planningId);
         }
 
         return [
@@ -699,7 +781,7 @@ final class AiSeasonService
      * @param array<string, mixed> $teamState
      * @return array<string, mixed>
      */
-    private static function buildTeamView(array $teamState, array $bootstrap, int $viewGw): array
+    private static function buildTeamView(array $teamState, array $bootstrap, int $viewGw, int $planningGw): array
     {
         $gwKey = (string) $viewGw;
         $snap = is_array($teamState['gameweeks'][$gwKey] ?? null) ? $teamState['gameweeks'][$gwKey] : null;
@@ -718,11 +800,63 @@ final class AiSeasonService
         $scores = TeamScoreComposer::compose($ordered, self::scoreMapFromSquad($ordered));
         $split = AiTeamsService::splitPitchBench($ordered);
 
+        $usesActual = self::gameweekUsesActualPoints($viewGw, $bootstrap, $planningGw);
+        $isPlanningView = $viewGw === $planningGw && !$usesActual;
+        $displayGwPoints = (float) ($snap['gw_points'] ?? 0);
+        $pointsSource = (string) ($snap['points_source'] ?? 'projected');
+
+        if ($usesActual) {
+            $liveMap = self::actualPointsMap($viewGw, $bootstrap, $planningGw);
+            if ($liveMap !== []) {
+                foreach ($ordered as &$player) {
+                    $player['gw_points'] = (float) ($liveMap[(int) ($player['id'] ?? 0)] ?? 0);
+                }
+                unset($player);
+
+                $scored = self::scoreGameweek($ordered, is_string($chip) ? $chip : null, $viewGw, $bootstrap, $planningGw);
+                $hitPoints = (int) ($snap['hit_points'] ?? 0);
+                $displayGwPoints = max(0, round($scored['points'] - $hitPoints, 1));
+                $pointsSource = (string) ($scored['source'] ?? 'live');
+                $split = AiTeamsService::splitPitchBench($ordered);
+            }
+        }
+
         $totalToGw = 0.0;
         foreach ($teamState['gameweeks'] as $gw => $row) {
             if ((int) $gw <= $viewGw && is_array($row)) {
                 $totalToGw += (float) ($row['gw_points'] ?? 0);
             }
+        }
+
+        $transfers = is_array($snap['transfers'] ?? null) ? $snap['transfers'] : [];
+        foreach ($transfers as $i => $transfer) {
+            if (!is_array($transfer)) {
+                continue;
+            }
+            if (empty($transfer['reason'])) {
+                $transfers[$i]['reason'] = self::formatTransferReason($transfer);
+            }
+            if (!isset($transfer['uses_free_transfer'])) {
+                $transfers[$i]['uses_free_transfer'] = (int) ($transfer['hit_points'] ?? 0) === 0;
+            }
+            $transfers[$i] = self::enrichTransferVisuals($transfers[$i], $bootstrap);
+        }
+
+        $transferPlan = null;
+        if ($isPlanningView) {
+            $ftBefore = (int) ($snap['free_transfers_before'] ?? ($teamState['free_transfers'] ?? 1));
+            $transferPlan = [
+                'gameweek' => $viewGw,
+                'free_transfers_before' => $ftBefore,
+                'transfers' => $transfers,
+                'note' => $transfers === []
+                    ? sprintf(
+                        'No transfers planned. This squad keeps its %d free transfer%s.',
+                        max(1, $ftBefore),
+                        max(1, $ftBefore) === 1 ? '' : 's'
+                    )
+                    : null,
+            ];
         }
 
         return [
@@ -731,14 +865,17 @@ final class AiSeasonService
             'lead' => $teamState['lead'],
             'total_points' => round($totalToGw, 1),
             'season_total' => round((float) ($teamState['total_points'] ?? 0), 1),
-            'gw_points' => (float) ($snap['gw_points'] ?? 0),
+            'gw_points' => $displayGwPoints,
             'predicted_points' => (float) ($snap['predicted_points'] ?? ($scores['predicted_points']['gw'] ?? 0)),
+            'uses_actual_points' => $usesActual && $pointsSource === 'live',
+            'is_planning_view' => $isPlanningView,
+            'transfer_plan' => $transferPlan,
             'strength' => (int) ($snap['strength'] ?? ($scores['strength']['gw'] ?? 0)),
             'team_value' => (float) ($snap['team_value'] ?? 0),
             'bank' => (float) ($snap['bank'] ?? ($teamState['bank'] ?? 0)),
             'free_transfers' => (int) ($snap['free_transfers_after'] ?? ($teamState['free_transfers'] ?? 0)),
             'formation' => (string) ($snap['formation'] ?? ''),
-            'transfers' => is_array($snap['transfers'] ?? null) ? $snap['transfers'] : [],
+            'transfers' => $transfers,
             'hit_points' => (int) ($snap['hit_points'] ?? 0),
             'chip' => $chip !== null ? [
                 'code' => $chip,
@@ -772,6 +909,66 @@ final class AiSeasonService
         }
 
         return $map;
+    }
+
+    /**
+     * @param array<string, mixed> $transfer
+     * @param array<string, mixed> $bootstrap
+     * @return array<string, mixed>
+     */
+    private static function enrichTransferVisuals(array $transfer, array $bootstrap): array
+    {
+        $elementsById = [];
+        foreach ($bootstrap['elements'] ?? [] as $element) {
+            if (!is_array($element)) {
+                continue;
+            }
+            $elementsById[(int) ($element['id'] ?? 0)] = $element;
+        }
+
+        $teamsById = [];
+        foreach ($bootstrap['teams'] ?? [] as $team) {
+            if (!is_array($team)) {
+                continue;
+            }
+            $teamsById[(int) ($team['id'] ?? 0)] = $team;
+        }
+
+        foreach (['out' => 'out_id', 'in' => 'in_id'] as $side => $idKey) {
+            $id = (int) ($transfer[$idKey] ?? 0);
+            if ($id <= 0) {
+                continue;
+            }
+
+            $element = $elementsById[$id] ?? null;
+            if ($element === null) {
+                continue;
+            }
+
+            $teamId = (int) ($element['team'] ?? 0);
+            $team = $teamsById[$teamId] ?? [];
+            $teamCode = (int) ($team['code'] ?? 0);
+            $elementType = (int) ($element['element_type'] ?? 0);
+            $isGk = $elementType === 1;
+            $shirt = $teamCode > 0
+                ? 'https://fantasy.premierleague.com/dist/img/shirts/standard/shirt_'
+                    . $teamCode
+                    . ($isGk ? '_1' : '')
+                    . '-66.webp'
+                : null;
+            $photo = (string) ($element['photo'] ?? '');
+            $photoId = $photo !== '' ? preg_replace('/\.jpg$/i', '', $photo) : '';
+            $headshot = is_string($photoId) && $photoId !== ''
+                ? 'https://resources.premierleague.com/premierleague/photos/players/110x140/p' . $photoId . '.png'
+                : null;
+
+            $transfer[$side . '_photo'] = $headshot;
+            $transfer[$side . '_shirt'] = $shirt;
+            $transfer[$side . '_team_short'] = (string) ($team['short_name'] ?? '');
+            $transfer[$side . '_price'] = ((int) ($element['now_cost'] ?? 0)) / 10;
+        }
+
+        return $transfer;
     }
 
     private static function chipLabel(string $chip): string

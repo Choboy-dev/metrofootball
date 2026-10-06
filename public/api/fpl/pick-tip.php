@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once dirname(__DIR__) . '/bootstrap.php';
 
 use App\AuthService;
+use App\BillingService;
 use App\PlayerAiScout;
 use App\PickTeamService;
 use App\Response;
@@ -27,8 +28,7 @@ if (!$user || empty($user['fpl_team_id'])) {
     Response::json(['ok' => false, 'error' => 'Link your FPL team first.'], 422);
 }
 
-$premium = ($user['plan'] ?? '') === 'premium'
-    && ($user['subscription_status'] ?? '') === 'active';
+$premium = BillingService::isPremiumActive($user);
 if (!$premium) {
     Response::json(['ok' => false, 'error' => 'AI tips are a Premium feature.', 'redirect' => '/join'], 403);
 }

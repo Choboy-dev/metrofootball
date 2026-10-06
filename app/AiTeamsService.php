@@ -1029,7 +1029,7 @@ final class AiTeamsService
         $photo = (string) ($element['photo'] ?? '');
         $photoId = $photo !== '' ? preg_replace('/\.jpg$/i', '', $photo) : '';
         $headshot = is_string($photoId) && $photoId !== ''
-            ? 'https://resources.premierleague.com/premierleague/photos/players/250x250/p' . $photoId . '.png'
+            ? 'https://resources.premierleague.com/premierleague/photos/players/110x140/p' . $photoId . '.png'
             : null;
 
         return [

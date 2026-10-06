@@ -6,6 +6,7 @@ require_once dirname(__DIR__) . '/bootstrap.php';
 
 use App\AiSeasonService;
 use App\AuthService;
+use App\BillingService;
 use App\Response;
 use App\Session;
 
@@ -25,8 +26,7 @@ if (!$user) {
     Response::json(['ok' => false, 'error' => 'Please log in first.', 'redirect' => '/login'], 401);
 }
 
-$premium = ($user['plan'] ?? '') === 'premium'
-    && ($user['subscription_status'] ?? '') === 'active';
+$premium = BillingService::isPremiumActive($user);
 if (!$premium) {
     Response::json([
         'ok' => false,

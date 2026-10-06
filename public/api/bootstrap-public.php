@@ -10,6 +10,7 @@ declare(strict_types=1);
 $root = dirname(__DIR__, 2);
 
 require_once $root . '/app/Env.php';
+require_once $root . '/app/EmailTemplate.php';
 require_once $root . '/app/ResendMailer.php';
 require_once $root . '/app/Response.php';
 require_once $root . '/app/Session.php';

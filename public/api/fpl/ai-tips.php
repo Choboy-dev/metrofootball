@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/bootstrap.php';
 
+use App\AiTipsExtrasService;
 use App\AiTipsService;
 use App\AuthService;
+use App\BillingService;
 use App\PlayerAiScout;
 use App\PickTeamService;
 use App\Response;
@@ -32,8 +34,7 @@ if (empty($user['fpl_team_id'])) {
     Response::json(['ok' => false, 'error' => 'Link your FPL team first.', 'redirect' => '/link-team'], 422);
 }
 
-$premium = ($user['plan'] ?? '') === 'premium'
-    && ($user['subscription_status'] ?? '') === 'active';
+$premium = BillingService::isPremiumActive($user);
 if (!$premium) {
     Response::json([
         'ok' => false,
@@ -70,6 +71,17 @@ try {
         $cached = AiTipsService::refreshCaptainSection($cached, $squad);
         $cached = AiTipsService::refreshDropWatchSection($cached, $squad);
         $cached = AiTipsService::refreshSnipersSection($cached, $squad, $catalogue);
+        $composed = TeamScoreComposer::compose($squad, $scoreMap);
+        $cached = AiTipsExtrasService::refreshAll(
+            $cached,
+            $userId,
+            (int) $user['fpl_team_id'],
+            $pick,
+            $squad,
+            $catalogue,
+            $composed['strength'],
+            $composed['predicted_points']
+        );
         Response::json([
             'ok' => true,
             'tips' => $cached,

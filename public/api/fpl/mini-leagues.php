@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once dirname(__DIR__) . '/bootstrap.php';
 
 use App\AuthService;
+use App\BillingService;
 use App\MiniLeagueService;
 use App\Response;
 use App\Session;
@@ -26,8 +27,7 @@ if (empty($user['fpl_team_id'])) {
     Response::json(['ok' => false, 'error' => 'Link your FPL team first.', 'redirect' => '/link-team'], 422);
 }
 
-$premium = ($user['plan'] ?? '') === 'premium'
-    && ($user['subscription_status'] ?? '') === 'active';
+$premium = BillingService::isPremiumActive($user);
 if (!$premium) {
     Response::json([
         'ok' => false,

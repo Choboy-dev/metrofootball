@@ -95,11 +95,31 @@ final class FplCache
             mkdir($dir, 0775, true);
         }
 
-        file_put_contents(
-            self::path($key),
-            json_encode(['saved_at' => gmdate('c'), 'value' => $value], JSON_UNESCAPED_UNICODE),
-            LOCK_EX
-        );
+        $flags = JSON_UNESCAPED_UNICODE;
+        if (defined('JSON_INVALID_UTF8_SUBSTITUTE')) {
+            $flags |= JSON_INVALID_UTF8_SUBSTITUTE;
+        }
+
+        $encoded = json_encode(['saved_at' => gmdate('c'), 'value' => $value], $flags);
+        if ($encoded === false) {
+            throw new \RuntimeException('Could not encode cache payload for ' . $key . ': ' . json_last_error_msg());
+        }
+
+        $path = self::path($key);
+        $tmp = $path . '.tmp.' . getmypid();
+        $written = file_put_contents($tmp, $encoded, LOCK_EX);
+        if ($written === false) {
+            @unlink($tmp);
+            throw new \RuntimeException('Could not write cache file for ' . $key);
+        }
+
+        if (!@rename($tmp, $path)) {
+            @unlink($tmp);
+            // Fallback for hosts where rename across mounts fails.
+            if (file_put_contents($path, $encoded, LOCK_EX) === false) {
+                throw new \RuntimeException('Could not replace cache file for ' . $key);
+            }
+        }
     }
 
     public static function forget(string $key): void

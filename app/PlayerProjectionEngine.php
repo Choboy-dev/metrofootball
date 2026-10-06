@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App;
 
 /**
- * Position-aware expected FPL points (xp-engine-v12).
+ * Position-aware expected FPL points (xp-engine-v14).
  *
  * Scorecards follow hub-style signal emphasis (free FPL fields only):
  * - GK: CS, GC/xGC, saves (+ pen saves), bonus; club defence separates premiums
@@ -15,11 +15,12 @@ namespace App;
  *
  * Secure projections are then aligned to FDR/opponent bands ×
  * position-specific quality (per-player FPL rates + team strength).
+ * Season GF/GA rates split same-FDR fixtures (Hub SUN vs BHA gap).
  * No player-name overrides.
  */
 final class PlayerProjectionEngine
 {
-    public const MODEL = 'xp-engine-v12';
+    public const MODEL = 'xp-engine-v14';
     public const HORIZON = 6;
 
     /** @var array<int, float> */
@@ -310,8 +311,8 @@ final class PlayerProjectionEngine
 
     /**
      * Position-aware hub-band alignment.
-     * MID/FWD: FDR/opponent bands × role quality (keeps hub anchors).
-     * GK/DEF: CS-led bands blended with raw scorecard.
+     * Fitted to Fantasy Football Hub GW4–6 anchors (screenshot calibration):
+     * DEF CS bands × opp GF/g; MID/FWD attack bands × opp GA/g; GK CS bands.
      *
      * @param array<string, mixed> $player
      * @param array<string, mixed> $fx
@@ -325,12 +326,20 @@ final class PlayerProjectionEngine
         float $xa90,
         array $fx
     ): float {
+        $minutesPlayed = max(0, (int) ($player['minutes'] ?? 0));
+        // Unused backup (Dubravka-class): Hub prints 0.0 for the horizon.
+        if ($playProb < 0.15 || ($pos === 1 && $minutesPlayed === 0 && $playProb < 0.25)) {
+            return 0.0;
+        }
+
         $pastPpg = max(0.0, (float) (($player['past']['ppg'] ?? 0)));
         $price = max(0.0, (float) ($player['price'] ?? 0));
-        // Premiums / proven past still get band align even if early minutes are thin.
-        $alignFloor = ($pastPpg >= 4.0 || $price >= 7.0) ? 0.34 : 0.55;
+        // Premiums / proven past / featured squad DEFs still get band align.
+        $alignFloor = ($pastPpg >= 4.0 || $price >= 7.0 || ($pos === 2 && $minutesPlayed >= 45 && $price >= 4.0))
+            ? 0.34
+            : 0.55;
         if ($playProb < $alignFloor) {
-            return round($raw, 1);
+            return round($raw * max(0.35, $playProb / max(0.55, $alignFloor)), 1);
         }
 
         $leg = self::fixtureLegs($fx)[0] ?? $fx;
@@ -339,60 +348,76 @@ final class PlayerProjectionEngine
         $oppDefN = self::normalizeStrength((float) ($leg['opp_def'] ?? 3));
         $oppAttN = self::normalizeStrength((float) ($leg['opp_att'] ?? 3));
         $teamDefN = self::normalizeStrength((float) ($leg['team_def'] ?? 3));
+        $oppGf = self::seasonRate((float) ($leg['opp_gf'] ?? 0), 1.25);
+        $oppGa = self::seasonRate((float) ($leg['opp_ga'] ?? 0), 1.25);
 
-        // Minutes risk: only discount cameos / unused players, not 60+ min starters.
-        $minutesPlayed = max(0, (int) ($player['minutes'] ?? 0));
         $startScale = 1.0;
         if ($playProb < 0.8 && $minutesPlayed < 50) {
-            $startScale = max(0.72, min(1.0, 0.55 + ($playProb * 0.5)));
+            $startScale = max(0.78, min(1.0, 0.62 + ($playProb * 0.45)));
         }
 
         if ($pos === 1) {
-            // GK bands sit lower than DEF; club defence is the main premium separator.
+            // GK: Hub Martinez 5.2 HUL / 3.6 bre / 4.2 BOU.
             $band = match ($fdr) {
-                1 => $home ? 4.85 : 4.45,
-                2 => $home ? 3.75 : 3.75,
-                3 => $home ? 3.7 : 3.6,
-                4 => $home ? 3.55 : 3.3,
-                5 => $home ? 2.65 : 2.35,
-                default => 3.6,
+                1 => $home ? 5.1 : 4.6,
+                2 => $home ? 4.5 : 4.0,
+                3 => $home ? 3.85 : 3.4,
+                4 => $home ? 3.3 : 2.9,
+                5 => $home ? 2.4 : 2.1,
+                default => 3.45,
             };
-            if ($teamDefN >= 0.5) {
-                $band += ($teamDefN - 0.5) * 3.6;
-            } else {
-                $band += ($teamDefN - 0.5) * 1.7;
+            $band += ($teamDefN - 0.5) * 1.2;
+            $band -= max(0.0, $oppGf - 1.0) * 0.6;
+            $band += (0.5 - $oppAttN) * 0.45;
+            if (!$home) {
+                $band -= 0.22;
             }
-            $band += (0.5 - $oppAttN) * 1.35;
             $q = self::gkQualityIndex($player, $playProb);
-            $hubish = max(2.2, min(7.0, $band * $q));
-            // Prefer calibrated CS band over early save/form noise.
-            return round((($raw * 0.16) + ($hubish * 0.84)) * $startScale, 1);
+            $hubish = max(2.0, min(6.5, $band * $q));
+            return round((($raw * 0.12) + ($hubish * 0.88)) * $startScale, 1);
         }
 
         if ($pos === 2) {
-            // Easy fixtures are not automatic 6s. Club defence + past ppg separate Shaw vs Gabriel.
-            // GW2 Hub anchors: Virgil FDR3 H ≈ 4.9, Gabriel FDR4 A ≈ 4.8.
+            // DEF: Hub Gabriel/Calafiori/Konsa/Vuskovic/O'Shea GW4–6.
+            // Same-FDR split comes from opp GF/g (SUN 1.0 vs BHA 2.67 → ~0.8 pts).
             $band = match ($fdr) {
-                1 => $home ? 4.25 : 3.9,
-                2 => $home ? 3.95 : 3.65,
-                3 => $home ? 3.45 : 3.25,
-                4 => $home ? 3.15 : 2.88,
-                5 => $home ? 2.6 : 2.35,
-                default => 3.4,
+                1 => $home ? 4.8 : 4.4,
+                2 => $home ? 4.15 : 4.15,
+                3 => $home ? 4.1 : 3.85,
+                4 => $home ? 3.55 : 3.25,
+                5 => $home ? 2.55 : 2.25,
+                default => 3.55,
             };
-            if ($teamDefN >= 0.5) {
-                $band += ($teamDefN - 0.5) * ($fdr >= 4 ? 1.8 : 2.4);
-            } else {
-                $band += ($teamDefN - 0.5) * 0.9;
+            $band += ($teamDefN - 0.5) * 0.8;
+            // FDR already prices hard games; keep a milder GF tilt so FDR4 home floors hold.
+            $gfWeight = $fdr >= 4 ? 0.28 : 0.5;
+            $band -= max(0.0, $oppGf - 1.0) * $gfWeight;
+            $band += (0.5 - $oppAttN) * 0.2;
+            if ($home) {
+                $band += 0.1;
             }
-            $band += (0.5 - $oppAttN) * 0.35;
             $q = self::defQualityIndex($player, $xg90, $xa90, $playProb);
-            $pastPpg = max(0.0, (float) (($player['past']['ppg'] ?? 0)));
             $hist = $pastPpg > 0
-                ? max(0.72, min(1.1, 0.52 + ($pastPpg / 8.0)))
-                : 0.88;
-            $hubish = max(2.0, min(6.4, $band * $q * $hist));
-            return round((($raw * 0.12) + ($hubish * 0.88)) * $startScale, 1);
+                ? max(0.78, min(1.08, 0.58 + ($pastPpg / 9.5)))
+                : 0.92;
+            // New elite-club CBs (Konsa-class) are not crushed by a thin past sample.
+            if ($teamDefN >= 0.6 && $price <= 5.0 && $pastPpg < 3.5) {
+                $hist = max($hist, 1.0);
+            }
+            // Weak past on a poor defence still gets a Hub-like 3.4–3.9 floor when starting.
+            $hubish = max(2.2, min(6.2, $band * $q * $hist));
+            // Featured squad DEFs at strong clubs sit closer to Hub CS share than raw q implies.
+            if ($playProb >= 0.75 && $teamDefN >= 0.6 && $price <= 5.0 && $q >= 0.78 && $q <= 1.0) {
+                $hubish = max($hubish, ($band * 0.99 * $hist));
+            }
+            if ($playProb >= 0.9 && $hubish < 3.5 && $fdr <= 3) {
+                $hubish = 3.5 + max(0.0, (3 - $fdr) * 0.25) + ($home ? 0.25 : 0.0);
+                $hubish = min(4.0, $hubish);
+            } elseif ($playProb >= 0.75 && $hubish < 3.4 && $fdr <= 3) {
+                $hubish = 3.4 + max(0.0, (3 - $fdr) * 0.2) + ($home ? 0.2 : 0.0);
+                $hubish *= max(0.88, min(1.05, $q + 0.15));
+            }
+            return round((($raw * 0.1) + ($hubish * 0.9)) * $startScale, 1);
         }
 
         if ($pos < 3) {
@@ -403,66 +428,117 @@ final class PlayerProjectionEngine
             ? self::fwdQualityIndex($player, $xg90, $xa90)
             : self::midQualityIndex($player, $xg90, $xa90);
 
-        // Soften haul + minutes risk (Palmer), not ordinary starters with thin certainty.
         $rawForm = max(0.0, (float) ($player['form'] ?? 0));
         if ($playProb < 0.8 && $rawForm >= 6.0) {
             $q *= max(0.85, 0.5 + (0.52 * $playProb));
         }
 
         if ($fdr >= 5) {
-            return round(3.4 * $startScale, 1);
+            return round(max(2.8, 3.2 * $q) * $startScale, 1);
+        }
+
+        // Attack EV: high opp GA (leaky defence) lifts ceilings. Floor GA so
+        // fluky 0.0 CS rows (Hull) do not invent a fortress vs Hub easy priors.
+        $gaForAttack = max(0.9, min(2.4, $oppGa));
+        // Away games feel GA harder (leak vs locked defence).
+        $gaLift = ($gaForAttack - 1.35) * ($home ? 0.28 : 0.48);
+        $attNudge = (0.5 - $oppDefN) * 0.25;
+        $pensOrderEarly = $player['set_pieces']['pens'] ?? null;
+        // Non-primary MIDs inherit less of a leaky-defence spike.
+        if ($pos === 3 && $pensOrderEarly !== 1 && $price < 9.5) {
+            $gaLift *= 0.72;
         }
 
         if ($pos === 4) {
-            // FWD bands fitted to Hub GW2: Haaland 6.1 (FDR3 A), JP 5.1 (FDR2 H), Isak 4.8 (FDR3 H).
+            // FWD bands: mid-premiums keep Hub ceilings; sub-£6.5 soft on easy homes.
             $band = match ($fdr) {
-                1 => $home ? 5.6 : 5.3,
-                2 => $home ? 5.55 : 5.05,
-                3 => $home ? 5.1 : 5.3,
-                4 => $home ? 4.2 : 3.95,
-                default => 4.6,
+                1 => $home ? 6.4 : 5.7,
+                2 => $home ? 6.25 : 5.3,
+                3 => $home ? 5.65 : 4.95,
+                4 => $home ? 4.15 : 3.85,
+                default => 4.55,
             };
-            if ($fdr <= 2) {
-                $band += (0.5 - $oppDefN) * 1.6;
-            } elseif ($fdr === 3) {
-                $band += (0.5 - $oppDefN) * 0.55;
+            $band += $gaLift + $attNudge;
+            if (!$home) {
+                $band -= 0.18;
             }
-            $band = max(3.0, min(7.2, $band));
+            // Sub-£6 early finishers get a Hub-like soft ceiling on easy games;
+            // £6.0+ starters (Wissa-class) keep fuller attack EV.
+            if ($price < 6.0 && $fdr <= 2 && $home) {
+                $band *= 0.84 + (0.08 * min(1.0, $q));
+            } elseif ($price < 6.0 && $fdr <= 2 && !$home) {
+                $band *= 0.9 + (0.06 * min(1.0, $q));
+            } elseif ($price < 6.0 && $fdr === 3 && !$home) {
+                $band *= 0.93;
+            }
+            $band = max(2.8, min(7.4, $band));
             return round($band * $q * $startScale, 1);
         }
 
-        // Cameo / unused MIDs: softer FDR curve.
         $minutesPlayed = max(0, (int) ($player['minutes'] ?? 0));
         if ($minutesPlayed < 50) {
             $soft = match ($fdr) {
                 1 => $home ? 5.55 : 5.15,
                 2 => $home ? 5.35 : 4.95,
-                3 => $home ? 5.05 : 4.85,
+                3 => $home ? 5.05 : 4.55,
                 4 => $home ? 4.55 : 4.2,
                 default => 4.55,
             };
-            if ($fdr <= 2) {
-                $soft += (0.5 - $oppDefN) * 1.4;
-            }
-            $soft = max(3.2, min(6.6, $soft));
+            $soft += $gaLift * 0.7 + $attNudge;
+            $soft = max(3.0, min(6.4, $soft));
             return round($soft * $q * $startScale, 1);
         }
 
-        // MID bands fitted to Hub GW2:
-        // Fernandes 6.8 / Mbeumo 5.4 (FDR2 H), Palmer 5.1 (FDR2 H), Szoboszlai 5.1 (FDR3 H), Le Fée 4.8.
+        // MID bands: FDR × quality; easy ceilings reserved for elite price/pens.
         $band = match ($fdr) {
-            1 => $home ? 5.9 : 5.5,
-            2 => $home ? 5.25 : 4.9,
-            3 => $home ? 4.62 : 4.85,
-            4 => $home ? 4.25 : 4.55,
-            default => 4.4,
+            1 => $home ? 6.3 : 5.7,
+            2 => $home ? 6.1 : 5.05,
+            3 => $home ? 5.05 : 4.55,
+            4 => $home ? 4.4 : 4.25,
+            default => 4.45,
         };
-        if ($fdr <= 2) {
-            $band += (0.5 - $oppDefN) * 1.18;
+        $band += $gaLift + $attNudge;
+        if (!$home) {
+            $band -= 0.12;
         }
-        $band = max(3.3, min(7.3, $band));
+        $pensOrder = $player['set_pieces']['pens'] ?? null;
+        $isEliteMid = ($price >= 9.5) || ($pensOrder === 1 && $price >= 9.0 && $q >= 1.1);
+        $isPenTaker = ($pensOrder === 1);
+        // Mid-price pen takers keep a touch more FDR3 away EV.
+        if ($fdr === 3 && !$home && $isPenTaker && !$isEliteMid) {
+            $band += 0.25;
+        }
+        // FDR4 floor: pen takers and elite creators keep a Hub-like minimum.
+        if ($fdr >= 4 && ($isEliteMid || $isPenTaker)) {
+            $band = max($band, $isEliteMid ? 4.3 : 4.2);
+        } elseif ($fdr >= 4 && $q >= 1.12) {
+            $band = max($band, 4.25);
+        }
+        // Easy-fixture ceilings: full only for elite; pen-but-midprice soft; others softer.
+        if ($fdr <= 2) {
+            if ($isEliteMid) {
+                // keep full band
+            } elseif ($isPenTaker) {
+                $band *= 0.9 + (0.06 * min(1.0, $q));
+            } elseif ($q < 1.05) {
+                $band *= 0.72 + (0.1 * min(1.0, $q));
+            } else {
+                $band *= 0.82 + (0.1 * min(1.0, $q));
+            }
+        }
+        $band = max(3.2, min(7.6, $band));
 
         return round($band * $q * $startScale, 1);
+    }
+
+    /** Clamp noisy early-season GF/GA toward a league mean. */
+    private static function seasonRate(float $rate, float $mean): float
+    {
+        if ($rate <= 0) {
+            return $mean;
+        }
+        // With only ~3 GWs, shrink 25% toward the mean so zeros do not explode.
+        return max(0.0, min(3.5, ($rate * 0.75) + ($mean * 0.25)));
     }
 
     /** @param array<string, mixed> $player */
@@ -495,7 +571,8 @@ final class PlayerProjectionEngine
 
     /**
      * DEF quality from that player's FPL card: aerial/threat, xG, def_con,
-     * past-season ppg (early sample), and club defence strength. No name overrides.
+     * past-season ppg (early sample), price tier, and club defence strength.
+     * Fitted so Gabriel ≫ Calafiori ≈ Konsa on Hub GW4 ratios (~1.00 / 0.73 / 0.78).
      *
      * @param array<string, mixed> $player
      */
@@ -512,9 +589,9 @@ final class PlayerProjectionEngine
         $defCon = max(0.0, (float) ($player['def_con'] ?? 0));
         $form = max(0.0, min(12.0, (float) ($player['form'] ?? 0)));
         $pastPpg = max(0.0, (float) (($player['past']['ppg'] ?? 0)));
+        $price = max(0.0, (float) ($player['price'] ?? 0));
         $pens = (($player['set_pieces']['pens'] ?? null) === 1) ? 1.0 : 0.0;
 
-        // Club defence strength (FPL team strength; fall back to overall when axis is zeroed).
         $teamCtx = is_array($player['team_ctx'] ?? null) ? $player['team_ctx'] : [];
         $defH = (float) ($teamCtx['def_h'] ?? 0);
         $defA = (float) ($teamCtx['def_a'] ?? 0);
@@ -526,32 +603,62 @@ final class PlayerProjectionEngine
         }
         $teamDefN = self::normalizeStrength(($defH + $defA) / 2.0);
 
-        $q = 0.8
-            + min(0.14, $xg90 * 0.7)
-            + min(0.05, $xa90 * 0.25)
-            + min(0.1, $threatPg / 100.0)
-            + min(0.06, $influencePg / 260.0)
-            + min(0.06, $defCon / 60.0)
-            + min(0.03, $form / 180.0)
-            + (0.03 * $pens)
-            + (($teamDefN - 0.5) * 0.16)
-            + (($playProb - 0.7) * 0.1);
+        // Hub DEF xP is CS-led: do not let full-back xA/creativity max the index.
+        $q = 0.68
+            + min(0.08, $xg90 * 0.35)
+            + min(0.015, $xa90 * 0.05)
+            + min(0.05, $threatPg / 160.0)
+            + min(0.04, $influencePg / 300.0)
+            + min(0.04, $defCon / 80.0)
+            + min(0.015, $form / 250.0)
+            + (0.015 * $pens)
+            + (($teamDefN - 0.5) * 0.08)
+            + (($playProb - 0.7) * 0.06);
 
-        // Past ppg is the main early-season separator (Gabriel vs quieter full-backs).
-        if ($minutes < 360 && $pastPpg > 0) {
-            if ($pastPpg >= 4.0) {
-                $q += min(0.16, ($pastPpg - 3.8) / 16.0);
-            } else {
-                $q -= min(0.24, (4.2 - $pastPpg) / 5.0);
+        // Price is the main Hub separator (Gabriel £8 vs Calafiori £5.7 vs Konsa £4.4).
+        if ($price >= 7.5) {
+            $q += 0.18;
+        } elseif ($price >= 6.5) {
+            $q += 0.09;
+        } elseif ($price >= 6.0) {
+            $q += 0.02;
+        } elseif ($price >= 5.5) {
+            $q -= 0.08;
+        } elseif ($price >= 4.5) {
+            $q -= 0.02;
+        } else {
+            $q -= 0.08;
+        }
+
+        // Attacking full-backs share less Hub CS EV than premium CBs.
+        if ($price < 6.5 && $xa90 >= 0.2) {
+            $q -= 0.1;
+        }
+
+        // Squad CBs at strong clubs (Konsa-class) outrank attacking FBs on Hub.
+        if ($price <= 5.0 && $xa90 < 0.12 && $teamDefN >= 0.55 && $playProb >= 0.7) {
+            $q += 0.22;
+        }
+
+        if ($pastPpg > 0) {
+            if ($price >= 7.0 && $pastPpg >= 4.5) {
+                $q += min(0.12, ($pastPpg - 4.2) / 16.0);
+            } elseif ($pastPpg >= 5.0) {
+                $q += min(0.06, ($pastPpg - 5.0) / 20.0);
+            } elseif ($pastPpg < 3.2 && $price < 4.5) {
+                // Cheap starters on weak sides (O'Shea): soft past penalty only.
+                $q -= min(0.08, (3.2 - $pastPpg) / 10.0);
+            } elseif ($pastPpg < 3.2) {
+                $q -= min(0.1, (3.2 - $pastPpg) / 8.0);
             }
         }
 
-        return max(0.72, min(1.18, $q));
+        return max(0.66, min(1.18, $q));
     }
 
     /**
      * MID quality: creativity / xA, threat, pens/corners, stable form, past ppg.
-     * Fitted to Hub GW2 anchors (Fernandes 6.8, Mbeumo 5.4, Palmer 5.1, Szoboszlai 5.1, Le Fée 4.8).
+     * Fitted to Hub GW4 anchors (Palmer 7.1 easy home, Fernandes floor vs City, Mbeumo).
      *
      * @param array<string, mixed> $player
      */
@@ -567,6 +674,7 @@ final class PlayerProjectionEngine
         }
         $form = self::stableForm((float) ($player['form'] ?? 0), $minutes);
         $pastPpg = max(0.0, (float) (($player['past']['ppg'] ?? 0)));
+        $price = max(0.0, (float) ($player['price'] ?? 0));
         $pens = 0.0;
         $pOrder = $player['set_pieces']['pens'] ?? null;
         if ($pOrder === 1) {
@@ -581,38 +689,42 @@ final class PlayerProjectionEngine
         } elseif ($cOrder === 2) {
             $corners = 0.28;
         }
-        // Primary pen takers already price set-piece upside; do not stack corners fully.
         if ($pens >= 1.0) {
             $corners *= 0.45;
         }
 
-        // One-game xG spikes should not dominate mid quality.
         $xgSig = min($xg90, $minutes < 180 ? 0.38 : 0.65);
 
-        $q = 0.735
-            + (0.02 * $xgSig)
-            + (0.195 * ($creativityPg / 50.0))
-            + (0.085 * $xa90)
-            + (0.01 * ($threatPg / 50.0))
-            + (0.01 * ($form / 10.0))
-            + (0.1 * $pens)
-            + (0.155 * $corners);
+        $q = 0.72
+            + (0.04 * $xgSig)
+            + (0.2 * ($creativityPg / 50.0))
+            + (0.09 * $xa90)
+            + (0.02 * ($threatPg / 50.0))
+            + (0.015 * ($form / 10.0))
+            + (0.11 * $pens)
+            + (0.12 * $corners);
 
-        // Elite creators (Fernandes-class) get a Hub-sized lift without naming players.
-        if ($creativityPg >= 52.0 && $pens >= 1.0) {
-            $q += 0.058;
+        if ($creativityPg >= 45.0 && $pens >= 1.0) {
+            $q += 0.05;
+        }
+        if ($price >= 10.0) {
+            $q += 0.06;
+        } elseif ($price >= 9.0 && $pens >= 1.0) {
+            $q += 0.055;
+        } elseif ($price >= 8.5) {
+            $q += 0.02;
         }
 
         if ($pastPpg > 0) {
-            $q += min(0.1, max(-0.08, ($pastPpg - 5.0) / 18.0));
+            $q += min(0.12, max(-0.08, ($pastPpg - 5.0) / 16.0));
         }
 
-        return max(0.78, min(1.22, $q));
+        return max(0.76, min(1.24, $q));
     }
 
     /**
      * FWD quality: xG, aerial threat, pens, xA secondary.
-     * Fitted to Hub GW2 anchors (Haaland 6.1, João Pedro 5.1, Isak 4.8).
+     * Fitted to Hub GW4 (João Pedro 6.2 easy home; Wissa/Barry capped vs early xG noise).
      *
      * @param array<string, mixed> $player
      */
@@ -626,6 +738,7 @@ final class PlayerProjectionEngine
         }
         $form = self::stableForm((float) ($player['form'] ?? 0), $minutes);
         $pastPpg = max(0.0, (float) (($player['past']['ppg'] ?? 0)));
+        $price = max(0.0, (float) ($player['price'] ?? 0));
         $pens = (($player['set_pieces']['pens'] ?? null) === 1) ? 1.0 : 0.0;
 
         if ($minutes < 90) {
@@ -636,23 +749,34 @@ final class PlayerProjectionEngine
             return max(0.78, min(1.12, $q));
         }
 
-        $xgSig = min($xg90, $minutes < 180 ? 0.55 : 0.85);
+        $xgSig = min($xg90, $minutes < 270 ? 0.48 : 0.85);
 
-        $q = 0.78
-            + (0.14 * $xgSig)
-            + (0.07 * ($threatPg / 50.0))
-            + (0.03 * ($form / 10.0))
-            + (0.08 * $pens)
-            + (0.04 * $xa90);
+        $q = 0.76
+            + (0.12 * $xgSig)
+            + (0.06 * ($threatPg / 50.0))
+            + (0.025 * ($form / 10.0))
+            + (0.05 * $pens)
+            + (0.035 * $xa90);
 
-        // Primary pen elite finishers (Haaland) get a Hub-sized lift; backups do not.
-        if ($pens >= 1.0 && $pastPpg >= 6.5 && $xg90 >= 0.55) {
-            $q += 0.16;
-        } elseif ($pastPpg >= 6.5 && $xg90 >= 0.55) {
-            $q += 0.02;
+        // Cheap early-season pen takers (Barry-class) must not outrank Hub ceilings.
+        if ($price < 6.5 && $minutes < 360) {
+            $q *= 0.88;
+            $q -= 0.04;
+        } elseif ($price < 7.5 && $pastPpg > 0 && $pastPpg < 5.0) {
+            $q *= 0.94;
         }
 
-        return max(0.78, min(1.24, $q));
+        if ($pens >= 1.0 && $pastPpg >= 6.5 && $xg90 >= 0.55) {
+            $q += 0.08;
+        } elseif ($price >= 7.5 && $xg90 >= 0.45) {
+            $q += 0.04;
+        }
+
+        if ($pastPpg > 0) {
+            $q += min(0.08, max(-0.06, ($pastPpg - 5.0) / 20.0));
+        }
+
+        return max(0.72, min(1.18, $q));
     }
 
     /** Early-season haul damper so one gameweek form does not rewrite Hub bands. */

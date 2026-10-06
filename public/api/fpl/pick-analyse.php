@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once dirname(__DIR__) . '/bootstrap.php';
 
 use App\AuthService;
+use App\BillingService;
 use App\PlayerAiScout;
 use App\PickTeamService;
 use App\Response;
@@ -29,8 +30,7 @@ if (!$user || empty($user['fpl_team_id'])) {
 
 Session::release();
 
-$premium = ($user['plan'] ?? '') === 'premium'
-    && ($user['subscription_status'] ?? '') === 'active';
+$premium = BillingService::isPremiumActive($user);
 
 $data = mf_read_json();
 $squad = $data['squad'] ?? null;

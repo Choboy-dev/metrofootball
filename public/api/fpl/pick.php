@@ -16,7 +16,16 @@ ini_set('max_execution_time', '120');
 
 try {
     $auth = PickPageService::authenticate();
-    $shell = PickPageService::buildShell($auth['user_id'], $auth['entry_id'], $auth['premium']);
+    $gameweekId = isset($_GET['gw']) ? (int) $_GET['gw'] : null;
+    if ($gameweekId !== null && $gameweekId < 1) {
+        $gameweekId = null;
+    }
+    $shell = PickPageService::buildShell(
+        $auth['user_id'],
+        $auth['entry_id'],
+        $auth['premium'],
+        $gameweekId
+    );
 
     http_response_code(200);
     header('Content-Type: application/json; charset=utf-8');

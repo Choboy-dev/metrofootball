@@ -610,7 +610,7 @@ final class LeagueTableService
         if (!is_string($photoId) || $photoId === '') {
             return null;
         }
-        return 'https://resources.premierleague.com/premierleague/photos/players/250x250/p' . $photoId . '.png';
+        return 'https://resources.premierleague.com/premierleague/photos/players/110x140/p' . $photoId . '.png';
     }
 
     private static function playerShirt(int $teamCode, int $elementType): ?string

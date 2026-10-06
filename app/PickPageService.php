@@ -32,8 +32,7 @@ final class PickPageService
 
         Session::release();
 
-        $premium = ($user['plan'] ?? '') === 'premium'
-            && ($user['subscription_status'] ?? '') === 'active';
+        $premium = BillingService::isPremiumActive($user);
 
         return [
             'user_id' => $userId,
@@ -48,16 +47,35 @@ final class PickPageService
      *
      * @return array{pick: array<string, mixed>, cache: string, premium: bool, event_id: int}
      */
-    public static function buildShell(int $userId, int $entryId, bool $premium): array
+    public static function buildShell(int $userId, int $entryId, bool $premium, ?int $gameweekId = null): array
     {
-        $result = PickTeamService::buildForEntry($entryId);
+        $result = PickTeamService::buildForEntry($entryId, $gameweekId);
         $pick = $result['pick'];
         $eventId = (int) ($pick['event']['id'] ?? 0);
+        $viewMode = (string) ($pick['view_mode'] ?? 'plan');
 
-        $pick = self::applyDraftOverlay($userId, $entryId, $eventId, $pick);
+        if ($viewMode === 'plan') {
+            $pick = self::applyDraftOverlay($userId, $entryId, $eventId, $pick);
+        }
 
         $editable = !empty($pick['editable']);
-        if ($premium) {
+        if ($viewMode !== 'plan') {
+            $pick['locks'] = [
+                'editing' => true,
+                'predicted' => false,
+                'suggested_transfers' => true,
+                'optimise' => true,
+                'chips' => true,
+                'premium_card_stats' => true,
+            ];
+            $pick['suggested_transfers'] = [];
+            if ($pick['gw_points'] !== null) {
+                $pick['predicted_points'] = [
+                    'gw' => (float) $pick['gw_points'],
+                    'five_gw' => (float) $pick['gw_points'],
+                ];
+            }
+        } elseif ($premium) {
             $pick['locks'] = [
                 'editing' => !$editable,
                 'predicted' => false,
@@ -95,11 +113,46 @@ final class PickPageService
      *
      * @return array{pick: array<string, mixed>, ai_source: string}
      */
-    public static function enrich(int $userId, int $entryId, bool $premium): array
+    public static function enrich(int $userId, int $entryId, bool $premium, ?int $gameweekId = null): array
     {
-        $result = PickTeamService::buildForEntry($entryId);
+        $result = PickTeamService::buildForEntry($entryId, $gameweekId);
         $pick = $result['pick'];
         $eventId = (int) ($pick['event']['id'] ?? 0);
+        $viewMode = (string) ($pick['view_mode'] ?? 'plan');
+
+        if ($viewMode !== 'plan') {
+            $pick['editable'] = false;
+            $pick['locks'] = [
+                'editing' => true,
+                'predicted' => false,
+                'suggested_transfers' => true,
+                'optimise' => true,
+                'chips' => true,
+                'premium_card_stats' => true,
+            ];
+            $pick['suggested_transfers'] = [];
+            $pick['ai'] = [
+                'model' => 'shared-scout',
+                'source' => 'history',
+                'cached' => true,
+                'notes' => '',
+                'tips_remaining' => TeamAiService::tipsRemaining($userId),
+                'enriched' => true,
+            ];
+            if ($pick['gw_points'] !== null) {
+                $pick['predicted_points'] = [
+                    'gw' => (float) $pick['gw_points'],
+                    'five_gw' => (float) $pick['gw_points'],
+                ];
+            }
+
+            return [
+                'pick' => $pick,
+                'ai_source' => 'history',
+                'cache' => $result['cache'],
+            ];
+        }
+
         $pick = self::applyDraftOverlay($userId, $entryId, $eventId, $pick);
 
         $context = PickTeamService::lastFetchContext();

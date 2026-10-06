@@ -88,6 +88,7 @@ final class TeamLinkService
         }
 
         Session::login($user);
+        AdminNotificationService::fplTeamLinked($user, $summary);
 
         // Build Live + Pick snapshots now so post-link pages open quickly.
         try {

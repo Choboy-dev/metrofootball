@@ -113,13 +113,16 @@ final class GameweekRecapService
             return self::eventMeta($byId[$requestedGw], $byId);
         }
 
-        if ($previous) {
-            return self::eventMeta($previous, $byId);
-        }
-
+        // Prefer the latest finished GW. FPL keeps is_previous on the GW before
+        // a finished-but-still-current week, which left the page stuck on GW2
+        // after GW3 had completed.
         if ($finished) {
             usort($finished, static fn (array $a, array $b): int => ((int) $b['id']) <=> ((int) $a['id']));
             return self::eventMeta($finished[0], $byId);
+        }
+
+        if ($previous) {
+            return self::eventMeta($previous, $byId);
         }
 
         if ($current) {
@@ -1102,5 +1105,103 @@ final class GameweekRecapService
             'best_player' => $enrich($best),
             'worst_player' => $enrich($worst),
         ];
+    }
+
+    /**
+     * Finished gameweek recaps for the FPL Guides hub and sitemap.
+     *
+     * @return list<array{gw:int,name:string}>
+     */
+    public static function listFinishedPaths(): array
+    {
+        $bootstrap = FplClient::fetchBootstrapPick();
+        $events = is_array($bootstrap['events'] ?? null) ? $bootstrap['events'] : [];
+        $out = [];
+        foreach ($events as $event) {
+            if (!is_array($event)) {
+                continue;
+            }
+            $id = (int) ($event['id'] ?? 0);
+            if ($id < 1) {
+                continue;
+            }
+            if (empty($event['finished']) && empty($event['data_checked'])) {
+                continue;
+            }
+            $out[] = [
+                'gw' => $id,
+                'name' => (string) ($event['name'] ?? ('Gameweek ' . $id)),
+            ];
+        }
+        usort($out, static fn (array $a, array $b): int => $b['gw'] <=> $a['gw']);
+        return $out;
+    }
+
+    /**
+     * @return list<array{
+     *   slug:string,
+     *   title:string,
+     *   description:string,
+     *   category:string,
+     *   read_mins:int,
+     *   featured_image:string,
+     *   href:string,
+     *   source:string
+     * }>
+     */
+    public static function listGuideCards(): array
+    {
+        $bootstrap = FplClient::fetchBootstrapPick();
+
+        $eventsById = [];
+        foreach (($bootstrap['events'] ?? []) as $event) {
+            if (is_array($event)) {
+                $eventsById[(int) ($event['id'] ?? 0)] = $event;
+            }
+        }
+
+        $cards = [];
+        foreach (self::listFinishedPaths() as $row) {
+            $gw = (int) ($row['gw'] ?? 0);
+            if ($gw < 1) {
+                continue;
+            }
+            $event = $eventsById[$gw] ?? [];
+            $avg = $event['average_entry_score'] ?? null;
+            $high = $event['highest_score'] ?? null;
+            $name = (string) ($row['name'] ?? ('Gameweek ' . $gw));
+
+            $description = 'Who scored, who blanked, and how the gameweek went.';
+            if ($avg !== null && $avg !== '' && (int) $avg > 0) {
+                $description = 'Average score ' . (int) $avg . ' points';
+                if ($high !== null && $high !== '' && (int) $high > 0) {
+                    $description .= ', highest ' . (int) $high . '.';
+                } else {
+                    $description .= '.';
+                }
+                $description .= ' Results, captains, and the players who mattered.';
+            }
+
+            $cards[] = [
+                'slug' => 'fpl-gameweek-' . $gw . '-recap',
+                'title' => $name . ' Recap',
+                'description' => $description,
+                'category' => 'Gameweek recap',
+                'read_mins' => 4,
+                'featured_image' => self::featuredImagePath(),
+                'href' => '/gameweek-recap?gw=' . $gw,
+                'source' => 'gameweek_recap',
+            ];
+        }
+
+        return $cards;
+    }
+
+    /**
+     * Shared featured image for every Gameweek Recap card (guides hub + social).
+     */
+    public static function featuredImagePath(): string
+    {
+        return '/images/guides/featured/gameweek-recap.jpg';
     }
 }

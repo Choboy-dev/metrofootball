@@ -161,7 +161,7 @@ final class PriceChangeService
             'team_short' => (string) ($team['short_name'] ?? ''),
             'team_name' => (string) ($team['name'] ?? ''),
             'photo' => $photoCode !== ''
-                ? 'https://resources.premierleague.com/premierleague/photos/players/250x250/p' . $photoCode . '.png'
+                ? 'https://resources.premierleague.com/premierleague/photos/players/110x140/p' . $photoCode . '.png'
                 : null,
             'shirt' => $shirt,
             'price' => round($nowCost / 10, 1),
