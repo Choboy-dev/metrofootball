@@ -3,9 +3,9 @@
  * Header matches provided shadcn Header design (sticky blur, Tools/Reports panels, mobile portal)
  * Motion: animate, hover, inView, stagger
  */
-import { animate, inView, stagger } from './motion.js';
-import { initSiteNav, scheduleGwTipsHydration } from './site-nav.js';
-import { applyAuthNav, bindAuthToolLinks, bindSignOutButtons, fetchSession } from './auth.js';
+import { animate, inView, stagger } from './motion.js?v=20260901perf';
+import { initSiteNav, scheduleGwTipsHydration } from './site-nav.js?v=20260907pub';
+import { applyAuthNav, bindAuthToolLinks, bindSignOutButtons, fetchSession } from './auth.js?v=20260907pub';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -23,25 +23,10 @@ async function initAuthNav() {
 }
 
 function revealHero() {
-  const parts = document.querySelectorAll('.hero-reveal');
-  if (!parts.length) return;
-
-  if (reduceMotion) {
-    parts.forEach((el) => {
-      el.style.transform = 'none';
-    });
-    return;
-  }
-
-  animate(
-    parts,
-    { y: [28, 0] },
-    {
-      duration: 0.7,
-      delay: stagger(0.1, { startDelay: 0.08 }),
-      easing: [0.17, 0.55, 0.55, 1],
-    }
-  );
+  document.querySelectorAll('.hero-reveal').forEach((el) => {
+    el.style.opacity = '1';
+    el.style.transform = 'none';
+  });
 }
 
 function revealOnScroll() {
@@ -50,6 +35,7 @@ function revealOnScroll() {
 
   if (reduceMotion) {
     targets.forEach((el) => {
+      el.style.opacity = '1';
       el.style.transform = 'none';
     });
     return;
@@ -60,7 +46,7 @@ function revealOnScroll() {
     (element) => {
       animate(
         element,
-        { y: 0 },
+        { opacity: 1, y: 0 },
         {
           duration: 0.55,
           easing: [0.17, 0.55, 0.55, 1],
@@ -80,7 +66,7 @@ function staggerToolGrid() {
     () => {
       animate(
         tools,
-        { y: [22, 0], scale: [0.98, 1] },
+        { opacity: [0, 1], y: [22, 0], scale: [0.98, 1] },
         {
           duration: 0.45,
           delay: stagger(0.06),
@@ -134,25 +120,19 @@ function initHeroAccordionDesktop(root) {
     return { idle, active };
   }
 
+  function applyImageWidth(activeWidth) {
+    root.style.setProperty('--hero-card-active-width', `${activeWidth}px`);
+  }
+
   function setActive(index) {
     activeIndex = index;
     const { idle, active } = sizes();
+    applyImageWidth(active);
 
     cards.forEach((card, i) => {
       const on = i === index;
-      const nextWidth = on ? active : idle;
       card.classList.toggle('is-active', on);
-
-      if (reduceMotion) {
-        card.style.width = `${nextWidth}px`;
-        return;
-      }
-
-      animate(
-        card,
-        { width: nextWidth },
-        { duration: 0.7, easing: [0.22, 1, 0.36, 1] }
-      );
+      card.style.width = `${on ? active : idle}px`;
     });
   }
 
@@ -177,6 +157,11 @@ function initHeroAccordionDesktop(root) {
     });
     root.querySelectorAll('[data-hero-clone]').forEach((clone) => clone.remove());
     track.style.transform = '';
+    cards.forEach((card) => {
+      card.style.width = '';
+      card.style.flexBasis = '';
+    });
+    root.style.removeProperty('--hero-card-active-width');
   };
 }
 
@@ -498,7 +483,6 @@ function initHeroMobileSlider(root) {
   };
 
   buildDots();
-  applyCardWidths();
   applyOffset(stepToOffset(0));
   updateDots();
   startTimer();

@@ -1,14 +1,15 @@
 import { animate, inView, stagger } from 'https://cdn.jsdelivr.net/npm/motion@12.23.12/+esm';
-import { initSiteNav } from './site-nav.js';
+import { initSiteNav } from './site-nav.js?v=20260907pub';
 import { initTeamTabs } from './team-tabs.js';
 import {
   applyAuthNav,
+  applyPremiumGate,
   apiUrl,
   bindSignOutButtons,
   fetchSession,
   redirectToLogin,
   pageUrl,
-} from './auth.js';
+} from './auth.js?v=20260907pub';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const PROGRESS_SHOW_DELAY_MS = 80;
@@ -33,33 +34,10 @@ const progressUi = {
   anim: null,
 };
 
-function isPremiumActive(user) {
-  return user?.plan === 'premium' && user?.subscription_status === 'active';
-}
-
-function upgradePath(user) {
-  if (user?.plan === 'premium' && user?.subscription_status !== 'active') {
-    return pageUrl('payment');
-  }
-  return pageUrl('join');
-}
-
 function applyGate(session) {
-  const lock = document.querySelector('[data-premium-lock]');
-  const unlocked = document.querySelector('[data-premium-unlocked]');
-  const cta = document.querySelector('[data-upgrade-cta]');
-  const user = session?.user;
-  const premium = isPremiumActive(user);
-
-  if (cta) cta.setAttribute('href', upgradePath(user));
-  if (lock) lock.hidden = premium;
-  if (unlocked) unlocked.hidden = !premium;
-
-  const reveal = premium ? unlocked : lock;
-  if (reveal && !reduceMotion) {
-    animate(reveal, { opacity: [0, 1], y: [12, 0] }, { duration: 0.4, easing: [0.17, 0.55, 0.55, 1] });
-  }
-  return premium;
+  return applyPremiumGate(session, {
+    animateReveal: reduceMotion ? null : animate,
+  }).premium;
 }
 
 function progressEls() {
@@ -280,7 +258,7 @@ function renderMeta(plan) {
   const eventName = plan.event?.name || 'This gameweek';
   if (eventEl) eventEl.textContent = eventName;
 
-  const teamName = plan.entry?.name || plan.entry?.player_first_name || 'Your team';
+  const teamName = plan.entry?.team_name || plan.entry?.name || plan.entry?.manager_name || 'Your team';
   if (teamEl) teamEl.textContent = teamName;
 
   if (strengthEl) {

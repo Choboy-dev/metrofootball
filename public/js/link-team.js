@@ -1,5 +1,5 @@
-import { animate } from './motion.js';
-import { initSiteNav } from './site-nav.js';
+import { animate } from './motion.js?v=20260901perf';
+import { initSiteNav } from './site-nav.js?v=20260907pub';
 import { initTeamTabs } from './team-tabs.js';
 import {
   applyAuthNav,
@@ -12,7 +12,7 @@ import {
   pageUrl,
   postJson,
   setBusy,
-} from './auth.js';
+} from './auth.js?v=20260907pub';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const IMPORT_SHOW_DELAY_MS = 80;

@@ -4,7 +4,7 @@
  */
 
 const SAME_TAB_PATH =
-  /(?:^|\/)(login|join|register|signup|sign-up|signin|sign-in|pricing|payment|billing|checkout|verify-otp|verify|link-team)(?:\/|$|\.html|(?=[?#]))/i;
+  /(?:^|\/)(login|join|register|signup|sign-up|signin|sign-in|pricing|payment|billing|checkout|verify-otp|verify-email|verify|link-team|fixture-difficulty)(?:\/|$|\.html|(?=[?#]))/i;
 
 let started = false;
 
@@ -23,6 +23,16 @@ function shouldOpenSameTab(anchor) {
   try {
     const url = new URL(raw, window.location.href);
     const path = url.pathname.toLowerCase();
+
+    // Same-page section anchors must stay in this tab (TOC, in-article jumps).
+    if (
+      url.origin === window.location.origin
+      && url.hash
+      && url.pathname.replace(/\/+$/, '') === window.location.pathname.replace(/\/+$/, '')
+    ) {
+      return true;
+    }
+
     if (SAME_TAB_PATH.test(path) || SAME_TAB_PATH.test(raw.toLowerCase())) {
       return true;
     }

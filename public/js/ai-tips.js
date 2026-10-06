@@ -1,14 +1,17 @@
-import { animate, inView, stagger } from './motion.js';
-import { initSiteNav } from './site-nav.js';
+import { animate, inView, stagger } from './motion.js?v=20260901perf';
+import { renderTipsExtras, oneTapBtn } from './ai-tips-extras.js?v=20260904tips9';
+import { bindOneTapFixButtons } from './one-tap-fix.js?v=20260904tips9';
+import { initSiteNav } from './site-nav.js?v=20260907pub';
 import { initTeamTabs } from './team-tabs.js';
 import {
   applyAuthNav,
+  applyPremiumGate,
   apiUrl,
   bindSignOutButtons,
   fetchSession,
   redirectToLogin,
   pageUrl,
-} from './auth.js';
+} from './auth.js?v=20260907pub';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const PROGRESS_SHOW_DELAY_MS = 80;
@@ -167,33 +170,10 @@ function failProgress() {
   progressUi.value = 0;
 }
 
-function isPremiumActive(user) {
-  return user?.plan === 'premium' && user?.subscription_status === 'active';
-}
-
-function upgradePath(user) {
-  if (user?.plan === 'premium' && user?.subscription_status !== 'active') {
-    return pageUrl('payment');
-  }
-  return pageUrl('join');
-}
-
 function applyGate(session) {
-  const lock = document.querySelector('[data-premium-lock]');
-  const unlocked = document.querySelector('[data-premium-unlocked]');
-  const cta = document.querySelector('[data-upgrade-cta]');
-  const user = session?.user;
-  const premium = isPremiumActive(user);
-
-  if (cta) cta.setAttribute('href', upgradePath(user));
-  if (lock) lock.hidden = premium;
-  if (unlocked) unlocked.hidden = !premium;
-
-  const reveal = premium ? unlocked : lock;
-  if (reveal && !reduceMotion) {
-    animate(reveal, { opacity: [0, 1], y: [12, 0] }, { duration: 0.4, easing: [0.17, 0.55, 0.55, 1] });
-  }
-  return premium;
+  return applyPremiumGate(session, {
+    animateReveal: reduceMotion ? null : animate,
+  }).premium;
 }
 
 function escapeHtml(value) {
@@ -327,6 +307,10 @@ function renderTransfers(section) {
       </div>
 
       <p class="ai-swap__reason">${escapeHtml(item.reason)}</p>
+      ${oneTapBtn(
+        { type: 'transfer', outId: item.out_id, inId: item.in_id },
+        `We swapped ${escapeHtml(outName)} for ${escapeHtml(inName)} on your Pick page. Press Save to keep it.`
+      )}
     </article>
   `;
   }).join('');
@@ -454,6 +438,14 @@ function renderCaptain(section) {
       ${renderCaptainCard(pick, 'captain')}
       ${section?.vice ? renderCaptainCard(section.vice, 'vice') : ''}
     </div>
+    ${oneTapBtn(
+      {
+        type: 'captain',
+        captainId: pick.id,
+        viceId: section?.vice?.id || null,
+      },
+      `We set ${escapeHtml(pick.name || 'your captain')}${section?.vice?.name ? ` and ${escapeHtml(section.vice.name)} as vice` : ''} on your Pick page. Press Save to keep it.`
+    )}
   `;
 
   animateCaptainCards(body);
@@ -723,6 +715,24 @@ function renderTips(tips) {
   renderDropWatch(sections.drop_watch);
   renderChip(sections.chip);
   renderSnipers(sections.snipers);
+  renderTipsExtras(sections, {
+    escapeHtml,
+    playerFaceHtml,
+    fdrBadgeHtml,
+    renderCaptainCard,
+    pageUrl,
+    setNote,
+    reduceMotion,
+    animate,
+    stagger,
+    inView,
+  });
+
+  bindOneTapFixButtons(document.querySelector('[data-tips-stack]'), pageUrl);
+
+  const shareBtn = document.querySelector('[data-tips-share]');
+  if (shareBtn) shareBtn.hidden = false;
+
   revealPanels();
 }
 

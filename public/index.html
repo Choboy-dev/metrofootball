@@ -3,15 +3,45 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Meta Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1033677469478224');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1033677469478224&ev=PageView&noscript=1" alt="" /></noscript>
+  <!-- End Meta Pixel Code -->
+  <script>
+    (function(){try{var r=localStorage.getItem('mf_auth_hint');if(!r)return;var h=JSON.parse(r);if(Date.now()-(h.ts||0)>6048e5)return;var m=h.premium?'premium':h.authenticated?'signed-in':null;if(m)document.documentElement.dataset.authHint=m;}catch(e){}})();
+  </script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9101848035950927"
+     crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="./css/fonts.css?v=20260830perf2">
+  <link rel="stylesheet" href="./css/app.css?v=20260904nav2">
+  <link rel="stylesheet" href="./css/perf.css?v=20260830perf">
+  <link rel="preload" as="image" href="./images/hero/hero-1-700.webp?v=20260830hero" fetchpriority="high" imagesrcset="./images/hero/hero-1-350.webp?v=20260830hero 350w, ./images/hero/hero-1-700.webp?v=20260830hero 700w" imagesizes="(min-width: 900px) 280px, calc((100vw - 1.5rem) / 2)">
+  <link rel="modulepreload" href="./js/vendor/motion.esm.js" crossorigin>
+  <noscript>
+    <link rel="stylesheet" href="./css/fonts.css?v=20260830perf">
+    <link rel="stylesheet" href="./css/perf.css?v=20260830perf">
+    <link rel="stylesheet" href="./css/app.css?v=20260904nav2">
+  </noscript>
   <title>Metro Football | FPL tools that help you win</title>
-  <meta name="description" content="Metro Football gives you clear Fantasy Premier League tools and reports from about £2.50 a month.">
+  <meta name="description" content="Metro Football gives you clear Fantasy Premier League tools and reports from about £4 a month.">
   <link rel="canonical" href="https://metrofootball.co.uk/">
   <link rel="icon" href="./images/metro-football-favicon.png" type="image/png" sizes="500x500">
   <link rel="apple-touch-icon" href="./images/metro-football-favicon.png">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Metro Football">
   <meta property="og:title" content="Metro Football | FPL tools that help you win">
-  <meta property="og:description" content="Metro Football gives you clear Fantasy Premier League tools and reports from about £2.50 a month.">
+  <meta property="og:description" content="Metro Football gives you clear Fantasy Premier League tools and reports from about £4 a month.">
   <meta property="og:url" content="https://metrofootball.co.uk/">
   <meta property="og:image" content="https://metrofootball.co.uk/images/metro-football-favicon.png">
   <meta property="og:image:width" content="500">
@@ -19,16 +49,15 @@
   <meta property="og:locale" content="en_GB">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Metro Football | FPL tools that help you win">
-  <meta name="twitter:description" content="Metro Football gives you clear Fantasy Premier League tools and reports from about £2.50 a month.">
+  <meta name="twitter:description" content="Metro Football gives you clear Fantasy Premier League tools and reports from about £4 a month.">
   <meta name="twitter:image" content="https://metrofootball.co.uk/images/metro-football-favicon.png">
-  <link rel="stylesheet" href="./css/app.css">
+
 </head>
 <body>
   <header class="site-header" data-header>
     <nav class="site-nav" aria-label="Main">
-      <div class="site-nav__left">
-        <a href="./" class="site-logo" aria-label="Metro Football home">
-          <img class="site-logo__img" src="./images/metro-football-logo-dark.png" alt="" width="320" height="107" decoding="async">
+      <a href="./" class="site-logo" aria-label="Metro Football home">
+          <img class="site-logo__img" src="./images/metro-football-correct-dark-logo-315.webp?v=20260830logo" srcset="./images/metro-football-correct-dark-logo-315.webp?v=20260830logo 315w, ./images/metro-football-correct-dark-logo-630.webp?v=20260830logo 630w" sizes="(min-width: 768px) 204px, 180px" alt="" width="938" height="313" decoding="async">
         </a>
 
         <div class="nav-menu desktop-only">
@@ -73,7 +102,7 @@
                     </a>
                   </li>
                   <li>
-                    <a class="list-item" href="./fixture-difficulty" data-auth-tool>
+                    <a class="list-item" href="./fixture-difficulty">
                       <span class="list-item__copy">
                         <span class="list-item__title">Fixture Difficulty Ticker</span>
                         <span class="list-item__desc">See easy and hard fixture runs</span>
@@ -89,9 +118,6 @@
                     </a>
                   </li>
                 </ul>
-                <div class="nav-panel__note">
-                  <p>Interested? <a href="./join">Go premium from £2 a month</a></p>
-                </div>
               </div>
             </div>
           </div>
@@ -131,7 +157,7 @@
                 </ul>
                 <ul class="nav-list nav-list--stack">
                   <li>
-                    <a class="list-item" href="#">
+                    <a class="list-item" href="./players">
                       <span class="list-item__copy">
                         <span class="list-item__title">Players</span>
                         <span class="list-item__desc">Search players and season stats</span>
@@ -147,7 +173,7 @@
                     </a>
                   </li>
                   <li>
-                    <a class="list-item" href="./fpl-gameweek-2-tips" data-nav-gw-tips-link>
+                    <a class="list-item" href="/fpl-gameweek-tips" data-nav-gw-tips-link>
                       <span class="list-item__copy">
                         <span class="list-item__title" data-nav-gw-tips-label>Gameweek Tips</span>
                         <span class="list-item__desc">Picks and advice for this gameweek</span>
@@ -160,10 +186,11 @@
           </div>
 
           <a data-pricing-nav class="nav-link" href="./join">Pricing</a>
-          <a class="nav-link" href="#">About</a>
+          <a class="nav-link" href="./about">About</a>
+          <a class="nav-link" href="./fpl-guides">FPL Guides</a>
+          <a class="nav-link" href="./help-center">Help</a>
           <a class="nav-link" href="./contact">Contact</a>
         </div>
-      </div>
 
       <div class="site-nav__right desktop-only">
         <a class="mf-btn mf-btn--ink mf-btn--sm" href="./login">
@@ -218,7 +245,7 @@
       <div class="hero-shell">
         <div class="hero-copy">
           <h1 class="hero-title hero-reveal" id="hero-brand">We help you win your mini league</h1>
-          <p class="hero-lead hero-reveal">For just £2.50 a month, if you don't win your mini league, we give you your money back at the end of the season.</p>
+          <p class="hero-lead hero-reveal">For just £4 a month, if you don't win your mini league, we give you your money back at the end of the season.</p>
           <div class="hero-ctas hero-reveal">
             <a class="mf-btn mf-btn--primary" href="./join">
               <span class="mf-btn__label">Start for free</span>
@@ -246,8 +273,12 @@
               aria-label="Transfer Planner"
             >
               <img
-                src="./images/hero/hero-1.jpg"
+                src="./images/hero/hero-1.webp?v=20260831c"
                 alt=""
+                width="560"
+                height="900"
+                decoding="sync"
+                fetchpriority="high"
                 data-hero-image
               >
               <div class="hero-card__shade" aria-hidden="true"></div>
@@ -264,8 +295,11 @@
               aria-label="Differential Finder"
             >
               <img
-                src="./images/hero/hero-2.jpg"
+                src="./images/hero/hero-2.webp?v=20260831c"
                 alt=""
+                width="560"
+                height="900"
+                decoding="async"
                 data-hero-image
               >
               <div class="hero-card__shade" aria-hidden="true"></div>
@@ -273,7 +307,7 @@
             </a>
 
             <a
-              class="hero-card"
+              class="hero-card is-active"
               role="listitem"
               href="./pick"
               data-auth-tool
@@ -282,8 +316,11 @@
               aria-label="Rate My Team"
             >
               <img
-                src="./images/hero/hero-3.jpg"
+                src="./images/hero/hero-3.webp?v=20260831c"
                 alt=""
+                width="560"
+                height="900"
+                decoding="async"
                 data-hero-image
               >
               <div class="hero-card__shade" aria-hidden="true"></div>
@@ -300,8 +337,12 @@
               aria-label="Chip Strategy Planner"
             >
               <img
-                src="./images/hero/hero-4.jpg"
+                src="./images/hero/hero-4.webp?v=20260831c"
                 alt=""
+                width="560"
+                height="900"
+                decoding="async"
+                loading="lazy"
                 data-hero-image
               >
               <div class="hero-card__shade" aria-hidden="true"></div>
@@ -312,14 +353,17 @@
               class="hero-card"
               role="listitem"
               href="./fixture-difficulty"
-              data-auth-tool
               data-hero-card
               data-index="4"
               aria-label="Fixture Difficulty Ticker"
             >
               <img
-                src="./images/hero/hero-5.jpg"
+                src="./images/hero/hero-5.webp?v=20260831c"
                 alt=""
+                width="560"
+                height="900"
+                decoding="async"
+                loading="lazy"
                 data-hero-image
               >
               <div class="hero-card__shade" aria-hidden="true"></div>
@@ -617,10 +661,10 @@
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </span>
           </a>
-          <a class="report-row reveal" href="#">
+          <a class="report-row reveal" href="./players">
             <div class="report-copy">
               <h3>Search players and season stats</h3>
-              <p>We are building a player search with season stats. It will be free for everyone when it launches.</p>
+              <p>Browse every Premier League player with season stats, form, and fixture context in one place.</p>
             </div>
             <span class="report-arrow" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -635,7 +679,7 @@
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </span>
           </a>
-          <a class="report-row reveal" href="./fpl-gameweek-2-tips" data-nav-gw-tips-link>
+          <a class="report-row reveal" href="/fpl-gameweek-tips" data-nav-gw-tips-link>
             <div class="report-copy">
               <h3 data-nav-gw-tips-label>Gameweek Tips</h3>
               <p>We share picks and advice for the upcoming gameweek before the deadline.</p>
@@ -654,16 +698,16 @@
           <h2 id="tools-title" class="section-title">Pick a tool and get stuck in</h2>
         </div>
         <div class="tools-grid">
-          <button class="tool reveal" type="button" data-auth-tool-href="./fixture-difficulty">
+          <a class="tool reveal" href="./fixture-difficulty">
             <div class="tool-top">
               <span class="tool-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h10M4 17h7" stroke-linecap="round"/></svg>
               </span>
-              <span class="tool-badge premium">Premium</span>
+              <span class="tool-badge free">Free</span>
             </div>
             <h3>Fixture Difficulty Ticker</h3>
             <p>We colour code the next run of fixtures so hard and easy weeks are easy to spot.</p>
-          </button>
+          </a>
           <button class="tool reveal" type="button" data-auth-tool-href="./ai-tips#snipers">
             <div class="tool-top">
               <span class="tool-icon" aria-hidden="true">
@@ -786,10 +830,10 @@
                 <h3 class="pricing-card__name">Premium</h3>
                 <p class="pricing-card__desc">We unlock your personal team tools.</p>
                 <p class="pricing-card__price">
-                  <span class="pricing-card__amount" data-price data-monthly="£2.50" data-yearly="£2">£2</span>
+                  <span class="pricing-card__amount" data-price data-monthly="£4" data-yearly="£3.50">£3.50</span>
                   <span class="pricing-card__period" data-period data-monthly="/ month" data-yearly="/ month">/ month</span>
                 </p>
-                <p class="pricing-card__billing-note" data-billing-note data-monthly="" data-yearly="£22/year billed yearly · 1 month free" hidden>£22/year billed yearly · 1 month free</p>
+                <p class="pricing-card__billing-note" data-billing-note data-monthly="" data-yearly="Billed yearly" hidden>Billed yearly</p>
               </header>
               <div class="pricing-card__body">
                 <div class="pricing-card__rule" aria-hidden="true"></div>
@@ -854,29 +898,50 @@
     <div class="container footer-grid">
       <div class="footer-brand">
         <a class="brand" href="./">
-          <img class="site-logo__img site-logo__img--light" src="./images/metro-football-logo-light.png" alt="" width="320" height="107" decoding="async">
+          <img class="site-logo__img site-logo__img--light" src="./images/metro-football-logo-light-315.webp?v=20260830logo" srcset="./images/metro-football-logo-light-315.webp?v=20260830logo 315w, ./images/metro-football-logo-light-630.webp?v=20260830logo 630w" sizes="(min-width: 768px) 204px, 180px" alt="" width="938" height="313" decoding="async">
         </a>
         <p>Metro Football builds FPL tools and auto reports for managers who want clear answers before the deadline.</p>
+        <div class="mf-social mf-social--footer" aria-label="Follow Metro Football">
+          <p class="mf-social__label">Follow us</p>
+          <ul class="mf-social__list">
+            <li>
+              <a class="mf-social__link" href="https://web.facebook.com/metrofootballuk/" aria-label="Metro Football on Facebook" target="_blank" rel="noopener noreferrer">
+                <svg class="mf-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.5 22v-8.7h2.9l.44-3.4h-3.34V7.9c0-.98.27-1.65 1.68-1.65h1.8V3.1c-.31 0-1.38-.13-2.63-.13-2.6 0-4.38 1.58-4.38 4.48v2.5H7.5v3.4h3.09V22h3.91Z"/></svg>
+              </a>
+            </li>
+            <li>
+              <a class="mf-social__link" href="https://x.com/metrofootballuk" aria-label="Metro Football on X" target="_blank" rel="noopener noreferrer">
+                <svg class="mf-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.687 3H20.5l-7.43 8.49L21.5 21h-6.05l-4.74-5.52L5.2 21H2.38l7.94-9.08L2.5 3h6.2l4.28 4.98L17.687 3Zm-2.12 16.2h1.72L8.57 4.67H6.73l8.837 14.53Z"/></svg>
+              </a>
+            </li>
+            <li>
+              <a class="mf-social__link" href="https://www.instagram.com/metrofootballuk/" aria-label="Metro Football on Instagram" target="_blank" rel="noopener noreferrer">
+                <svg class="mf-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7.8 2h8.4A5.8 5.8 0 0 1 22 7.8v8.4A5.8 5.8 0 0 1 16.2 22H7.8A5.8 5.8 0 0 1 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2Zm0 2A3.8 3.8 0 0 0 4 7.8v8.4A3.8 3.8 0 0 0 7.8 20h8.4a3.8 3.8 0 0 0 3.8-3.8V7.8A3.8 3.8 0 0 0 16.2 4H7.8Zm9.65 1.5a1.05 1.05 0 1 1 0 2.1 1.05 1.05 0 0 1 0-2.1ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg>
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
       <div class="footer-col">
         <h4>Reports</h4>
         <a href="./gameweek-recap">Gameweek Recap</a>
         <a href="./price-changes">Price Change Predictions</a>
         <a href="./fpl-injury-news">Injury Risk Digest</a>
-        <a href="#">Players</a>
+        <a href="./players">Players</a>
         <a href="./league-table">League Table</a>
-        <a href="./fpl-gameweek-2-tips" data-nav-gw-tips-link>Gameweek Tips</a>
+        <a href="/fpl-gameweek-tips" data-nav-gw-tips-link>Gameweek Tips</a>
       </div>
       <div class="footer-col">
         <h4>Explore</h4>
         <a href="./">Home</a>
         <a href="./join">Pricing</a>
         <a href="./live">Dashboard</a>
+        <a href="./help-center">Help Center</a>
         <a href="./contact">Contact</a>
       </div>
       <div class="footer-col">
         <h4>Tools</h4>
-        <a href="./fixture-difficulty" data-auth-tool>Fixture Difficulty Ticker</a>
+        <a href="./fixture-difficulty">Fixture Difficulty Ticker</a>
         <a href="./ai-tips#snipers" data-auth-tool>Differential Finder</a>
         <a href="./mini-leagues" data-auth-tool>Mini League Tracker</a>
         <a href="./pick" data-auth-tool>Rate My Team</a>
@@ -884,23 +949,24 @@
         <a href="./ai-tips" data-auth-tool>AI Transfers</a>
         <a href="./chip-strategy" data-auth-tool>Chip Strategy Planner</a>
       </div>
-      <div class="footer-col">
-        <h4>Account</h4>
-        <a href="./login">Log in</a>
-        <a href="./join">Register</a>
-        <a href="./payment">Billing</a>
-      </div>
     </div>
     <div class="container footer-bottom">
       <span>© 2026 Metro Football. metrofootball.co.uk</span>
       <span>
-        <a href="./privacy-policy">Privacy</a>
+        <a href="./privacy-policy">Privacy Policy</a>
         ·
-        <a href="./terms">Terms</a>
+        <a href="./terms">Terms of Service</a>
+        ·
+        <a href="./disclaimer">Disclaimer</a>
+        ·
+        <a href="./about">About Us</a>
+        ·
+        <a href="./contact">Contact Us</a>
       </span>
     </div>
   </footer>
 
-  <script type="module" src="./js/app.js"></script>
+  <script defer src="./js/gtag-config.js?v=2"></script>
+  <script type="module" src="./js/app.js?v=20260907pub"></script>
 </body>
 </html>

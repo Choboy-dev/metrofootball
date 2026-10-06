@@ -1,14 +1,11 @@
-import { animate, stagger } from './motion.js';
-import { initSiteNav } from './site-nav.js';
+import { initSiteNav } from './site-nav.js?v=20260907pub';
 import {
   applyAuthNav,
   bindSignOutButtons,
   fetchSession,
   apiUrl,
-  redirectToLogin,
-  pageUrl,
-} from './auth.js';
-import { initMfSelects, setMfSelectValue } from './mf-select.js';
+} from './auth.js?v=20260907pub';
+import { initMfSelects, setMfSelectValue } from './mf-select.js?v=20260828g';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const PROGRESS_SHOW_DELAY_MS = 80;
@@ -26,35 +23,6 @@ const progressUi = {
   trickleTimer: null,
   anim: null,
 };
-
-function isPremiumActive(user) {
-  return user?.plan === 'premium' && user?.subscription_status === 'active';
-}
-
-function upgradePath(user) {
-  if (user?.plan === 'premium' && user?.subscription_status !== 'active') {
-    return pageUrl('payment');
-  }
-  return pageUrl('join');
-}
-
-function applyGate(session) {
-  const lock = document.querySelector('[data-premium-lock]');
-  const unlocked = document.querySelector('[data-premium-unlocked]');
-  const cta = document.querySelector('[data-upgrade-cta]');
-  const user = session?.user;
-  const premium = isPremiumActive(user);
-
-  if (cta) cta.setAttribute('href', upgradePath(user));
-  if (lock) lock.hidden = premium;
-  if (unlocked) unlocked.hidden = !premium;
-
-  const reveal = premium ? unlocked : lock;
-  if (reveal && !reduceMotion) {
-    animate(reveal, { opacity: [0, 1], y: [12, 0] }, { duration: 0.4, easing: [0.17, 0.55, 0.55, 1] });
-  }
-  return premium;
-}
 
 function progressEls() {
   return {
@@ -119,27 +87,12 @@ function startProgress(label = 'Loading fixtures') {
   }, reduceMotion ? 400 : 200);
 }
 
-function setProgress(target, { immediate = false, label } = {}) {
+function setProgress(target, { label } = {}) {
   if (label) setProgressLabel(label);
   const next = Math.max(progressUi.value, Math.min(100, target));
-  if (progressUi.anim) {
-    progressUi.anim.stop();
-    progressUi.anim = null;
-  }
-  if (immediate || reduceMotion) {
-    progressUi.value = next;
-    applyProgressVisual(next);
-    return;
-  }
-  const from = progressUi.value;
-  progressUi.anim = animate(from, next, {
-    duration: 0.35,
-    ease: [0.17, 0.55, 0.55, 1],
-    onUpdate: (latest) => {
-      progressUi.value = latest;
-      applyProgressVisual(latest);
-    },
-  });
+  progressUi.anim = null;
+  progressUi.value = next;
+  applyProgressVisual(next);
 }
 
 async function finishProgress(label = 'Fixtures ready') {
@@ -152,14 +105,7 @@ async function finishProgress(label = 'Fixtures ready') {
     progressUi.showTimer = null;
   }
   setProgressLabel(label);
-  setProgress(100, { immediate: reduceMotion });
-  if (progressUi.anim) {
-    try {
-      await progressUi.anim;
-    } catch {
-      // ignore
-    }
-  }
+  setProgress(100);
   const els = progressEls();
   if (els.top) els.top.classList.add('is-complete');
   await new Promise((r) => setTimeout(r, reduceMotion ? 40 : 220));
@@ -352,22 +298,11 @@ function renderGrid(teams) {
 }
 
 function animateCards(grid) {
-  if (reduceMotion || !grid) return;
-  const cards = [...grid.querySelectorAll('[data-fdr-card]')];
-  if (!cards.length) return;
-  cards.forEach((card) => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(14px)';
+  if (!grid) return;
+  grid.querySelectorAll('[data-fdr-card]').forEach((card) => {
+    card.style.opacity = '';
+    card.style.transform = '';
   });
-  animate(
-    cards,
-    { opacity: 1, y: 0 },
-    {
-      duration: 0.4,
-      delay: stagger(0.03),
-      easing: [0.17, 0.55, 0.55, 1],
-    }
-  );
 }
 
 function renderTicker(ticker) {
@@ -411,11 +346,6 @@ async function loadTicker(horizon = state.horizon) {
     setProgress(70, { label: 'Building difficulty tickers' });
     const data = await response.json();
     if (!response.ok || !data.ok) {
-      if (data.redirect) {
-        failProgress();
-        window.location.href = pageUrl(String(data.redirect).replace(/^\//, ''));
-        return;
-      }
       throw new Error(data.error || 'Could not load fixture difficulty.');
     }
     state.horizon = Number(data.ticker?.horizon) || horizon;
@@ -451,22 +381,25 @@ function bindControls() {
 }
 
 async function boot() {
-  initSiteNav();
-  bindSignOutButtons();
-  initMfSelects();
-  bindControls();
+  try {
+    initSiteNav();
+    bindSignOutButtons();
+    initMfSelects();
+    bindControls();
 
-  const session = await fetchSession();
-  if (!session?.authenticated) {
-    redirectToLogin();
-    return;
+    try {
+      const session = await fetchSession();
+      applyAuthNav(session);
+    } catch {
+      applyAuthNav(null);
+    }
+
+    document.body.classList.add('premium-gate-ready');
+    await loadTicker(state.horizon);
+  } catch (error) {
+    failProgress();
+    setError(error?.message || 'Could not start the fixture difficulty page.');
   }
-
-  applyAuthNav(session);
-  const premium = applyGate(session);
-  if (!premium) return;
-
-  await loadTicker(state.horizon);
 }
 
 boot();

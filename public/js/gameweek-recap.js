@@ -1,11 +1,11 @@
 import { animate, inView, stagger } from 'https://cdn.jsdelivr.net/npm/motion@12.23.12/+esm';
-import { initSiteNav } from './site-nav.js';
+import { initSiteNav } from './site-nav.js?v=20260907pub';
 import {
   applyAuthNav,
   bindSignOutButtons,
   fetchSession,
   apiUrl,
-} from './auth.js';
+} from './auth.js?v=20260907pub';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const PROGRESS_SHOW_DELAY_MS = 80;
@@ -191,10 +191,14 @@ function showToast(message) {
 }
 
 function clearGwFromUrl() {
-  const url = new URL(window.location.href);
-  if (!url.searchParams.has('gw')) return;
-  url.searchParams.delete('gw');
-  window.history.replaceState({}, '', url);
+  // Keep ?gw= so shared / guides links stay on the chosen gameweek.
+}
+
+function requestedGw() {
+  const raw = new URL(window.location.href).searchParams.get('gw');
+  if (raw === null || raw === '') return null;
+  const gw = Number.parseInt(raw, 10);
+  return Number.isFinite(gw) && gw > 0 ? gw : null;
 }
 
 function playerFace(player) {
@@ -859,7 +863,11 @@ async function loadRecap() {
   startProgress('Loading recap');
   try {
     setProgress(30, { label: 'Loading match scores' });
-    const res = await fetch(apiUrl('fpl/gameweek-recap'), {
+    const gw = requestedGw();
+    const endpoint = gw
+      ? `${apiUrl('fpl/gameweek-recap')}?gw=${encodeURIComponent(String(gw))}`
+      : apiUrl('fpl/gameweek-recap');
+    const res = await fetch(endpoint, {
       credentials: 'same-origin',
       headers: { Accept: 'application/json' },
     });
@@ -868,7 +876,6 @@ async function loadRecap() {
     if (!res.ok || !data.ok) {
       throw new Error(data.error || 'We could not load this recap.');
     }
-    clearGwFromUrl();
     renderAll(data.recap);
     await finishProgress('Recap ready');
   } catch (err) {

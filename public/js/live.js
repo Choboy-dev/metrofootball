@@ -1,5 +1,5 @@
 import { animate, stagger } from 'https://cdn.jsdelivr.net/npm/motion@12.23.12/+esm';
-import { initSiteNav } from './site-nav.js';
+import { initSiteNav } from './site-nav.js?v=20260907pub';
 import { initTeamTabs } from './team-tabs.js';
 import {
   applyAuthNav,
@@ -7,10 +7,10 @@ import {
   fetchSession,
   apiUrl,
   pageUrl,
-} from './auth.js';
+} from './auth.js?v=20260907pub';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const LIVE_STORAGE_KEY = 'mf_live_snapshot_v1';
+const LIVE_STORAGE_KEY = 'mf_live_snapshot_v2';
 const PROGRESS_SHOW_DELAY_MS = 120;
 
 const progressUi = {
@@ -238,10 +238,13 @@ function eventIcons(events) {
   if (events.red > 0) {
     bits.push('<span class="live-event live-event--red" title="Red card" aria-label="Red card"></span>');
   }
-  if (events.bonus > 0) {
-    bits.push(`<span class="live-event live-event--bonus" title="Bonus">${events.bonus}</span>`);
-  }
   return bits.join('');
+}
+
+function bonusShoulderBadge(events = {}) {
+  const bonus = Number(events.bonus ?? 0);
+  if (bonus <= 0) return '';
+  return `<span class="pick-player__badge pick-player__badge--bonus" aria-label="${bonus} bonus point${bonus === 1 ? '' : 's'}" title="Bonus points">+${bonus}</span>`;
 }
 
 function playerCard(player, { bench = false } = {}) {
@@ -257,7 +260,9 @@ function playerCard(player, { bench = false } = {}) {
     ? `<img class="pick-player__shirt" src="${escapeHtml(player.shirt)}" alt="" width="52" height="68" loading="eager" decoding="async">`
     : `<span class="pick-player__shirt pick-player__shirt--fallback" aria-hidden="true"></span>`;
 
-  const scored = Number(player.team_points ?? player.points ?? 0);
+  const scored = bench
+    ? Number(player.points ?? player.team_points ?? 0)
+    : Number(player.team_points ?? player.points ?? 0);
   const events = eventIcons(player.events || {});
   const topRight = player.is_captain
     ? '<span class="pick-player__price" title="Captain">x2</span>'
@@ -268,6 +273,7 @@ function playerCard(player, { bench = false } = {}) {
       ${pos}
       <div class="pick-player__kit">
         ${badge}
+        ${bonusShoulderBadge(player.events || {})}
         ${shirt}
       </div>
       <span class="pick-player__card">
@@ -473,11 +479,6 @@ async function boot() {
   if (redirect === 'link-team') {
     failProgress();
     window.location.href = pageUrl('link-team');
-    return;
-  }
-  if (redirect === 'payment') {
-    failProgress();
-    window.location.href = pageUrl('payment');
     return;
   }
 

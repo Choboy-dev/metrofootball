@@ -3,6 +3,30 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Meta Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1033677469478224');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1033677469478224&ev=PageView&noscript=1" alt="" /></noscript>
+  <!-- End Meta Pixel Code -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9101848035950927"
+     crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="./css/app.css?v=20260904nav2">
+  <link rel="stylesheet" href="/css/tool-guide.css?v=20261005mfx">
+  <script src="./js/perf-head.js?v=20260901perf"></script>
+  <noscript>
+    <link rel="stylesheet" href="./css/fonts.css?v=20260830perf">
+    <link rel="stylesheet" href="./css/perf.css?v=20260830perf">
+  </noscript>
   <title>League Table | Metro Football</title>
   <meta name="description" content="Live Premier League table plus goals, assists, and clean sheet leaders on Metro Football.">
   <link rel="canonical" href="https://metrofootball.co.uk/league-table">
@@ -21,7 +45,9 @@
   <meta name="twitter:title" content="League Table | Metro Football">
   <meta name="twitter:description" content="Live Premier League table plus goals, assists, and clean sheet leaders on Metro Football.">
   <meta name="twitter:image" content="https://metrofootball.co.uk/images/metro-football-favicon.png">
-  <link rel="stylesheet" href="./css/app.css">
+  <link rel="modulepreload" href="./js/site-nav.js?v=20260830b">
+  <link rel="modulepreload" href="./js/auth.js?v=20260828d">
+  <link rel="modulepreload" href="./js/league-table.js?v=20260828d">
 </head>
 <body class="lt-page" data-auth-page="tool" data-tool="league-table" data-tool-access="free">
   <div
@@ -43,9 +69,8 @@
 
   <header class="site-header" data-header>
     <nav class="site-nav" aria-label="Main">
-      <div class="site-nav__left">
-        <a href="./" class="site-logo" aria-label="Metro Football home">
-          <img class="site-logo__img" src="./images/metro-football-logo-dark.png" alt="" width="320" height="107" decoding="async">
+      <a href="./" class="site-logo" aria-label="Metro Football home">
+          <img class="site-logo__img" src="./images/metro-football-correct-dark-logo-315.webp?v=20260830logo" srcset="./images/metro-football-correct-dark-logo-315.webp?v=20260830logo 315w, ./images/metro-football-correct-dark-logo-630.webp?v=20260830logo 630w" sizes="(min-width: 768px) 204px, 180px" alt="" width="938" height="313" decoding="async">
         </a>
 
         <div class="nav-menu desktop-only">
@@ -58,7 +83,7 @@
               <div class="nav-panel__card">
                 <ul class="nav-list nav-list--grid">
                   <li>
-                    <a class="list-item" href="./gameweek-recap">
+                    <a class="list-item" href="./pick" data-auth-tool>
                       <span class="list-item__copy">
                         <span class="list-item__title">Rate My Team</span>
                         <span class="list-item__desc">Score your squad and pick a captain</span>
@@ -106,9 +131,6 @@
                     </a>
                   </li>
                 </ul>
-                <div class="nav-panel__note">
-                  <p>Interested? <a href="./join">Go premium from £2 a month</a></p>
-                </div>
               </div>
             </div>
           </div>
@@ -148,7 +170,7 @@
                 </ul>
                 <ul class="nav-list nav-list--stack">
                   <li>
-                    <a class="list-item" href="#">
+                    <a class="list-item" href="./players">
                       <span class="list-item__copy">
                         <span class="list-item__title">Players</span>
                         <span class="list-item__desc">Search players and season stats</span>
@@ -164,7 +186,7 @@
                     </a>
                   </li>
                   <li>
-                    <a class="list-item" href="./fpl-gameweek-2-tips" data-nav-gw-tips-link>
+                    <a class="list-item" href="/fpl-gameweek-tips" data-nav-gw-tips-link>
                       <span class="list-item__copy">
                         <span class="list-item__title" data-nav-gw-tips-label>Gameweek Tips</span>
                         <span class="list-item__desc">Picks and advice for this gameweek</span>
@@ -177,10 +199,11 @@
           </div>
 
           <a data-pricing-nav class="nav-link" href="./join">Pricing</a>
-          <a class="nav-link" href="#">About</a>
-          <a class="nav-link" href="#">Contact</a>
+          <a class="nav-link" href="./about">About</a>
+          <a class="nav-link" href="./fpl-guides">FPL Guides</a>
+          <a class="nav-link" href="./help-center">Help</a>
+          <a class="nav-link" href="./contact">Contact</a>
         </div>
-      </div>
 
       <div class="site-nav__right desktop-only">
         <a class="mf-btn mf-btn--ink mf-btn--sm" href="./login" data-guest-only>
@@ -235,7 +258,7 @@
   </div>
 
 
-  <main class="lt-main" data-lt-main>
+  <main class="lt-main" data-lt-main aria-busy="true">
     <div class="container lt-shell">
       <header class="lt-header">
         <p class="lt-header__kicker" data-lt-event>Premier League</p>
@@ -243,7 +266,7 @@
         <p class="lt-header__lead">Live Premier League standings, plus the players leading goals, assists, and clean sheets.</p>
       </header>
 
-      <div class="live-load pick-load lt-load" data-lt-load hidden>
+      <div class="live-load pick-load lt-load is-visible is-active" data-lt-load aria-live="polite">
         <div class="live-load__meta">
           <p class="live-load__label" data-lt-load-label>Loading table</p>
           <p class="live-load__pct" data-lt-load-pct aria-hidden="true">0%</p>
@@ -291,20 +314,75 @@
     </div>
   </main>
 
+  <section class="mf-explainer" data-mf-explainer aria-labelledby="mfx-title">
+    <div class="container mf-explainer__shell">
+      <aside class="mf-explainer__byline" aria-label="About this guide">
+        <a class="mf-explainer__author" href="/author/chosen-esiwe">
+          <img class="mf-explainer__avatar" src="/images/authors/chosen-esiwe.jpg" alt="" width="48" height="48" loading="lazy" decoding="async">
+          <span class="mf-explainer__who">
+            <span class="mf-explainer__name">Chosen Esiwe</span>
+            <span class="mf-explainer__role">Founder, Metro Football</span>
+          </span>
+        </a>
+        <ul class="mf-explainer__facts">
+          <li><strong>Reviewed</strong> <time datetime="2026-10-05">5 October 2026</time></li>
+          <li><strong>Source</strong> Standings and player numbers from official Premier League match data via FPL</li>
+        </ul>
+      </aside>
+      <article class="mf-explainer__body">
+        <h2 class="mf-explainer__title" id="mfx-title">Reading the Premier League table for FPL</h2>
+        <p class="mf-explainer__lede">The table is the oldest stat in football and still one of the most useful. Here you get the live standings next to the players leading the league for goals, assists, clean sheets and more.</p>
+        <h3>What is on this page</h3>
+        <p>The table shows every club's position, points and goal difference, with the top four, the European places and the relegation zone marked so each race is easy to follow. The tabs beside it switch to the player leaders: goals, assists, clean sheets, average rating, chances created, minutes played, goals plus assists, goals per 90 minutes and FPL points.</p>
+        <h3>How FPL managers can use it</h3>
+        <ol class="mf-explainer__steps">
+        <li><strong>Look at goal difference, not only points.</strong> A club scoring freely is a good place to find attackers, and one conceding very little is where clean sheets come from.</li>
+        <li><strong>Use goals per 90 to find hidden finishers.</strong> Some players score often but play fewer minutes. If their role grows, so do their points.</li>
+        <li><strong>Watch minutes played.</strong> A player near the top of that list is a safe starter, which matters most for defenders and cheap midfielders.</li>
+        <li><strong>Compare chances created with assists.</strong> A player making plenty of chances but few assists is often unlucky, and luck tends to even out.</li>
+        </ol>
+        <h3>Why the table matters more as the season goes on</h3>
+        <p>From March onwards, what a team is playing for starts to shape results. Sides chasing Europe or fighting relegation often play with an extra edge, while clubs with little left to play for can drift. The table tells you who still has something at stake, and that is worth knowing when you pick players for the run in. If you want to go deeper on the numbers behind the table, our guide to <a href="/fpl-guides/fpl-stats-explained-12-numbers-every-manager-should-understand">12 FPL stats every manager should understand</a> is a good next read.</p>
+        <p class="mf-explainer__note">For the games each club has coming up, switch to our <a href="/fixture-difficulty">Fixture Difficulty</a> ticker.</p>
+      </article>
+    </div>
+  </section>
+
+
   <footer class="site-footer">
     <div class="container footer-grid">
       <div class="footer-brand">
         <a class="brand" href="./">
-          <img class="site-logo__img site-logo__img--light" src="./images/metro-football-logo-light.png" alt="" width="320" height="107" decoding="async">
+          <img class="site-logo__img site-logo__img--light" src="./images/metro-football-logo-light-315.webp?v=20260830logo" srcset="./images/metro-football-logo-light-315.webp?v=20260830logo 315w, ./images/metro-football-logo-light-630.webp?v=20260830logo 630w" sizes="(min-width: 768px) 204px, 180px" alt="" width="938" height="313" decoding="async">
         </a>
         <p>Metro Football builds FPL tools and auto reports for managers who want clear answers before the deadline.</p>
+        <div class="mf-social mf-social--footer" aria-label="Follow Metro Football">
+          <p class="mf-social__label">Follow us</p>
+          <ul class="mf-social__list">
+            <li>
+              <a class="mf-social__link" href="https://web.facebook.com/metrofootballuk/" aria-label="Metro Football on Facebook" target="_blank" rel="noopener noreferrer">
+                <svg class="mf-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.5 22v-8.7h2.9l.44-3.4h-3.34V7.9c0-.98.27-1.65 1.68-1.65h1.8V3.1c-.31 0-1.38-.13-2.63-.13-2.6 0-4.38 1.58-4.38 4.48v2.5H7.5v3.4h3.09V22h3.91Z"/></svg>
+              </a>
+            </li>
+            <li>
+              <a class="mf-social__link" href="https://x.com/metrofootballuk" aria-label="Metro Football on X" target="_blank" rel="noopener noreferrer">
+                <svg class="mf-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.687 3H20.5l-7.43 8.49L21.5 21h-6.05l-4.74-5.52L5.2 21H2.38l7.94-9.08L2.5 3h6.2l4.28 4.98L17.687 3Zm-2.12 16.2h1.72L8.57 4.67H6.73l8.837 14.53Z"/></svg>
+              </a>
+            </li>
+            <li>
+              <a class="mf-social__link" href="https://www.instagram.com/metrofootballuk/" aria-label="Metro Football on Instagram" target="_blank" rel="noopener noreferrer">
+                <svg class="mf-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7.8 2h8.4A5.8 5.8 0 0 1 22 7.8v8.4A5.8 5.8 0 0 1 16.2 22H7.8A5.8 5.8 0 0 1 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2Zm0 2A3.8 3.8 0 0 0 4 7.8v8.4A3.8 3.8 0 0 0 7.8 20h8.4a3.8 3.8 0 0 0 3.8-3.8V7.8A3.8 3.8 0 0 0 16.2 4H7.8Zm9.65 1.5a1.05 1.05 0 1 1 0 2.1 1.05 1.05 0 0 1 0-2.1ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg>
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
       <div class="footer-col">
         <h4>Explore</h4>
         <a href="./">Home</a>
-        <a href="#">Players</a>
+        <a href="./players">Players</a>
         <a href="./league-table">League Table</a>
-        <a href="#">Dashboard</a>
+        <a href="./live">Dashboard</a>
         <a href="./join">Upgrade</a>
       </div>
       <div class="footer-col">
@@ -313,29 +391,29 @@
         <a href="./ai-tips#snipers">Differential Finder</a>
         <a href="./mini-leagues">Mini League Tracker</a>
         <a href="./pick">Rate My Team</a>
-        <a href="#">Transfer Planner</a>
+        <a href="./ai-tips">Transfer Planner</a>
         <a href="./ai-tips">AI Transfers</a>
         <a href="./chip-strategy">Chip Strategy Planner</a>
-      </div>
-      <div class="footer-col">
-        <h4>Account</h4>
-        <a href="#">Log in</a>
-        <a href="#">Register</a>
-        <a href="#">Settings</a>
-        <a href="#">Billing</a>
-        <a href="#">Help</a>
       </div>
     </div>
     <div class="container footer-bottom">
       <span>© 2026 Metro Football. metrofootball.co.uk</span>
       <span>
-        <a href="./privacy-policy">Privacy</a>
+        <a href="./privacy-policy">Privacy Policy</a>
         ·
-        <a href="./terms">Terms</a>
+        <a href="./terms">Terms of Service</a>
+        ·
+        <a href="./disclaimer">Disclaimer</a>
+        ·
+        <a href="./about">About Us</a>
+        ·
+        <a href="./contact">Contact Us</a>
       </span>
     </div>
   </footer>
 
-  <script type="module" src="./js/league-table.js"></script>
+  <script defer src="./js/gtag-config.js?v=2"></script>
+  <script type="module" src="./js/league-table.js?v=20260828d"></script>
+  <script type="module" src="/js/tool-guide.js?v=20261005mfx2"></script>
 </body>
 </html>

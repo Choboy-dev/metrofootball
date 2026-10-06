@@ -1,10 +1,18 @@
-import { animate, stagger } from 'https://cdn.jsdelivr.net/npm/motion@12.23.12/+esm';
-
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const CHECK_SVG = `<svg class="mf-select__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12.5 9.5 17 19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const CHEVRON_SVG = `<svg class="mf-select__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 let openRoot = null;
+let motionPromise = null;
+
+function loadMotion() {
+  if (!motionPromise) {
+    motionPromise = import('./motion.js?v=20260901perf')
+      .then((mod) => ({ animate: mod.animate, stagger: mod.stagger }))
+      .catch(() => ({ animate: null, stagger: null }));
+  }
+  return motionPromise;
+}
 
 function optionEls(root) {
   return [...root.querySelectorAll('[data-mf-select-option]')];
@@ -112,20 +120,25 @@ function openSelect(root) {
   const skipMotion = reduceMotion || Boolean(root.closest('.contact-form'));
 
   if (!skipMotion) {
-    try {
-      animate(panel, { y: [-6, 0] }, { duration: 0.2, easing: [0.17, 0.55, 0.55, 1] });
-      animate(
-        options,
-        { y: [6, 0] },
-        {
-          duration: 0.24,
-          delay: stagger(0.025, { startDelay: 0.03 }),
-          easing: [0.17, 0.55, 0.55, 1],
+    loadMotion().then(({ animate, stagger }) => {
+      if (typeof animate !== 'function') return;
+      try {
+        animate(panel, { y: [-6, 0] }, { duration: 0.2, easing: [0.17, 0.55, 0.55, 1] });
+        if (typeof stagger === 'function') {
+          animate(
+            options,
+            { y: [6, 0] },
+            {
+              duration: 0.24,
+              delay: stagger(0.025, { startDelay: 0.03 }),
+              easing: [0.17, 0.55, 0.55, 1],
+            }
+          );
         }
-      );
-    } catch {
-      // Menu stays visible even if Motion fails
-    }
+      } catch {
+        // Menu stays visible even if Motion fails
+      }
+    });
   }
 
   const selected = options.find((opt) => opt.classList.contains('is-selected')) || options[0];

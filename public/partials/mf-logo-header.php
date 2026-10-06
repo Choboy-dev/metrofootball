@@ -1,0 +1,1 @@
+<img class="site-logo__img" src="./images/metro-football-correct-dark-logo-315.webp?v=20260830logo" srcset="./images/metro-football-correct-dark-logo-315.webp?v=20260830logo 315w, ./images/metro-football-correct-dark-logo-630.webp?v=20260830logo 630w" sizes="(min-width: 768px) 204px, 180px" alt="" width="938" height="313" decoding="async">

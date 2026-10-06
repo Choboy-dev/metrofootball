@@ -1,14 +1,15 @@
-import { animate, inView, stagger } from './motion.js';
-import { initSiteNav } from './site-nav.js';
+import { animate, inView, stagger } from './motion.js?v=20260901perf';
+import { initSiteNav } from './site-nav.js?v=20260907pub';
 import { initTeamTabs } from './team-tabs.js';
 import {
   applyAuthNav,
+  applyPremiumGate,
   apiUrl,
   bindSignOutButtons,
   fetchSession,
   redirectToLogin,
   pageUrl,
-} from './auth.js';
+} from './auth.js?v=20260907pub';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const PROGRESS_SHOW_DELAY_MS = 80;
@@ -28,33 +29,10 @@ const progressUi = {
   anim: null,
 };
 
-function isPremiumActive(user) {
-  return user?.plan === 'premium' && user?.subscription_status === 'active';
-}
-
-function upgradePath(user) {
-  if (user?.plan === 'premium' && user?.subscription_status !== 'active') {
-    return pageUrl('payment');
-  }
-  return pageUrl('join');
-}
-
 function applyGate(session) {
-  const lock = document.querySelector('[data-premium-lock]');
-  const unlocked = document.querySelector('[data-premium-unlocked]');
-  const cta = document.querySelector('[data-upgrade-cta]');
-  const user = session?.user;
-  const premium = isPremiumActive(user);
-
-  if (cta) cta.setAttribute('href', upgradePath(user));
-  if (lock) lock.hidden = premium;
-  if (unlocked) unlocked.hidden = !premium;
-
-  const reveal = premium ? unlocked : lock;
-  if (reveal && !reduceMotion) {
-    animate(reveal, { opacity: [0, 1], y: [12, 0] }, { duration: 0.4, easing: [0.17, 0.55, 0.55, 1] });
-  }
-  return premium;
+  return applyPremiumGate(session, {
+    animateReveal: reduceMotion ? null : animate,
+  }).premium;
 }
 
 function progressEls() {
@@ -243,6 +221,17 @@ function rankChangeHtml(change) {
   return '<span class="ml-change ml-change--flat" aria-label="No change">—</span>';
 }
 
+function rankArrowHtml(change) {
+  const value = Number(change ?? 0);
+  if (value > 0) {
+    return `<span class="ml-change ml-change--up ml-change--icon-only" aria-hidden="true">▲</span>`;
+  }
+  if (value < 0) {
+    return `<span class="ml-change ml-change--down ml-change--icon-only" aria-hidden="true">▼</span>`;
+  }
+  return '<span class="ml-change ml-change--flat ml-change--icon-only" aria-hidden="true">—</span>';
+}
+
 function pointsGapLabel(gap) {
   const value = Number(gap ?? 0);
   if (value === 0) return 'Level on points';
@@ -333,25 +322,165 @@ function renderHeader(dashboard) {
   }
 }
 
-function renderStats(dashboard) {
+function rankOrdinal(rank) {
+  const n = Number(rank);
+  if (!Number.isFinite(n) || n < 1) return '—';
+  const mod100 = n % 100;
+  if (mod100 >= 11 && mod100 <= 13) return `${n}th`;
+  const mod10 = n % 10;
+  if (mod10 === 1) return `${n}st`;
+  if (mod10 === 2) return `${n}nd`;
+  if (mod10 === 3) return `${n}rd`;
+  return `${n}th`;
+}
+
+function pulseInsightIcon(type) {
+  const icons = {
+    rival: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke-linecap="round"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke-linecap="round"/></svg>',
+    mover: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 17 6-6 4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 7h7v7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    leader: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20 17 22M12 14h.01M12 2v8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    crown: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 19h20M4 17l2-9 4 4 2-6 2 6 4-4 2 9" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    trend: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    flat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg>',
+  };
+  return icons[type] || icons.rival;
+}
+
+function pulseInsightIconMarkup(insight) {
+  if (insight.iconHtml) {
+    return `<span class="ml-pulse__insight-arrow">${insight.iconHtml}</span>`;
+  }
+  if (insight.iconSrc) {
+    return `<img class="ml-pulse__insight-img" src="${escapeHtml(insight.iconSrc)}" alt="" width="28" height="28" loading="lazy" decoding="async">`;
+  }
+  return pulseInsightIcon(insight.type);
+}
+
+function buildPulseInsights(dashboard) {
+  const stats = dashboard.stats || {};
+  const rivals = dashboard.rivals || [];
+  const climbers = dashboard.movers?.up || [];
+  const insights = [];
+  const change = Number(stats.rank_change) || 0;
+
+  if (change > 0) {
+    insights.push({
+      type: 'trend',
+      tone: 'up',
+      kicker: 'Last week',
+      title: `Up ${change} places`,
+      detail: 'You climbed the table',
+      iconHtml: rankArrowHtml(change),
+    });
+  } else if (change < 0) {
+    insights.push({
+      type: 'trend',
+      tone: 'down',
+      kicker: 'Last week',
+      title: `Down ${Math.abs(change)} places`,
+      detail: 'Time to fight back',
+      iconHtml: rankArrowHtml(change),
+    });
+  }
+
+  if (stats.rank === 1) {
+    insights.push({
+      type: 'crown',
+      tone: 'accent',
+      kicker: 'Top spot',
+      title: 'You lead the league',
+      detail: `${stats.total ?? 0} pts in total`,
+      iconSrc: './images/mini-leagues/icon-first-place.png',
+    });
+  } else if ((stats.gap_to_leader ?? 0) > 0) {
+    insights.push({
+      type: 'leader',
+      tone: 'neutral',
+      kicker: stats.leader_name || '1st place',
+      title: `${stats.gap_to_leader} pts ahead`,
+      detail: '1st place',
+      iconSrc: './images/mini-leagues/icon-first-place.png',
+    });
+  }
+
+  if (rivals.length) {
+    const rival = rivals[0];
+    const gap = Number(rival.points_gap) || 0;
+    let detail = 'Same points as you';
+    if (gap > 0) detail = `${gap} pt${gap === 1 ? '' : 's'} ahead of you`;
+    if (gap < 0) detail = `${Math.abs(gap)} pt${Math.abs(gap) === 1 ? '' : 's'} behind you`;
+    insights.push({
+      type: 'rival',
+      tone: gap > 0 ? 'warn' : gap < 0 ? 'up' : 'neutral',
+      kicker: 'Closest rival',
+      title: rival.entry_name || 'Rival',
+      detail,
+      iconSrc: './images/mini-leagues/icon-rival.png',
+    });
+  }
+
+  const climber = climbers.find((row) => Number(row.rank_change) >= 3);
+  if (climber) {
+    insights.push({
+      type: 'mover',
+      tone: 'up',
+      kicker: 'Biggest move',
+      title: climber.entry_name || 'Rival',
+      detail: `Up ${climber.rank_change} places this week`,
+    });
+  }
+
+  return insights.slice(0, 4);
+}
+
+function renderPulseInsightCard(insight) {
+  const tone = insight.tone || 'neutral';
+  return `
+    <article class="ml-pulse__insight ml-pulse__insight--${escapeHtml(tone)}" data-ml-insight>
+      <span class="ml-pulse__insight-icon">${pulseInsightIconMarkup(insight)}</span>
+      <div class="ml-pulse__insight-copy">
+        <span class="ml-pulse__insight-kicker">${escapeHtml(insight.kicker)}</span>
+        <p class="ml-pulse__insight-title">${escapeHtml(insight.title)}</p>
+        <p class="ml-pulse__insight-detail">${escapeHtml(insight.detail)}</p>
+      </div>
+    </article>
+  `;
+}
+
+function renderPulse(dashboard) {
   const stats = dashboard.stats || {};
   const you = dashboard.you || {};
+  const leagueName = dashboard.league?.name || 'Your league';
+  const managerCount = dashboard.league?.rank_count ?? 0;
+  const eventName = dashboard.event?.name || 'Gameweek';
+
+  const leagueEl = document.querySelector('[data-ml-pulse-league]');
+  const eventEl = document.querySelector('[data-ml-pulse-event]');
+  const rankMetaEl = document.querySelector('[data-ml-pulse-rank-meta]');
+  const rankWrap = document.querySelector('[data-ml-pulse-rank-wrap]');
+  const insightsRoot = document.querySelector('[data-ml-insights]');
+
+  if (leagueEl) leagueEl.textContent = leagueName;
+  if (eventEl) eventEl.textContent = eventName;
+  if (rankMetaEl) {
+    rankMetaEl.textContent = managerCount
+      ? `${rankOrdinal(stats.rank)} of ${managerCount} managers`
+      : rankOrdinal(stats.rank);
+  }
 
   const map = {
-    '[data-ml-stat-rank]': stats.rank ?? '—',
+    '[data-ml-stat-rank]': rankOrdinal(stats.rank),
     '[data-ml-stat-total]': `${stats.total ?? 0} pts`,
     '[data-ml-stat-gap]': stats.rank === 1 ? 'You lead' : `${stats.gap_to_leader ?? 0} pts`,
-    '[data-ml-stat-change]': stats.rank_change > 0
-      ? `Up ${stats.rank_change}`
-      : stats.rank_change < 0
-        ? `Down ${Math.abs(stats.rank_change)}`
-        : 'No change',
   };
 
   Object.entries(map).forEach(([sel, text]) => {
     const el = document.querySelector(sel);
     if (el) el.textContent = text;
   });
+
+  const changeEl = document.querySelector('[data-ml-stat-change]');
+  if (changeEl) changeEl.innerHTML = rankChangeHtml(stats.rank_change);
 
   const gwEl = document.querySelector('[data-ml-stat-gw]');
   if (gwEl) gwEl.textContent = `${you.event_total ?? 0} pts this week`;
@@ -362,11 +491,55 @@ function renderStats(dashboard) {
     changeTile.classList.toggle('is-down', stats.rank_change < 0);
     changeTile.classList.toggle('is-flat', stats.rank_change === 0);
   }
+
+  if (rankWrap) {
+    rankWrap.classList.toggle('is-leading', stats.rank === 1);
+  }
+
+  const insights = buildPulseInsights(dashboard);
+  if (insightsRoot) {
+    if (!insights.length) {
+      insightsRoot.hidden = true;
+      insightsRoot.innerHTML = '';
+    } else {
+      insightsRoot.hidden = false;
+      insightsRoot.innerHTML = insights.map(renderPulseInsightCard).join('');
+    }
+  }
 }
 
-function renderBrief(dashboard) {
-  const el = document.querySelector('[data-ml-brief]');
-  if (el) el.textContent = dashboard.brief || '';
+function animatePulse() {
+  if (reduceMotion) return;
+  const pulse = document.querySelector('[data-ml-pulse]');
+  if (!pulse) return;
+
+  const insights = [...pulse.querySelectorAll('[data-ml-insight]')];
+  if (!insights.length) return;
+
+  insights.forEach((card) => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(10px)';
+  });
+
+  animate(insights, { opacity: 1, y: 0 }, {
+    duration: 0.42,
+    delay: stagger(0.08),
+    easing: [0.17, 0.55, 0.55, 1],
+  });
+}
+
+function renderStats(dashboard) {
+  renderPulse(dashboard);
+}
+
+function renderBrief() {
+  /* Legacy brief text replaced by ml-pulse insight cards. */
+}
+
+function entryLink(row, className) {
+  const name = escapeHtml(row.entry_name);
+  if (!row.profile_path) return `<span class="${className}">${name}</span>`;
+  return `<a class="${className} ml-entry-link" href="${escapeHtml(row.profile_path)}">${name}</a>`;
 }
 
 function renderStandings(dashboard) {
@@ -381,7 +554,7 @@ function renderStandings(dashboard) {
         <tr class="ml-row${you}">
           <td class="ml-row__rank">${escapeHtml(row.rank)}</td>
           <td class="ml-row__team">
-            <span class="ml-row__name">${escapeHtml(row.entry_name)}</span>
+            ${entryLink(row, 'ml-row__name')}
             <span class="ml-row__manager">${escapeHtml(row.player_name)}</span>
           </td>
           <td class="ml-row__gw">${escapeHtml(row.event_total)}</td>
@@ -401,7 +574,7 @@ function renderStandings(dashboard) {
           <span class="ml-standing-card__rank">${escapeHtml(row.rank)}</span>
           <div class="ml-standing-card__main">
             <div class="ml-standing-card__head">
-              <span class="ml-standing-card__team">${escapeHtml(row.entry_name)}</span>
+              ${entryLink(row, 'ml-standing-card__team')}
               ${youLabel}
               <span class="ml-standing-card__move">${rankChangeHtml(row.rank_change)}</span>
             </div>
@@ -430,7 +603,7 @@ function renderRivals(dashboard) {
   root.innerHTML = rivals.map((rival) => `
     <li class="ml-rival">
       <div class="ml-rival__head">
-        <span class="ml-rival__name">${escapeHtml(rival.entry_name)}</span>
+        ${entryLink(rival, 'ml-rival__name')}
         <span class="ml-rival__rank">#${escapeHtml(rival.rank)}</span>
       </div>
       <p class="ml-rival__meta">${escapeHtml(pointsGapLabel(rival.points_gap))} · ${escapeHtml(rival.total)} pts</p>
@@ -447,7 +620,7 @@ function renderMovers(dashboard) {
     if (!items.length) return `<li class="ml-side__empty">${escapeHtml(emptyText)}</li>`;
     return items.map((row) => `
       <li class="ml-mover">
-        <span class="ml-mover__name">${escapeHtml(row.entry_name)}</span>
+        ${entryLink(row, 'ml-mover__name')}
         <span class="ml-mover__change">${rankChangeHtml(row.rank_change)}</span>
       </li>
     `).join('');
@@ -487,6 +660,25 @@ function renderAlerts(dashboard) {
   toggle.dataset.leagueId = String(dashboard.league?.id ?? state.activeLeagueId ?? '');
 }
 
+function syncStandingsTableHeight() {
+  const tablePanel = document.querySelector('.ml-panel--table');
+  const side = document.querySelector('.ml-side');
+  if (!tablePanel || !side) return;
+
+  if (window.matchMedia('(max-width: 900px)').matches) {
+    tablePanel.style.height = '';
+    return;
+  }
+
+  tablePanel.style.height = `${side.offsetHeight}px`;
+}
+
+function queueStandingsTableHeightSync() {
+  requestAnimationFrame(() => {
+    requestAnimationFrame(syncStandingsTableHeight);
+  });
+}
+
 function renderBoard(dashboard, { animateIn = false } = {}) {
   const board = document.querySelector('[data-ml-board]');
   if (board) board.hidden = false;
@@ -504,15 +696,19 @@ function renderBoard(dashboard, { animateIn = false } = {}) {
   renderMovers(dashboard);
   renderActivity(dashboard);
   renderAlerts(dashboard);
+  queueStandingsTableHeightSync();
+
+  if (!reduceMotion) {
+    animatePulse();
+  }
 
   if (animateIn && !reduceMotion && board) {
     animate(board, { opacity: [0, 1], y: [12, 0] }, { duration: 0.4, ease: [0.17, 0.55, 0.55, 1] });
-    const tiles = board.querySelectorAll('.ml-stat');
-    animate(tiles, { opacity: [0, 1], y: [8, 0] }, {
-      duration: 0.35,
-      delay: stagger(0.05),
-      ease: [0.17, 0.55, 0.55, 1],
-    });
+    const pulse = board.querySelector('[data-ml-pulse]');
+    if (pulse) {
+      animate(pulse, { opacity: [0, 1], y: [14, 0] }, { duration: 0.45, ease: [0.17, 0.55, 0.55, 1] });
+    }
+    animatePulse();
   }
 }
 
@@ -727,6 +923,8 @@ function bindUi() {
   if (alerts) {
     alerts.addEventListener('change', () => toggleAlerts(alerts.checked));
   }
+
+  window.addEventListener('resize', queueStandingsTableHeightSync, { passive: true });
 }
 
 async function boot() {

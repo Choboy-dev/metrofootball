@@ -1,11 +1,10 @@
-import { animate, stagger } from './motion.js';
-import { initSiteNav } from './site-nav.js';
+import { initSiteNav } from './site-nav.js?v=20260907pub';
 import {
   applyAuthNav,
   bindSignOutButtons,
   fetchSession,
   apiUrl,
-} from './auth.js';
+} from './auth.js?v=20260907pub';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const PROGRESS_SHOW_DELAY_MS = 80;
@@ -86,27 +85,14 @@ function startProgress(label = 'Loading table') {
   }, reduceMotion ? 400 : 200);
 }
 
-function setProgress(target, { immediate = false, label } = {}) {
+function setProgress(target, { immediate = true, label } = {}) {
   if (label) setProgressLabel(label);
   const next = Math.max(progressUi.value, Math.min(100, target));
   if (progressUi.anim) {
-    progressUi.anim.stop();
     progressUi.anim = null;
   }
-  if (immediate || reduceMotion) {
-    progressUi.value = next;
-    applyProgressVisual(next);
-    return;
-  }
-  const from = progressUi.value;
-  progressUi.anim = animate(from, next, {
-    duration: 0.35,
-    ease: [0.17, 0.55, 0.55, 1],
-    onUpdate: (latest) => {
-      progressUi.value = latest;
-      applyProgressVisual(latest);
-    },
-  });
+  progressUi.value = next;
+  applyProgressVisual(next);
 }
 
 async function finishProgress(label = 'Table ready') {
@@ -292,22 +278,11 @@ function renderLeaders(rows, label) {
 }
 
 function animateRows(scope) {
-  if (reduceMotion || !scope) return;
-  const rows = [...scope.querySelectorAll('[data-lt-row]')];
-  if (!rows.length) return;
-  rows.forEach((row) => {
-    row.style.opacity = '0';
-    row.style.transform = 'translateY(10px)';
+  if (!scope) return;
+  scope.querySelectorAll('[data-lt-row]').forEach((row) => {
+    row.style.opacity = '';
+    row.style.transform = '';
   });
-  animate(
-    rows,
-    { opacity: 1, y: 0 },
-    {
-      duration: 0.35,
-      delay: stagger(0.02),
-      easing: [0.17, 0.55, 0.55, 1],
-    }
-  );
 }
 
 function renderPanel() {
@@ -428,15 +403,21 @@ async function loadTable() {
 }
 
 async function boot() {
-  initFaceFallbacks();
-  initSiteNav();
-  bindSignOutButtons();
-  bindTabs();
+  try {
+    initFaceFallbacks();
+    initSiteNav();
+    bindSignOutButtons();
+    bindTabs();
 
-  const session = await fetchSession();
-  applyAuthNav(session || { authenticated: false });
-
-  await loadTable();
+    const [session] = await Promise.all([
+      fetchSession(),
+      loadTable(),
+    ]);
+    applyAuthNav(session || { authenticated: false });
+  } catch (error) {
+    failProgress();
+    setError(error?.message || 'Could not start the league table page.');
+  }
 }
 
 boot();

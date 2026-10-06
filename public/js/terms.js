@@ -1,10 +1,10 @@
 import { animate, inView } from 'https://cdn.jsdelivr.net/npm/motion@12.23.12/+esm';
-import { initSiteNav } from './site-nav.js';
+import { initSiteNav } from './site-nav.js?v=20260907pub';
 import {
   applyAuthNav,
   bindSignOutButtons,
   fetchSession,
-} from './auth.js';
+} from './auth.js?v=20260907pub';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 

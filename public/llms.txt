@@ -1,0 +1,49 @@
+# Metro Football
+
+> Metro Football is an FPL tools site at https://metrofootball.co.uk. We help Fantasy Premier League managers with transfers, player profiles, chip timing, fixtures, and clear gameweek guidance.
+
+Metro Football is not the official Fantasy Premier League product. Our public pages explain tools, guides, and player data for managers. Private areas such as /admin, /mail, and /api are not for AI citation.
+
+## Core pages
+
+- [Home](https://metrofootball.co.uk/): Product overview and main entry point
+- [About](https://metrofootball.co.uk/about): Who Metro Football is
+- [Join](https://metrofootball.co.uk/join): Membership plans
+- [Help Centre](https://metrofootball.co.uk/help-center): Common questions and support
+- [Contact](https://metrofootball.co.uk/contact): Get in touch
+
+## FPL tools
+
+- [Player profiles](https://metrofootball.co.uk/players): Browse clubs and individual FPL player profiles
+- [Rate My Team](https://metrofootball.co.uk/pick): Score a squad and captain choice
+- [AI Transfers](https://metrofootball.co.uk/ai-tips): Transfer ideas for a linked team
+- [AI Teams](https://metrofootball.co.uk/ai-teams): Suggested squad builds
+- [Chip Strategy Planner](https://metrofootball.co.uk/chip-strategy): Best weeks for chips
+- [Fixture Difficulty Ticker](https://metrofootball.co.uk/fixture-difficulty): Upcoming fixture difficulty
+- [Mini League Tracker](https://metrofootball.co.uk/mini-leagues): Mini league standings and rivals
+- [Live dashboard](https://metrofootball.co.uk/live): Live team and gameweek view
+- [League table](https://metrofootball.co.uk/league-table): Premier League table context for FPL
+
+## News and guides
+
+- [FPL Guides](https://metrofootball.co.uk/fpl-guides): Free strategy and basics guides
+- [Gameweek tips](https://metrofootball.co.uk/fpl-gameweek-tips): Current gameweek tips
+- [Injury news](https://metrofootball.co.uk/fpl-injury-news): Player availability updates
+- [Price changes](https://metrofootball.co.uk/price-changes): Rise and fall watchlist
+- [Gameweek recap](https://metrofootball.co.uk/gameweek-recap): After the deadline review
+
+## Sitemaps and policies
+
+- [Sitemap index](https://metrofootball.co.uk/sitemap.xml): All public sitemaps
+- [Pages sitemap](https://metrofootball.co.uk/sitemap-pages.xml): Main site pages
+- [Players sitemap](https://metrofootball.co.uk/sitemap-players.php): Club hubs and player profiles
+- [Guides sitemap](https://metrofootball.co.uk/sitemap-guides.php): Published FPL guides
+- [Privacy policy](https://metrofootball.co.uk/privacy-policy): Privacy terms
+- [Terms](https://metrofootball.co.uk/terms): Site terms
+- [Disclaimer](https://metrofootball.co.uk/disclaimer): Advice and advertising limits
+- [About](https://metrofootball.co.uk/about): Who Metro Football is
+- [Contact](https://metrofootball.co.uk/contact): Get in touch
+
+## Optional
+
+- [robots.txt](https://metrofootball.co.uk/robots.txt): Crawl rules for bots

@@ -7,9 +7,12 @@
 @media (min-width: 960px) {
   .privacy-aside,
   .terms-aside,
+  .about-aside,
   .fin-aside,
   .fin-layout__aside,
   .fin-layout__toc,
+  .fin-toc,
+  [data-fin-toc],
   .report-aside,
   .gwr-aside,
   .pcp-aside,

@@ -3,6 +3,29 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Meta Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1033677469478224');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1033677469478224&ev=PageView&noscript=1" alt="" /></noscript>
+  <!-- End Meta Pixel Code -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9101848035950927"
+     crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="./css/app.css?v=20260904nav2">
+  <script src="./js/perf-head.js?v=20260901perf"></script>
+  <noscript>
+    <link rel="stylesheet" href="./css/fonts.css?v=20260830perf">
+    <link rel="stylesheet" href="./css/perf.css?v=20260830perf">
+  </noscript>
   <title>Join Metro Football | Pick your plan</title>
   <meta name="description" content="Choose Free or Premium and start using Metro Football FPL tools.">
   <link rel="canonical" href="https://metrofootball.co.uk/join">
@@ -21,14 +44,13 @@
   <meta name="twitter:title" content="Join Metro Football | Pick your plan">
   <meta name="twitter:description" content="Choose Free or Premium and start using Metro Football FPL tools.">
   <meta name="twitter:image" content="https://metrofootball.co.uk/images/metro-football-favicon.png">
-  <link rel="stylesheet" href="./css/app.css">
+
 </head>
 <body class="join-page">
   <header class="site-header" data-header>
     <nav class="site-nav" aria-label="Main">
-      <div class="site-nav__left">
-        <a href="./" class="site-logo" aria-label="Metro Football home">
-          <img class="site-logo__img" src="./images/metro-football-logo-dark.png" alt="" width="320" height="107" decoding="async">
+      <a href="./" class="site-logo" aria-label="Metro Football home">
+          <img class="site-logo__img" src="./images/metro-football-correct-dark-logo-315.webp?v=20260830logo" srcset="./images/metro-football-correct-dark-logo-315.webp?v=20260830logo 315w, ./images/metro-football-correct-dark-logo-630.webp?v=20260830logo 630w" sizes="(min-width: 768px) 204px, 180px" alt="" width="938" height="313" decoding="async">
         </a>
 
         <div class="nav-menu desktop-only">
@@ -41,7 +63,7 @@
               <div class="nav-panel__card">
                 <ul class="nav-list nav-list--grid">
                   <li>
-                    <a class="list-item" href="./gameweek-recap">
+                    <a class="list-item" href="./pick" data-auth-tool>
                       <span class="list-item__copy">
                         <span class="list-item__title">Rate My Team</span>
                         <span class="list-item__desc">Score your squad and pick a captain</span>
@@ -89,9 +111,6 @@
                     </a>
                   </li>
                 </ul>
-                <div class="nav-panel__note">
-                  <p>Interested? <a href="./join">Go premium from £2 a month</a></p>
-                </div>
               </div>
             </div>
           </div>
@@ -131,7 +150,7 @@
                 </ul>
                 <ul class="nav-list nav-list--stack">
                   <li>
-                    <a class="list-item" href="#">
+                    <a class="list-item" href="./players">
                       <span class="list-item__copy">
                         <span class="list-item__title">Players</span>
                         <span class="list-item__desc">Search players and season stats</span>
@@ -147,7 +166,7 @@
                     </a>
                   </li>
                   <li>
-                    <a class="list-item" href="./fpl-gameweek-2-tips" data-nav-gw-tips-link>
+                    <a class="list-item" href="/fpl-gameweek-tips" data-nav-gw-tips-link>
                       <span class="list-item__copy">
                         <span class="list-item__title" data-nav-gw-tips-label>Gameweek Tips</span>
                         <span class="list-item__desc">Picks and advice for this gameweek</span>
@@ -160,10 +179,11 @@
           </div>
 
           <a data-pricing-nav class="nav-link" href="./join" aria-current="page">Pricing</a>
-          <a class="nav-link" href="#">About</a>
+          <a class="nav-link" href="./about">About</a>
+          <a class="nav-link" href="./fpl-guides">FPL Guides</a>
+          <a class="nav-link" href="./help-center">Help</a>
           <a class="nav-link" href="./contact">Contact</a>
         </div>
-      </div>
 
       <div class="site-nav__right desktop-only">
         <a class="mf-btn mf-btn--ink mf-btn--sm" href="./login" data-guest-only>
@@ -221,7 +241,7 @@
     <div class="container join-shell">
       <div class="join-intro">
         <h1 class="join-title">Win your mini league</h1>
-        <p class="join-lead">For just £2.50 a month, if you don't win your mini league, we give you your money back at the end of the season.</p>
+        <p class="join-lead">For just £4 a month, if you don't win your mini league, we give you your money back at the end of the season.</p>
         <div class="pricing-toggle join-toggle">
           <span data-billing-label="monthly">Monthly</span>
           <button
@@ -238,7 +258,142 @@
         </div>
       </div>
 
-      <div class="compare-scroll" data-join-pricing>
+      <div class="join-pricing" data-join-pricing>
+        <div class="join-mobile-plans" aria-label="Pricing plans">
+          <article class="join-plan-card compare-reveal">
+            <header class="join-plan-card__head">
+              <h2 class="join-plan-card__name">Free</h2>
+              <p class="join-plan-card__note">Reports and core tools</p>
+              <p class="join-plan-card__price">
+                <span class="join-plan-card__amount" data-price data-monthly="£0" data-yearly="£0">£0</span>
+                <span class="join-plan-card__period" data-period data-monthly="/ month" data-yearly="/ year">/ year</span>
+              </p>
+              <p class="join-plan-card__billing-note" data-billing-note data-monthly="" data-yearly="Free forever">Free forever</p>
+            </header>
+            <ul class="join-plan-card__features">
+              <li>
+                <span class="join-plan-card__check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span>Rate My Team and Captain Picker</span>
+              </li>
+              <li>
+                <span class="join-plan-card__check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span>Gameweek Recap each week</span>
+              </li>
+              <li>
+                <span class="join-plan-card__check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span>Price Change Predictions</span>
+              </li>
+              <li>
+                <span class="join-plan-card__check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span>Differential Finder</span>
+              </li>
+              <li>
+                <span class="join-plan-card__check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span>Injury and Rotation Risk Digest</span>
+              </li>
+              <li>
+                <span class="join-plan-card__check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span>Track one mini league</span>
+              </li>
+            </ul>
+            <footer class="join-plan-card__foot">
+              <a class="mf-btn mf-btn--ink mf-btn--block" href="./register?plan=free" data-plan-cta="free">
+                <span class="mf-btn__label">Get started</span>
+                <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </a>
+            </footer>
+          </article>
+
+          <article class="join-plan-card join-plan-card--premium compare-reveal">
+            <p class="join-plan-card__badge">Most popular</p>
+            <header class="join-plan-card__head">
+              <h2 class="join-plan-card__name">Premium</h2>
+              <p class="join-plan-card__note">Personal team tools</p>
+              <p class="join-plan-card__price">
+                <span class="join-plan-card__amount" data-price data-monthly="£4" data-yearly="£3.50">£3.50</span>
+                <span class="join-plan-card__period" data-period data-monthly="/ month" data-yearly="/ month">/ month</span>
+              </p>
+              <p class="join-plan-card__billing-note" data-billing-note data-monthly="" data-yearly="Billed yearly" hidden>Billed yearly</p>
+            </header>
+            <ul class="join-plan-card__features">
+              <li>
+                <span class="join-plan-card__check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span>AI Transfers for your squad</span>
+              </li>
+              <li>
+                <span class="join-plan-card__check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span>Team predicted points each gameweek</span>
+              </li>
+              <li>
+                <span class="join-plan-card__check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span>Five gameweek squad forecast</span>
+              </li>
+              <li>
+                <span class="join-plan-card__check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span>Chip Strategy Planner</span>
+              </li>
+              <li>
+                <span class="join-plan-card__check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span>AI Teams and Budget Team Builder</span>
+              </li>
+              <li>
+                <span class="join-plan-card__check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span>Unlimited mini leagues plus rival alerts</span>
+              </li>
+            </ul>
+            <footer class="join-plan-card__foot">
+              <a class="mf-btn mf-btn--primary mf-btn--block" href="./register?plan=premium" data-plan-cta="premium">
+                <span class="mf-btn__label">Get started</span>
+                <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </a>
+            </footer>
+          </article>
+
+          <article class="join-plan-card join-plan-card--vs compare-reveal">
+            <header class="join-plan-card__head">
+              <h2 class="join-plan-card__name join-plan-card__name--vs">
+                <span>vs</span>
+                <img class="hub-logo hub-logo--title" src="./images/hub-logo.svg" alt="" width="28" height="28" decoding="async" aria-hidden="true">
+                <span>FPL Hub</span>
+              </h2>
+              <p class="join-plan-card__note">More tools for way less</p>
+              <p class="join-plan-card__price">
+                <span class="join-plan-card__amount" data-hub-price data-monthly="£9.96" data-yearly="£7.98">£7.98</span>
+                <span class="join-plan-card__period">/ month</span>
+              </p>
+              <p class="join-plan-card__pitch">You save <span class="join-plan-card__pitch-em" data-save-pct data-monthly="60" data-yearly="56">56%</span> with Metro Football for better FPL tools</p>
+            </header>
+            <ul class="join-plan-card__features">
+              <li>
+                <span class="join-plan-card__miss" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 6-12 12M6 6l12 12" stroke-linecap="round"/></svg></span>
+                <span>No free Rate My Team or weekly reports</span>
+              </li>
+              <li>
+                <span class="join-plan-card__miss" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 6-12 12M6 6l12 12" stroke-linecap="round"/></svg></span>
+                <span>No mini league rival alerts</span>
+              </li>
+              <li>
+                <span class="join-plan-card__miss" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 6-12 12M6 6l12 12" stroke-linecap="round"/></svg></span>
+                <span>No AI tip on your edited squad</span>
+              </li>
+              <li>
+                <span class="join-plan-card__miss" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 6-12 12M6 6l12 12" stroke-linecap="round"/></svg></span>
+                <span>No suggested transfer swaps</span>
+              </li>
+              <li>
+                <span class="join-plan-card__miss" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 6-12 12M6 6l12 12" stroke-linecap="round"/></svg></span>
+                <span>No differential finder</span>
+              </li>
+              <li>
+                <span class="join-plan-card__miss" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 6-12 12M6 6l12 12" stroke-linecap="round"/></svg></span>
+                <span>No unlimited mini leagues</span>
+              </li>
+            </ul>
+            <p class="join-plan-card__hub-close">Why pay <span data-hub-price data-monthly="£9.96" data-yearly="£7.98">£7.98</span> per month on FPL Hub without these amazing tools?</p>
+          </article>
+        </div>
+
+        <div class="compare-scroll compare-scroll--desktop">
         <div class="compare-grid">
           <div class="compare-grid__corner compare-reveal" aria-hidden="true"></div>
 
@@ -249,6 +404,7 @@
               <span class="compare-plan__amount" data-price data-monthly="£0" data-yearly="£0">£0</span>
               <span class="compare-plan__period" data-period data-monthly="/ month" data-yearly="/ year">/ year</span>
             </p>
+            <p class="compare-plan__billing-note" data-billing-note data-monthly="" data-yearly="Free forever">Free forever</p>
             <a class="mf-btn mf-btn--ink mf-btn--block" href="./register?plan=free" data-plan-cta="free">
               <span class="mf-btn__label">Get started</span>
               <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -259,79 +415,165 @@
             <p class="compare-plan__name">Premium</p>
             <p class="compare-plan__note">Personal team tools</p>
             <p class="compare-plan__price">
-              <span class="compare-plan__amount" data-price data-monthly="£2.50" data-yearly="£2">£2</span>
+              <span class="compare-plan__amount" data-price data-monthly="£4" data-yearly="£3.50">£3.50</span>
               <span class="compare-plan__period" data-period data-monthly="/ month" data-yearly="/ month">/ month</span>
             </p>
-            <p class="compare-plan__billing-note" data-billing-note data-monthly="" data-yearly="£22/year billed yearly · 1 month free" hidden>£22/year billed yearly · 1 month free</p>
+            <p class="compare-plan__billing-note" data-billing-note data-monthly="" data-yearly="Billed yearly" hidden>Billed yearly</p>
             <a class="mf-btn mf-btn--primary mf-btn--block" href="./register?plan=premium" data-plan-cta="premium">
               <span class="mf-btn__label">Get started</span>
               <span class="mf-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </a>
           </div>
 
+          <div class="compare-plan compare-plan--vs compare-reveal">
+            <p class="compare-plan__name compare-plan__name--vs">
+              <span>vs</span>
+              <img class="hub-logo hub-logo--title" src="./images/hub-logo.svg" alt="" width="28" height="28" decoding="async" aria-hidden="true">
+              <span>FPL Hub</span>
+            </p>
+            <p class="compare-plan__note">More for way less</p>
+            <p class="compare-plan__price">
+              <span class="compare-plan__amount" data-hub-price data-monthly="£9.96" data-yearly="£7.98">£7.98</span>
+              <span class="compare-plan__period">/ month</span>
+            </p>
+            <p class="compare-plan__pitch">You save <span class="compare-plan__pitch-em" data-save-pct data-monthly="60" data-yearly="56">56%</span> with Metro Football for better FPL tools</p>
+          </div>
+
           <div class="compare-grid__label compare-grid__label--head compare-reveal"><strong>Features</strong></div>
+          <div class="compare-grid__cell compare-grid__cell--empty compare-reveal" aria-hidden="true"></div>
+          <div class="compare-grid__cell compare-grid__cell--empty compare-reveal" aria-hidden="true"></div>
+          <div class="compare-grid__cell compare-grid__cell--empty compare-reveal" aria-hidden="true"></div>
+
+          <div class="compare-grid__label compare-grid__label--head compare-reveal"><strong>Your squad</strong></div>
+          <div class="compare-grid__cell compare-grid__cell--empty compare-reveal" aria-hidden="true"></div>
           <div class="compare-grid__cell compare-grid__cell--empty compare-reveal" aria-hidden="true"></div>
           <div class="compare-grid__cell compare-grid__cell--empty compare-reveal" aria-hidden="true"></div>
 
           <div class="compare-grid__label compare-reveal">AI Transfers</div>
           <div class="compare-grid__cell compare-reveal"><span class="compare-minus" aria-label="Not included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg></span></div>
           <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-grid__cell--vs compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
 
           <div class="compare-grid__label compare-reveal">Rate My Team and Captain Picker</div>
           <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
           <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-grid__cell--vs compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
 
-          <div class="compare-grid__label compare-reveal">Transfer Planner</div>
+          <div class="compare-grid__label compare-reveal">Team predicted points per gameweek</div>
           <div class="compare-grid__cell compare-reveal"><span class="compare-minus" aria-label="Not included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg></span></div>
           <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-grid__cell--vs compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+
+          <div class="compare-grid__label compare-reveal">Five gameweek squad forecast</div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-minus" aria-label="Not included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-grid__cell--vs compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+
+          <div class="compare-grid__label compare-reveal">Per player predicted scores</div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-minus" aria-label="Not included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-grid__cell--vs compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+
+          <div class="compare-grid__label compare-reveal">Optimise lineup with AI</div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-minus" aria-label="Not included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-grid__cell--vs compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+
+          <div class="compare-grid__label compare-reveal">Plan transfers with AI</div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-minus" aria-label="Not included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-grid__cell--vs compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+
+          <div class="compare-grid__label compare-reveal">Suggested transfer swaps</div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-minus" aria-label="Not included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-grid__cell--vs compare-reveal"><span class="compare-minus" aria-label="Not included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg></span></div>
+
+          <div class="compare-grid__label compare-reveal">AI tip on your edited squad</div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-minus" aria-label="Not included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-grid__cell--vs compare-reveal"><span class="compare-minus" aria-label="Not included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg></span></div>
 
           <div class="compare-grid__label compare-reveal">Chip Strategy Planner</div>
           <div class="compare-grid__cell compare-reveal"><span class="compare-minus" aria-label="Not included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg></span></div>
           <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-grid__cell--vs compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
 
-          <div class="compare-grid__label compare-reveal">Budget Team Builder</div>
+          <div class="compare-grid__label compare-reveal">AI Teams and Budget Team Builder</div>
           <div class="compare-grid__cell compare-reveal"><span class="compare-minus" aria-label="Not included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg></span></div>
           <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-
-          <div class="compare-grid__label compare-reveal">Gameweek Recap</div>
-          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-
-          <div class="compare-grid__label compare-reveal">Price Change Predictions</div>
-          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-
-          <div class="compare-grid__label compare-reveal">xG and xA Over and Under Performers</div>
-          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-
-          <div class="compare-grid__label compare-reveal">Injury and Rotation Risk Digest</div>
-          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-grid__cell--vs compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
 
           <div class="compare-grid__label compare-reveal">Fixture Difficulty Ticker</div>
           <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
           <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-grid__cell--vs compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+
+          <div class="compare-grid__label compare-grid__label--head compare-reveal"><strong>Reports and discovery</strong></div>
+          <div class="compare-grid__cell compare-grid__cell--empty compare-reveal" aria-hidden="true"></div>
+          <div class="compare-grid__cell compare-grid__cell--empty compare-reveal" aria-hidden="true"></div>
+          <div class="compare-grid__cell compare-grid__cell--empty compare-reveal" aria-hidden="true"></div>
+
+          <div class="compare-grid__label compare-reveal">Gameweek Recap</div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-grid__cell--vs compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+
+          <div class="compare-grid__label compare-reveal">Price Change Predictions</div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-grid__cell--vs compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+
+          <div class="compare-grid__label compare-reveal">xG and xA Over and Under Performers</div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-grid__cell--vs compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+
+          <div class="compare-grid__label compare-reveal">Injury and Rotation Risk Digest</div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-grid__cell--vs compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
 
           <div class="compare-grid__label compare-reveal">Differential Finder</div>
           <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
           <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-grid__cell--vs compare-reveal"><span class="compare-minus" aria-label="Not included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg></span></div>
+
+          <div class="compare-grid__label compare-grid__label--head compare-reveal"><strong>Player profiles</strong></div>
+          <div class="compare-grid__cell compare-grid__cell--empty compare-reveal" aria-hidden="true"></div>
+          <div class="compare-grid__cell compare-grid__cell--empty compare-reveal" aria-hidden="true"></div>
+          <div class="compare-grid__cell compare-grid__cell--empty compare-reveal" aria-hidden="true"></div>
+
+          <div class="compare-grid__label compare-reveal">Fixture predicted points on player pages</div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-minus" aria-label="Not included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-grid__cell--vs compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+
+          <div class="compare-grid__label compare-reveal">Deep profile filters and compare</div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-minus" aria-label="Not included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-grid__cell--vs compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+
+          <div class="compare-grid__label compare-reveal">Over and underperformance breakdown</div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-minus" aria-label="Not included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-grid__cell--vs compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+
+          <div class="compare-grid__label compare-grid__label--head compare-reveal"><strong>Mini leagues</strong></div>
+          <div class="compare-grid__cell compare-grid__cell--empty compare-reveal" aria-hidden="true"></div>
+          <div class="compare-grid__cell compare-grid__cell--empty compare-reveal" aria-hidden="true"></div>
+          <div class="compare-grid__cell compare-grid__cell--empty compare-reveal" aria-hidden="true"></div>
 
           <div class="compare-grid__label compare-reveal">Mini League Tracker</div>
           <div class="compare-grid__cell compare-reveal"><span class="compare-value">1 league</span></div>
           <div class="compare-grid__cell compare-reveal"><span class="compare-value">Unlimited</span></div>
+          <div class="compare-grid__cell compare-grid__cell--vs compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
 
           <div class="compare-grid__label compare-reveal">Mini league rival alerts</div>
           <div class="compare-grid__cell compare-reveal"><span class="compare-minus" aria-label="Not included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg></span></div>
           <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-
-          <div class="compare-grid__label compare-reveal">Scatter filters and CSV export</div>
-          <div class="compare-grid__cell compare-reveal"><span class="compare-minus" aria-label="Not included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg></span></div>
-          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-
-          <div class="compare-grid__label compare-reveal">Faster price prediction updates</div>
-          <div class="compare-grid__cell compare-reveal"><span class="compare-minus" aria-label="Not included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg></span></div>
-          <div class="compare-grid__cell compare-reveal"><span class="compare-check" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="compare-grid__cell compare-grid__cell--vs compare-reveal"><span class="compare-minus" aria-label="Not included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg></span></div>
+        </div>
         </div>
       </div>
 
@@ -372,7 +614,7 @@
             </h3>
             <div class="faq-item__panel" id="faq-answer-2" role="region" aria-labelledby="faq-question-2" hidden>
               <div class="faq-item__content">
-                <p>Free includes weekly reports such as Gameweek Recap and Price Change Predictions, plus tools like Fixture Difficulty Ticker, Differential Finder, and Rate My Team with Captain Picker. Premium adds personal tools including Transfer Planner, Chip Strategy Planner, AI Transfers, and unlimited mini league tracking.</p>
+                <p>Free includes weekly reports, Differential Finder, and Rate My Team with Captain Picker on your linked squad. Premium unlocks predicted points per gameweek, transfer planning, AI Transfers, Chip Strategy, AI Teams, deeper player profiles, and unlimited mini league tracking. Fixture Difficulty Ticker is free for everyone.</p>
               </div>
             </div>
           </article>
@@ -388,7 +630,7 @@
             </h3>
             <div class="faq-item__panel" id="faq-answer-3" role="region" aria-labelledby="faq-question-3" hidden>
               <div class="faq-item__content">
-                <p>Yes. Choose monthly at £2.50 or yearly at £2 per month (£22/year with one month free) on this page. You can change how you pay later in your account billing settings.</p>
+                <p>Yes. Choose monthly at £4 or yearly at £3.50 per month (£38.50/year) on this page. You can change how you pay later in your account billing settings.</p>
               </div>
             </div>
           </article>
@@ -404,7 +646,7 @@
             </h3>
             <div class="faq-item__panel" id="faq-answer-4" role="region" aria-labelledby="faq-question-4" hidden>
               <div class="faq-item__content">
-                <p>Premium costs £2.50 a month when billed monthly, or £2 a month when billed yearly. If you do not win your mini league by the end of the season, we refund what you paid for Premium that season.</p>
+                <p>Premium costs £4 a month when billed monthly, or £3.50 a month when billed yearly. If you do not win your mini league by the end of the season, we refund what you paid for Premium that season.</p>
               </div>
             </div>
           </article>
@@ -481,16 +723,36 @@
     <div class="container footer-grid">
       <div class="footer-brand">
         <a class="brand" href="./">
-          <img class="site-logo__img site-logo__img--light" src="./images/metro-football-logo-light.png" alt="" width="320" height="107" decoding="async">
+          <img class="site-logo__img site-logo__img--light" src="./images/metro-football-logo-light-315.webp?v=20260830logo" srcset="./images/metro-football-logo-light-315.webp?v=20260830logo 315w, ./images/metro-football-logo-light-630.webp?v=20260830logo 630w" sizes="(min-width: 768px) 204px, 180px" alt="" width="938" height="313" decoding="async">
         </a>
         <p>Metro Football builds FPL tools and auto reports for managers who want clear answers before the deadline.</p>
+        <div class="mf-social mf-social--footer" aria-label="Follow Metro Football">
+          <p class="mf-social__label">Follow us</p>
+          <ul class="mf-social__list">
+            <li>
+              <a class="mf-social__link" href="https://web.facebook.com/metrofootballuk/" aria-label="Metro Football on Facebook" target="_blank" rel="noopener noreferrer">
+                <svg class="mf-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.5 22v-8.7h2.9l.44-3.4h-3.34V7.9c0-.98.27-1.65 1.68-1.65h1.8V3.1c-.31 0-1.38-.13-2.63-.13-2.6 0-4.38 1.58-4.38 4.48v2.5H7.5v3.4h3.09V22h3.91Z"/></svg>
+              </a>
+            </li>
+            <li>
+              <a class="mf-social__link" href="https://x.com/metrofootballuk" aria-label="Metro Football on X" target="_blank" rel="noopener noreferrer">
+                <svg class="mf-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.687 3H20.5l-7.43 8.49L21.5 21h-6.05l-4.74-5.52L5.2 21H2.38l7.94-9.08L2.5 3h6.2l4.28 4.98L17.687 3Zm-2.12 16.2h1.72L8.57 4.67H6.73l8.837 14.53Z"/></svg>
+              </a>
+            </li>
+            <li>
+              <a class="mf-social__link" href="https://www.instagram.com/metrofootballuk/" aria-label="Metro Football on Instagram" target="_blank" rel="noopener noreferrer">
+                <svg class="mf-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7.8 2h8.4A5.8 5.8 0 0 1 22 7.8v8.4A5.8 5.8 0 0 1 16.2 22H7.8A5.8 5.8 0 0 1 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2Zm0 2A3.8 3.8 0 0 0 4 7.8v8.4A3.8 3.8 0 0 0 7.8 20h8.4a3.8 3.8 0 0 0 3.8-3.8V7.8A3.8 3.8 0 0 0 16.2 4H7.8Zm9.65 1.5a1.05 1.05 0 1 1 0 2.1 1.05 1.05 0 0 1 0-2.1ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg>
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
       <div class="footer-col">
         <h4>Explore</h4>
         <a href="./">Home</a>
-        <a href="#">Players</a>
+        <a href="./players">Players</a>
         <a href="./league-table">League Table</a>
-        <a href="#">Dashboard</a>
+        <a href="./live">Dashboard</a>
         <a href="./join">Upgrade</a>
       </div>
       <div class="footer-col">
@@ -499,29 +761,28 @@
         <a href="./ai-tips#snipers">Differential Finder</a>
         <a href="./mini-leagues">Mini League Tracker</a>
         <a href="./pick">Rate My Team</a>
-        <a href="#">Transfer Planner</a>
+        <a href="./ai-tips">Transfer Planner</a>
         <a href="./ai-tips">AI Transfers</a>
         <a href="./chip-strategy">Chip Strategy Planner</a>
-      </div>
-      <div class="footer-col">
-        <h4>Account</h4>
-        <a href="#">Log in</a>
-        <a href="#">Register</a>
-        <a href="#">Settings</a>
-        <a href="#">Billing</a>
-        <a href="#">Help</a>
       </div>
     </div>
     <div class="container footer-bottom">
       <span>© 2026 Metro Football. metrofootball.co.uk</span>
       <span>
-        <a href="./privacy-policy">Privacy</a>
+        <a href="./privacy-policy">Privacy Policy</a>
         ·
-        <a href="./terms">Terms</a>
+        <a href="./terms">Terms of Service</a>
+        ·
+        <a href="./disclaimer">Disclaimer</a>
+        ·
+        <a href="./about">About Us</a>
+        ·
+        <a href="./contact">Contact Us</a>
       </span>
     </div>
   </footer>
 
-  <script type="module" src="./js/join.js"></script>
+  <script defer src="./js/gtag-config.js?v=2"></script>
+  <script type="module" src="./js/join.js?v=20260902join1"></script>
 </body>
 </html>

@@ -13,10 +13,9 @@ const MOBILE_MENU_SECTIONS = [
       { title: 'AI Transfers', desc: 'Get the best transfer for your squad', href: './ai-tips', auth: true },
       { title: 'Chip Strategy Planner', desc: 'Find the best weeks for each chip', href: './chip-strategy', auth: true },
       { title: 'Differential Finder', desc: 'Spot low owned high scorers', href: './ai-tips#snipers', auth: true },
-      { title: 'Fixture Difficulty Ticker', desc: 'See easy and hard fixture runs', href: './fixture-difficulty', auth: true },
+      { title: 'Fixture Difficulty Ticker', desc: 'See easy and hard fixture runs', href: './fixture-difficulty', auth: false },
       { title: 'Mini League Tracker', desc: 'Watch rivals and rank swings', href: './mini-leagues', auth: true },
     ],
-    note: 'Interested? <a href="./join">Go premium from £2 a month</a>',
   },
   {
     id: 'reports',
@@ -31,17 +30,19 @@ const MOBILE_MENU_SECTIONS = [
     id: 'explore',
     label: 'Explore',
     links: [
-      { title: 'Players', desc: 'Search players and season stats', href: '#' },
+      { title: 'Players', desc: 'Search players and season stats', href: './players' },
       { title: 'League Table', desc: 'See the table and recent form', href: './league-table' },
-      { title: 'Gameweek Tips', desc: 'Picks and advice for this gameweek', href: './fpl-gameweek-2-tips', gwTips: true },
+      { title: 'Gameweek Tips', desc: 'Picks and advice for this gameweek', href: '/fpl-gameweek-tips', gwTips: true },
     ],
   },
 ];
 
-const MOBILE_FOOTER_LINKS = [
-  { label: 'Pricing', href: './join', pricing: true },
-  { label: 'About', href: '#' },
+const MOBILE_NAV_LINKS = [
+  { label: 'About', href: './about' },
+  { label: 'FPL Guides', href: './fpl-guides' },
+  { label: 'Help', href: './help-center' },
   { label: 'Contact', href: './contact' },
+  { label: 'Pricing', href: './join', pricing: true },
 ];
 
 function escapeHtml(value) {
@@ -100,25 +101,31 @@ function renderSection(section) {
   </section>`;
 }
 
+function renderNavLink(link) {
+  const attrs = [
+    'class="mobile-accordion__trigger mobile-accordion__trigger--link"',
+    `href="${escapeHtml(link.href)}"`,
+    'data-same-tab',
+  ];
+  if (link.pricing) attrs.push('data-pricing-nav');
+
+  return `<div class="mobile-accordion__item${link.pricing ? ' mobile-accordion__item--pricing' : ''}">
+    <a ${attrs.join(' ')}>
+      <span class="mobile-accordion__label">${escapeHtml(link.label)}</span>
+    </a>
+  </div>`;
+}
+
 export function buildMobileMenuNav(navRoot) {
   if (!navRoot || navRoot.dataset.mobileBuilt === '1') return;
 
   const sections = MOBILE_MENU_SECTIONS.map(renderSection).join('');
-  const footer = MOBILE_FOOTER_LINKS.map((link) => {
-    const attrs = [
-      'class="mobile-menu__footer-link"',
-      `href="${escapeHtml(link.href)}"`,
-    ];
-    if (link.pricing) attrs.push('data-pricing-nav');
-    return `<a ${attrs.join(' ')}>${escapeHtml(link.label)}</a>`;
-  }).join('');
+  const navLinks = MOBILE_NAV_LINKS.map(renderNavLink).join('');
 
   navRoot.innerHTML = `
     <div class="mobile-accordion" data-mobile-accordion>
       ${sections}
-    </div>
-    <div class="mobile-menu__footer-links">
-      ${footer}
+      ${navLinks}
     </div>
   `;
 

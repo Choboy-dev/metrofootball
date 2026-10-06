@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+Disallow: /mail/
+Disallow: /admin/
+Disallow: /api/
+Disallow: /webhooks/
+
+Sitemap: https://metrofootball.co.uk/sitemap.xml

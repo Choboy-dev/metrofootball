@@ -1,4 +1,4 @@
-import { initSiteNav } from './site-nav.js';
+import { initSiteNav } from './site-nav.js?v=20260907pub';
 import {
   applyAuthNav,
   bindSignOutButtons,
@@ -6,7 +6,7 @@ import {
   postJson,
   setBusy,
   showFormError,
-} from './auth.js';
+} from './auth.js?v=20260907pub';
 import { getMfSelectValue, initMfSelects } from './mf-select.js?v=20260828';
 
 function bindContactReasonDropdown() {

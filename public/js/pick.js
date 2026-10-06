@@ -1,5 +1,5 @@
 import { animate, stagger } from 'https://cdn.jsdelivr.net/npm/motion@12.23.12/+esm';
-import { initSiteNav, scheduleGwTipsHydration } from './site-nav.js';
+import { initSiteNav, scheduleGwTipsHydration } from './site-nav.js?v=20260907pub';
 import { initTeamTabs } from './team-tabs.js';
 import {
   applyAuthNav,
@@ -10,8 +10,9 @@ import {
   pageUrl,
   isPremiumActive,
   setPageBootstrapping,
-} from './auth.js';
+} from './auth.js?v=20260907pub';
 import { initMfSelects } from './mf-select.js';
+import { consumeOneTapFix } from './one-tap-fix.js?v=20260904tips4';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const DETAIL_PROJ_MOBILE_MQ = window.matchMedia('(max-width: 640px)');
@@ -204,8 +205,11 @@ function sleep(ms) {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
-async function fetchPickPayload(path = 'fpl/pick', maxAttempts = 3) {
+async function fetchPickPayload(path = 'fpl/pick', maxAttempts = 3, gameweekId = null) {
   let lastError = null;
+  const gw = gameweekId ?? state.selectedGwId;
+  const query = gw ? `?gw=${encodeURIComponent(String(gw))}` : '';
+  const requestPath = path.includes('?') ? path : `${path}${query}`;
 
   for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
     if (attempt > 0) {
@@ -213,7 +217,7 @@ async function fetchPickPayload(path = 'fpl/pick', maxAttempts = 3) {
       await sleep(1200 * attempt);
     }
 
-    const response = await fetch(apiUrl(path), {
+    const response = await fetch(apiUrl(requestPath), {
       credentials: 'same-origin',
       headers: { Accept: 'application/json' },
     });
@@ -246,10 +250,6 @@ async function fetchPickPayload(path = 'fpl/pick', maxAttempts = 3) {
   throw lastError || new Error('Could not load your pick team.');
 }
 
-function isPremiumActive(user) {
-  return user?.plan === 'premium' && user?.subscription_status === 'active';
-}
-
 const state = {
   premium: false,
   locks: {},
@@ -268,6 +268,11 @@ const state = {
   editable: true,
   lockedReason: null,
   isLiveLocked: false,
+  viewMode: 'plan',
+  gameweekOptions: [],
+  selectedGwId: null,
+  gwPoints: null,
+  loadingGw: false,
   isDirty: false,
   saving: false,
   strengthHorizon: 'gw',
@@ -418,10 +423,12 @@ function lockIcon() {
 }
 
 function playerHeadshot(player) {
-  if (player?.headshot) return String(player.headshot);
+  if (player?.headshot) {
+    return String(player.headshot).replace('/photos/players/250x250/', '/photos/players/110x140/');
+  }
   const photo = String(player?.photo || '').replace(/\.jpg$/i, '').trim();
   if (photo) {
-    return `https://resources.premierleague.com/premierleague/photos/players/250x250/p${photo}.png`;
+    return `https://resources.premierleague.com/premierleague/photos/players/110x140/p${photo}.png`;
   }
   return '';
 }
@@ -889,10 +896,14 @@ function applyEditLock() {
   if (banner) {
     banner.hidden = !locked;
     if (locked) {
-      banner.textContent =
-        state.lockedReason === 'live_gameweek'
-          ? 'This gameweek is live on FPL. We are showing your locked FPL team and formation until the next gameweek opens.'
-          : 'Your team is locked right now.';
+      if (state.lockedReason === 'past_gameweek') {
+        banner.textContent = 'You are viewing a past gameweek. This squad is read only.';
+      } else if (state.lockedReason === 'live_gameweek') {
+        banner.textContent =
+          'This gameweek is live on FPL. We are showing your locked FPL team and formation until the next gameweek opens.';
+      } else {
+        banner.textContent = 'Your team is locked right now.';
+      }
     }
   }
 
@@ -1075,7 +1086,7 @@ function renderProjectionCards(player) {
     return `
       <div class="pick-detail__locked-panel">
         <span class="pick-detail__locked-icon">${lockIcon()}</span>
-        <p class="pick-detail__locked-title">Premium projections</p>
+        <p class="pick-detail__locked-title">Premium predictions</p>
         <p class="pick-gate__copy">Unlock expected points for the next gameweeks.</p>
         <a class="mf-btn mf-btn--primary mf-btn--sm" href="${pageUrl('join')}">
           <span class="mf-btn__label">Become a member</span>
@@ -1091,15 +1102,8 @@ function renderProjectionCards(player) {
         const isCaptGw = Boolean(player.is_captain && onPitch && index === 0);
         const raw = Number(player.ai?.projections?.[index]);
         const base = Number.isFinite(raw) ? raw : null;
-        const doubled = base == null ? null : Math.round(base * 2 * 10) / 10;
-        let valueHtml;
-        if (isCaptGw && base != null && doubled != null) {
-          valueHtml = `<span class="pick-detail__proj-value pick-detail__proj-value--captain" title="GW projected ${base.toFixed(1)}, captain doubles to ${doubled.toFixed(1)}" aria-label="Projected ${base.toFixed(1)} times 2 equals ${doubled.toFixed(1)}"><span class="pick-detail__proj-raw">${escapeHtml(base.toFixed(1))}</span><span class="pick-detail__proj-mul" aria-hidden="true">x 2</span><span class="pick-detail__proj-sep" aria-hidden="true">–</span><span class="pick-detail__proj-total">${escapeHtml(doubled.toFixed(1))}</span></span>`;
-        } else {
-          const value = displayProjection(player, index);
-          const shown = value == null ? formatStat(0, 1) : value.toFixed(1);
-          valueHtml = `<span class="pick-detail__proj-value">${escapeHtml(shown)}</span>`;
-        }
+        const shown = base == null ? formatStat(0, 1) : base.toFixed(1);
+        const valueHtml = `<span class="pick-detail__proj-value">${escapeHtml(shown)}</span>`;
         return `
         <article class="pick-detail__proj-card">
           <span class="pick-detail__proj-gw">GW ${escapeHtml(String(fixture.event || index + 1))}${isCaptGw ? ' · C' : ''}</span>
@@ -1172,6 +1176,12 @@ function renderPlayerModal(player) {
         <span class="mf-btn__label">Substitute</span>
         <span class="mf-btn__icon" aria-hidden="true">${modalActionIcon('substitute')}</span>
       </button>
+      ${player.position > 11
+        ? `<button type="button" class="mf-btn mf-btn--ink mf-btn--sm" data-modal-action="bench-order" data-modal-player="${player.id}">
+        <span class="mf-btn__label">Change bench order</span>
+        <span class="mf-btn__icon" aria-hidden="true">${modalActionIcon('substitute')}</span>
+      </button>`
+        : ''}
       ${restorable
         ? `<button type="button" class="mf-btn mf-btn--accent mf-btn--sm" data-modal-action="restore" data-modal-player="${player.id}">
         <span class="mf-btn__label">Restore ${escapeHtml(restoreTargetName(player.id))}</span>
@@ -1239,7 +1249,7 @@ function renderGateModal(kind) {
       }
     : {
         title: 'Unlock Premium detail',
-        body: 'Upgrade to Premium to see projections, player stats, and richer squad insights across Pick.',
+        body: 'Upgrade to Premium to see predictions, player stats, and richer squad insights across Pick.',
       };
   return `
     <section class="pick-gate">
@@ -1277,7 +1287,21 @@ function playerCard(player, { bench = false } = {}) {
     : '';
 
   let gwCells = '';
-  if (state.pitchView === 'price') {
+  if (state.viewMode !== 'plan') {
+    const scored = bench
+      ? Number(player.points ?? player.team_points ?? 0)
+      : Number(player.team_points ?? player.points ?? 0);
+    const fx = (player.fixtures || [])[0];
+    const fxMarkup = fx
+      ? pitchFxMarkup(fx.label || '-')
+      : `<span class="pick-player__fx"><span class="pick-player__fx-opp">-</span></span>`;
+    gwCells = `
+      <span class="pick-player__gw pick-player__gw--single">
+        <span class="pick-player__score" title="Gameweek points">${escapeHtml(String(scored))}</span>
+        ${fxMarkup}
+      </span>
+    `;
+  } else if (state.pitchView === 'price') {
     gwCells = priceChangeCardHtml(player);
   } else {
     const take = state.pitchView === 'next3' ? 3 : 1;
@@ -1286,25 +1310,14 @@ function playerCard(player, { bench = false } = {}) {
       .map((fx, index) => {
         let pred;
         if (state.locks.premium_card_stats) {
-          pred = `<span class="pick-player__score pick-player__score--locked" title="Projected score unlocks with Premium" aria-label="Projected score locked">
+          pred = `<span class="pick-player__score pick-player__score--locked" title="Predicted score unlocks with Premium" aria-label="Predicted score locked">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" stroke-linecap="round"/></svg>
           </span>`;
         } else {
-          const onPitch = Number(player.position) > 0 && Number(player.position) <= 11;
-          // Captain x2 only on the single-GW pitch view. Next 3 GWs shows base scores.
-          const isCaptGw = Boolean(
-            player.is_captain && onPitch && index === 0 && state.pitchView !== 'next3'
-          );
           const raw = Number(player.ai?.projections?.[index]);
           const base = Number.isFinite(raw) ? raw : null;
-          const doubled = base == null ? null : Math.round(base * 2 * 10) / 10;
-          if (isCaptGw && base != null && doubled != null) {
-            pred = `<span class="pick-player__score pick-player__score--captain" title="GW projected ${base.toFixed(1)}, captain doubles to ${doubled.toFixed(1)}" aria-label="Projected ${base.toFixed(1)} times 2 equals ${doubled.toFixed(1)}"><span class="pick-player__cap-raw">${escapeHtml(base.toFixed(1))}</span><span class="pick-player__cap-mul" aria-hidden="true">x 2</span><span class="pick-player__cap-sep" aria-hidden="true">–</span><span class="pick-player__cap-total">${escapeHtml(doubled.toFixed(1))}</span></span>`;
-          } else {
-            const value = state.pitchView === 'next3' ? base : displayProjection(player, index);
-            const shown = value == null ? '—' : value.toFixed(1);
-            pred = `<span class="pick-player__score" title="Projected points">${escapeHtml(shown)}</span>`;
-          }
+          const shown = base == null ? '—' : base.toFixed(1);
+          pred = `<span class="pick-player__score" title="Predicted points">${escapeHtml(shown)}</span>`;
         }
         const showFdr = state.pitchView !== 'next3';
         const fxMarkup = state.pitchView === 'next3'
@@ -1327,6 +1340,9 @@ function playerCard(player, { bench = false } = {}) {
 
   const risk = riskClass(player);
   const warn = warningIcon(player);
+  const projClass = state.viewMode !== 'plan' || state.pitchView !== 'next3'
+    ? ' pick-player__proj--single'
+    : ' pick-player__proj--next3';
 
   return `
     <button type="button" class="pick-player${selected}${interaction}${risk}" data-squad-id="${player.id}" aria-pressed="${state.selectedId === player.id}">
@@ -1340,7 +1356,7 @@ function playerCard(player, { bench = false } = {}) {
           <span class="pick-player__name">${warn}${escapeHtml(player.web_name)}</span>
           <span class="pick-player__price">${money(player.now_cost)}</span>
         </span>
-        <span class="pick-player__proj${state.pitchView === 'next3' ? ' pick-player__proj--next3' : ' pick-player__proj--single'}">
+        <span class="pick-player__proj${projClass}">
           ${gwCells}
         </span>
       </span>
@@ -1472,7 +1488,7 @@ function fixturePredCell(player, fixture, index) {
   if (state.locks.premium_card_stats) {
     return `
       <span class="pick-row__gw">
-        <span class="pick-row__pred pick-row__pred--locked" title="Projected score unlocks with Premium" aria-label="Projected score locked">
+        <span class="pick-row__pred pick-row__pred--locked" title="Predicted score unlocks with Premium" aria-label="Predicted score locked">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" stroke-linecap="round"/></svg>
         </span>
         ${fxMarkup}
@@ -1537,31 +1553,46 @@ function renderList() {
 }
 
 function renderSummary() {
+  const reviewMode = state.viewMode !== 'plan';
   const five = state.strengthHorizon === '5gw';
   const strengthVal = five ? state.strength.five_gw : state.strength.gw;
   const strengthEl = document.querySelector('[data-pick-strength]');
   if (strengthEl) {
-    strengthEl.textContent =
-      strengthVal == null || Number.isNaN(Number(strengthVal))
-        ? '…'
-        : `${Math.round(Number(strengthVal))}%`;
+    if (reviewMode) {
+      strengthEl.textContent = '—';
+    } else {
+      strengthEl.textContent =
+        strengthVal == null || Number.isNaN(Number(strengthVal))
+          ? '…'
+          : `${Math.round(Number(strengthVal))}%`;
+    }
   }
 
   const predictedEl = document.querySelector('[data-pick-predicted]');
   const predictedLock = document.querySelector('[data-predicted-lock]');
   const predictedBox = document.querySelector('[data-lock-predicted]');
+  const predictedLabel = document.querySelector('[data-pick-predicted-label]');
   const predictedVal = five ? state.predictedPoints.five_gw : state.predictedPoints.gw;
-  const showPredicted = state.premium && !state.locks.predicted;
+  const showPredicted = reviewMode
+    ? state.gwPoints != null
+    : (state.premium && !state.locks.predicted);
 
+  if (predictedLabel) {
+    predictedLabel.textContent = reviewMode ? 'Points' : 'Predicted';
+  }
   if (predictedBox) predictedBox.classList.toggle('pick-metric--locked', !showPredicted);
   if (predictedLock) predictedLock.hidden = showPredicted;
   if (predictedEl) {
     if (showPredicted) {
       predictedEl.hidden = false;
-      predictedEl.textContent =
-        predictedVal == null || Number.isNaN(Number(predictedVal))
-          ? '…'
-          : Number(predictedVal).toFixed(1);
+      if (reviewMode) {
+        predictedEl.textContent = String(Number(state.gwPoints) || 0);
+      } else {
+        predictedEl.textContent =
+          predictedVal == null || Number.isNaN(Number(predictedVal))
+            ? '…'
+            : Number(predictedVal).toFixed(1);
+      }
     } else {
       predictedEl.hidden = true;
       predictedEl.textContent = '-';
@@ -1572,22 +1603,28 @@ function renderSummary() {
   if (bankEl) bankEl.textContent = `${money(bankNow())}m`;
 
   const ftEl = document.querySelector('[data-pick-free-transfers]');
+  const ftLabel = document.querySelector('[data-pick-ft-label]');
+  if (ftLabel) {
+    ftLabel.textContent = reviewMode ? 'Transfers made' : 'Available transfers';
+  }
   if (ftEl) {
-    const available = remainingFreeTransfers();
-    ftEl.textContent = String(available);
-    ftEl.classList.toggle('pick-metric__value--ft-zero', available === 0);
+    if (reviewMode) {
+      ftEl.textContent = String(Number(state.freeTransfers) || 0);
+      ftEl.classList.remove('pick-metric__value--ft-zero');
+    } else {
+      const available = remainingFreeTransfers();
+      ftEl.textContent = String(available);
+      ftEl.classList.toggle('pick-metric__value--ft-zero', available === 0);
+    }
   }
 
   const hitsEl = document.querySelector('[data-pick-hits]');
   const hits = hitPoints();
   const made = transferDiff();
   if (hitsEl) {
-    if (made > 0) {
+    if (!reviewMode && made > 0 && hits > 0) {
       hitsEl.hidden = false;
-      hitsEl.textContent =
-        hits > 0
-          ? `${made} transfer${made === 1 ? '' : 's'} planned · -${hits} pts`
-          : `${made} free transfer${made === 1 ? '' : 's'} planned`;
+      hitsEl.textContent = `${made} transfer${made === 1 ? '' : 's'} planned · -${hits} pts`;
     } else {
       hitsEl.hidden = true;
       hitsEl.textContent = '';
@@ -1596,7 +1633,9 @@ function renderSummary() {
 
   const modeLabel = document.querySelector('[data-pick-mode-label]');
   if (modeLabel) {
-    if (state.mode === 'transfer' && state.selectedId) {
+    if (reviewMode) {
+      modeLabel.textContent = 'Viewing this gameweek squad';
+    } else if (state.mode === 'transfer' && state.selectedId) {
       const p = state.squad.find((s) => s.id === state.selectedId);
       modeLabel.textContent = p
         ? `Pick a ${p.pos_label} from the list to replace ${p.web_name}`
@@ -1613,6 +1652,8 @@ function renderSummary() {
       modeLabel.textContent = 'Tap a player for options';
     }
   }
+
+  renderGameweekNav();
 }
 
 function renderAll({ animateIn = false } = {}) {
@@ -1665,6 +1706,23 @@ function renderModal() {
   }
 
   body.innerHTML = html;
+  const faceImg = body.querySelector('[data-player-face]');
+  if (faceImg) {
+    faceImg.addEventListener('error', () => {
+      const player = findModalPlayer(state.modal.playerId);
+      if (player?.shirt) {
+        faceImg.src = player.shirt;
+        faceImg.classList.add('pick-detail__face--shirt');
+        return;
+      }
+      const initial = String(player?.web_name || player?.display_name || '?').slice(0, 1);
+      const fallback = document.createElement('span');
+      fallback.className = 'pick-detail__avatar-fallback';
+      fallback.setAttribute('aria-hidden', 'true');
+      fallback.textContent = initial;
+      faceImg.replaceWith(fallback);
+    }, { once: true });
+  }
   shell.hidden = false;
   document.body.style.overflow = 'hidden';
   dialog.focus();
@@ -1841,6 +1899,93 @@ function canSwapPlayers(aId, bId) {
   return isValidFormation(reorderSquad(trial));
 }
 
+function canSwapBenchOrder(aId, bId) {
+  const a = state.squad.find((p) => p.id === aId);
+  const b = state.squad.find((p) => p.id === bId);
+  return Boolean(a && b && a.position > 11 && b.position > 11 && aId !== bId);
+}
+
+function swapBenchOrder(aId, bId) {
+  if (!canSwapBenchOrder(aId, bId)) return false;
+  const a = state.squad.find((p) => p.id === aId);
+  const b = state.squad.find((p) => p.id === bId);
+  if (!a || !b) return false;
+  const aPos = a.position;
+  a.position = b.position;
+  b.position = aPos;
+  state.squad = reorderSquad(state.squad);
+  applyLocalScores();
+  return true;
+}
+
+function applyBenchOrder(orderedIds) {
+  if (!Array.isArray(orderedIds) || !orderedIds.length) return false;
+  const starters = state.squad.filter((p) => p.position <= 11);
+  const benchById = new Map(
+    state.squad.filter((p) => p.position > 11).map((p) => [p.id, p])
+  );
+  const orderedBench = [];
+  orderedIds.forEach((id) => {
+    const player = benchById.get(Number(id));
+    if (player) {
+      orderedBench.push(player);
+      benchById.delete(Number(id));
+    }
+  });
+  benchById.forEach((player) => orderedBench.push(player));
+  state.squad = [...starters, ...orderedBench].map((player, index) => ({
+    ...player,
+    position: index + 1,
+    multiplier: index < 11 ? (player.is_captain ? 2 : 1) : 0,
+  }));
+  return true;
+}
+
+function showOneTapBanner(message) {
+  const banner = document.querySelector('[data-pick-onetap-banner]');
+  if (!banner) {
+    showError(message);
+    return;
+  }
+  banner.textContent = message;
+  banner.hidden = false;
+}
+
+function applyOneTapTransfer(outId, inId) {
+  const out = state.squad.find((p) => p.id === outId);
+  const incoming = state.players.find((p) => p.id === inId);
+  if (!out || !incoming) return false;
+  state.selectedId = outId;
+  transferIn(inId);
+  return true;
+}
+
+function applyOneTapFix(fix) {
+  if (!fix || !state.editable) return false;
+  let ok = false;
+
+  if (fix.type === 'captain' && fix.captainId) {
+    setCaptain(Number(fix.captainId), false);
+    if (fix.viceId) setCaptain(Number(fix.viceId), true);
+    ok = true;
+  } else if (fix.type === 'transfer' && fix.outId && fix.inId) {
+    ok = applyOneTapTransfer(Number(fix.outId), Number(fix.inId));
+  } else if (fix.type === 'bench' && Array.isArray(fix.order)) {
+    ok = applyBenchOrder(fix.order.map(Number));
+    if (ok) {
+      applyLocalScores();
+      renderAll();
+    }
+  }
+
+  if (ok) {
+    state.isDirty = true;
+    updateSaveButton();
+    showOneTapBanner(fix.message || 'We applied your change. Press Save to keep it.');
+  }
+  return ok;
+}
+
 function swapPlayers(aId, bId) {
   if (!canSwapPlayers(aId, bId)) {
     showError('That sub would break FPL formation rules (min 3 DEF, 2 MID, 1 FWD).');
@@ -1938,6 +2083,30 @@ function onSquadClick(id) {
     return;
   }
 
+  // Bench order mode: swap priority between two bench players.
+  if (state.mode === 'bench-order' && state.selectedId) {
+    if (id === state.selectedId) {
+      clearInteractionMode();
+      showError('');
+      renderAll();
+      return;
+    }
+    if (!canSwapBenchOrder(state.selectedId, id)) {
+      showError('Choose another bench player to swap order with.');
+      return;
+    }
+    const ok = swapBenchOrder(state.selectedId, id);
+    clearInteractionMode();
+    if (ok) {
+      state.isDirty = true;
+      updateSaveButton();
+      renderAll();
+    } else {
+      renderAll();
+    }
+    return;
+  }
+
   // Sub mode: pick the other half of the swap.
   if (state.mode === 'sub' && state.selectedId) {
     if (id === state.selectedId) {
@@ -1966,6 +2135,8 @@ function onSquadClick(id) {
 }
 
 function bindUi() {
+  bindGameweekNav();
+
   document.querySelectorAll('[data-strength-horizon]').forEach((btn) => {
     btn.addEventListener('click', () => {
       state.strengthHorizon = btn.getAttribute('data-strength-horizon') || 'gw';
@@ -1978,6 +2149,7 @@ function bindUi() {
 
   document.querySelectorAll('[data-pitch-view]').forEach((btn) => {
     btn.addEventListener('click', () => {
+      if (state.viewMode !== 'plan') return;
       state.pitchView = btn.getAttribute('data-pitch-view') || 'next';
       document.querySelectorAll('[data-pitch-view]').forEach((b) => {
         b.classList.toggle('is-active', b === btn);
@@ -2131,6 +2303,12 @@ function bindUi() {
       showError('Choose who to swap with.');
       return;
     }
+    if (action === 'bench-order') {
+      closeModal();
+      setMode('bench-order', { selectedId: playerId });
+      showError('Choose another bench player to swap order with.');
+      return;
+    }
     if (action === 'restore') {
       closeModal();
       restorePreviousPlayer(playerId);
@@ -2215,23 +2393,89 @@ function applyLocks(premium, locks, tipsRemaining = 0) {
   applyEditLock();
 }
 
+function currentGwIndex() {
+  const options = state.gameweekOptions || [];
+  return options.findIndex((option) => Number(option.id) === Number(state.selectedGwId));
+}
+
+function renderGameweekNav() {
+  const options = state.gameweekOptions || [];
+  const idx = currentGwIndex();
+  const prev = document.querySelector('[data-gw-prev]');
+  const next = document.querySelector('[data-gw-next]');
+  if (prev) prev.disabled = state.loadingGw || idx <= 0;
+  if (next) next.disabled = state.loadingGw || idx < 0 || idx >= options.length - 1;
+}
+
+async function loadGameweek(gameweekId) {
+  const gw = Number(gameweekId);
+  if (!Number.isInteger(gw) || gw < 1 || state.loadingGw) return;
+  if (Number(state.selectedGwId) === gw) return;
+
+  state.loadingGw = true;
+  renderGameweekNav();
+  showError('');
+
+  try {
+    const session = { user: { premium: state.premium } };
+    const data = await fetchPickPayload('fpl/pick', 2, gw);
+    if (!data?.ok || data.redirect) {
+      throw new Error('Could not load that gameweek.');
+    }
+    applyPickPayload(data, session, { enriched: data.pick?.view_mode !== 'plan' });
+    renderAll();
+    updateSaveButton();
+    if (state.viewMode === 'plan') {
+      enrichPickInBackground(session);
+    }
+  } catch (error) {
+    showError(error?.message || 'Could not load that gameweek.');
+    renderGameweekNav();
+  } finally {
+    state.loadingGw = false;
+    renderGameweekNav();
+  }
+}
+
+function bindGameweekNav() {
+  document.querySelector('[data-gw-prev]')?.addEventListener('click', () => {
+    const options = state.gameweekOptions || [];
+    const idx = currentGwIndex();
+    if (idx <= 0) return;
+    loadGameweek(options[idx - 1].id);
+  });
+
+  document.querySelector('[data-gw-next]')?.addEventListener('click', () => {
+    const options = state.gameweekOptions || [];
+    const idx = currentGwIndex();
+    if (idx < 0 || idx >= options.length - 1) return;
+    loadGameweek(options[idx + 1].id);
+  });
+}
+
 function applyPickPayload(data, session, { enriched = true } = {}) {
   const pick = data.pick;
   state.fplSquad = structuredClone(pick.fpl_squad || pick.squad);
   state.fplBank = Number(pick.fpl_bank ?? pick.bank) || 0;
+  state.players = pick.players || [];
   state.originalSquad = structuredClone(pick.squad);
   state.squad = squadFromFplBaseline(pick.squad);
   syncTransferTracking();
-  state.players = pick.players || [];
   state.bankBase = Number(pick.bank) || 0;
-  state.freeTransfers = Number(pick.free_transfers) || 1;
+  state.freeTransfers = Number(pick.free_transfers) || 0;
   state.transferCost = Number(pick.transfer_cost) || 4;
   state.hasSavedDraft = Boolean(pick.has_saved_draft);
   state.editable = pick.editable !== false;
   state.lockedReason = pick.locked_reason || null;
   state.isLiveLocked = Boolean(pick.is_live_locked);
+  state.viewMode = pick.view_mode || 'plan';
+  state.gameweekOptions = Array.isArray(pick.gameweek?.options) ? pick.gameweek.options : [];
+  state.selectedGwId = Number(pick.gameweek?.selected_id || pick.event?.id) || null;
+  state.gwPoints = pick.gw_points == null ? null : Number(pick.gw_points);
   state.isDirty = false;
   state.event = pick.event;
+  state.mode = 'view';
+  state.selectedId = null;
   state.suggestedTransfers = Array.isArray(pick.suggested_transfers)
     ? pick.suggested_transfers
     : [];
@@ -2248,7 +2492,16 @@ function applyPickPayload(data, session, { enriched = true } = {}) {
       predicted_points: pick.predicted_points,
       notes: pick.ai?.notes || '',
     });
-    applyLocalScores();
+    if (state.viewMode === 'plan') {
+      applyLocalScores();
+    }
+  }
+
+  if (state.viewMode !== 'plan' && state.gwPoints != null) {
+    state.predictedPoints = {
+      gw: Number(state.gwPoints),
+      five_gw: Number(state.gwPoints),
+    };
   }
 
   const status = document.querySelector('[data-pick-status]');
@@ -2261,7 +2514,11 @@ function applyPickPayload(data, session, { enriched = true } = {}) {
   if (gw) gw.textContent = pick.event?.name || 'Gameweek';
   const deadline = document.querySelector('[data-pick-deadline]');
   if (deadline) {
-    if (state.isLiveLocked) {
+    if (state.viewMode === 'history') {
+      deadline.textContent = state.gwPoints != null
+        ? `${Number(state.gwPoints)} pts this gameweek`
+        : 'Past gameweek';
+    } else if (state.viewMode === 'live' || state.isLiveLocked) {
       deadline.textContent = 'Live on FPL';
     } else if (pick.event?.deadline_label) {
       deadline.textContent = `Deadline: ${pick.event.deadline_label}`;
@@ -2270,12 +2527,20 @@ function applyPickPayload(data, session, { enriched = true } = {}) {
     }
   }
 
+  const tipRow = document.querySelector('[data-pick-tip-row]');
+  if (tipRow) tipRow.hidden = !(state.premium && state.viewMode === 'plan');
+
+  const viewToggle = document.querySelector('.pick-view-toggle');
+  if (viewToggle) viewToggle.hidden = state.viewMode !== 'plan';
+
   applyEditLock();
+  renderGameweekNav();
 }
 
 async function enrichPickInBackground(session) {
+  if (state.viewMode !== 'plan') return;
   try {
-    const data = await fetchPickPayload('fpl/pick-enrich', 2);
+    const data = await fetchPickPayload('fpl/pick-enrich', 2, state.selectedGwId);
     if (!data?.ok || data.redirect) return;
     applyPickPayload(data, session, { enriched: true });
     renderAll();
@@ -2322,12 +2587,6 @@ async function boot() {
     window.location.href = pageUrl('link-team');
     return;
   }
-  if (redirect === 'payment') {
-    failProgress();
-    setPageBootstrapping(false);
-    window.location.href = pageUrl('payment');
-    return;
-  }
 
   try {
     setProgress(28, { label: 'Loading your squad from FPL' });
@@ -2348,6 +2607,8 @@ async function boot() {
     setProgress(94, { label: 'Almost ready' });
     renderAll({ animateIn: true });
     updateSaveButton();
+    const oneTap = consumeOneTapFix();
+    if (oneTap) applyOneTapFix(oneTap);
     await finishProgress('Squad ready');
     setPageBootstrapping(false);
     scheduleGwTipsHydration();

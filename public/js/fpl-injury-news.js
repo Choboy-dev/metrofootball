@@ -1,11 +1,11 @@
-import { animate, inView, stagger } from './motion.js';
-import { initSiteNav } from './site-nav.js';
+import { animate, inView, stagger } from './motion.js?v=20260901perf';
+import { initSiteNav } from './site-nav.js?v=20260907pub';
 import {
   applyAuthNav,
   bindSignOutButtons,
   fetchSession,
   apiUrl,
-} from './auth.js';
+} from './auth.js?v=20260907pub';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const PROGRESS_SHOW_DELAY_MS = 80;
@@ -583,13 +583,8 @@ async function loadPost() {
       failProgress();
       if (empty) {
         const title = empty.querySelector('[data-fin-empty-title]');
-        const copy = empty.querySelector('[data-fin-empty-copy]');
         if (title) {
           title.textContent = `${data.target_name || 'This gameweek'} digest is not live yet`;
-        }
-        if (copy) {
-          copy.textContent =
-            'Metro Football writes FPL injury news once for each new gameweek. We do not rebuild it on every visit, so managers always see the same briefing.';
         }
         empty.hidden = false;
       }

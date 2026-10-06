@@ -1,13 +1,14 @@
-import { animate, stagger } from './motion.js';
-import { initSiteNav } from './site-nav.js';
+import { animate, inView, stagger } from './motion.js?v=20260901perf';
+import { initSiteNav } from './site-nav.js?v=20260907pub';
 import { initTeamTabs } from './team-tabs.js';
 import {
   applyAuthNav,
+  applyPremiumGate,
   apiUrl,
   bindSignOutButtons,
   fetchSession,
   pageUrl,
-} from './auth.js';
+} from './auth.js?v=20260907pub';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const PROGRESS_SHOW_DELAY_MS = 80;
@@ -146,33 +147,10 @@ function failProgress() {
   progressUi.value = 0;
 }
 
-function isPremiumActive(user) {
-  return user?.plan === 'premium' && user?.subscription_status === 'active';
-}
-
-function upgradePath(user) {
-  if (user?.plan === 'premium' && user?.subscription_status !== 'active') {
-    return pageUrl('payment');
-  }
-  return pageUrl('join');
-}
-
 function applyGate(session) {
-  const lock = document.querySelector('[data-premium-lock]');
-  const unlocked = document.querySelector('[data-premium-unlocked]');
-  const cta = document.querySelector('[data-upgrade-cta]');
-  const user = session?.user;
-  const premium = isPremiumActive(user);
-
-  if (cta) cta.setAttribute('href', upgradePath(user));
-  if (lock) lock.hidden = premium;
-  if (unlocked) unlocked.hidden = !premium;
-
-  const reveal = premium ? unlocked : lock;
-  if (reveal && !reduceMotion) {
-    animate(reveal, { opacity: [0, 1], y: [12, 0] }, { duration: 0.4, easing: [0.17, 0.55, 0.55, 1] });
-  }
-  return premium;
+  return applyPremiumGate(session, {
+    animateReveal: reduceMotion ? null : animate,
+  }).premium;
 }
 
 function escapeHtml(value) {
@@ -228,7 +206,129 @@ function currentGameweekMeta() {
   return list.find((gw) => gw.id === id) || list[list.length - 1] || null;
 }
 
-function playerCard(player, { bench = false } = {}) {
+function formatPoints(value, { actual = false } = {}) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return '—';
+  if (actual) return String(Math.round(n));
+  const rounded = Math.round(n * 10) / 10;
+  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+}
+
+function isPlanningGameweekView(team) {
+  return Boolean(team?.is_planning_view);
+}
+
+function playerFaceHtml(photo, shirt, name, modifier = 'default') {
+  const raw = String(name || 'Player');
+  const initial = escapeHtml(raw.slice(0, 1));
+  const mod = modifier ? ` ai-face__img--${modifier}` : '';
+  const shirtAttr = shirt ? ` data-face-shirt="${escapeHtml(shirt)}"` : '';
+  const initialAttr = ` data-face-initial="${initial}"`;
+
+  if (photo) {
+    return `<img class="ai-face__img${mod}" src="${escapeHtml(photo)}" alt="" width="96" height="96" loading="lazy" decoding="async"${shirtAttr}${initialAttr}>`;
+  }
+  if (shirt) {
+    return `<img class="ai-face__shirt${mod}" src="${escapeHtml(shirt)}" alt="" width="56" height="74" loading="lazy" decoding="async"${initialAttr}>`;
+  }
+  return `<span class="ai-face__fallback" aria-hidden="true">${initial}</span>`;
+}
+
+function initFaceFallbacks() {
+  if (window.__mfFaceFallbackBound) return;
+  window.__mfFaceFallbackBound = true;
+  document.addEventListener(
+    'error',
+    (event) => {
+      const img = event.target;
+      if (!(img instanceof HTMLImageElement)) return;
+      if (!img.classList.contains('ai-face__img') && !img.classList.contains('ai-face__shirt')) return;
+      const stage = img.dataset.faceStage || 'photo';
+      const shirt = img.getAttribute('data-face-shirt');
+      if (stage !== 'shirt' && shirt) {
+        img.dataset.faceStage = 'shirt';
+        img.classList.remove('ai-face__img');
+        img.classList.add('ai-face__shirt');
+        img.removeAttribute('width');
+        img.removeAttribute('height');
+        img.src = shirt;
+        return;
+      }
+      const initial = img.getAttribute('data-face-initial') || '?';
+      const span = document.createElement('span');
+      span.className = 'ai-face__fallback';
+      span.setAttribute('aria-hidden', 'true');
+      span.textContent = initial;
+      img.replaceWith(span);
+    },
+    true
+  );
+}
+
+function transferPlayerMeta(transfer, side) {
+  const team = transfer[`${side}_team_short`] || '';
+  const pos = transfer.pos || '';
+  const price = Number(transfer[`${side}_price`]);
+  const priceLabel = Number.isFinite(price) && price > 0 ? `£${price.toFixed(1)}m` : '';
+  return [team, pos, priceLabel].filter(Boolean).join(' · ');
+}
+
+function animateTransferSwaps(container) {
+  if (reduceMotion || !container) return;
+  const cards = [...container.querySelectorAll('[data-ai-swap]')];
+  if (!cards.length) return;
+
+  cards.forEach((card) => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(18px)';
+  });
+
+  animate(cards, { opacity: 1, y: 0 }, {
+    duration: 0.45,
+    delay: stagger(0.1),
+    easing: [0.17, 0.55, 0.55, 1],
+  });
+
+  inView(cards, (element) => {
+    const outFace = element.querySelector('.ai-swap__face--out');
+    const inFace = element.querySelector('.ai-swap__face--in');
+    const switchOrb = element.querySelector('.ai-swap__switch-orb');
+    if (outFace) {
+      animate(outFace, { scale: [0.88, 1], opacity: [0, 1] }, { duration: 0.4, easing: [0.22, 1, 0.36, 1] });
+    }
+    if (inFace) {
+      animate(inFace, { scale: [0.88, 1], opacity: [0, 1] }, { duration: 0.4, delay: 0.08, easing: [0.22, 1, 0.36, 1] });
+    }
+    if (switchOrb) {
+      animate(switchOrb, { rotate: [0, 180], scale: [0.7, 1] }, { duration: 0.55, delay: 0.05, easing: [0.22, 1, 0.36, 1] });
+    }
+  }, { amount: 0.35 });
+}
+
+function gameweekUsesActualPoints() {
+  const gw = currentGameweekMeta();
+  return Boolean(gw?.uses_actual_points ?? gw?.finished);
+}
+
+function playerDisplayPoints(player, { bench = false, usesActual = false } = {}) {
+  if (usesActual && player.gw_points != null) {
+    const base = Number(player.gw_points);
+    if (!Number.isFinite(base)) return '—';
+    const onPitch = !bench;
+    if (onPitch && player.is_captain) {
+      const mul = Number(player.multiplier) || 2;
+      return formatPoints(base * mul, { actual: true });
+    }
+    return formatPoints(base, { actual: true });
+  }
+
+  const raw = Number(player.ai?.projections?.[0] ?? player.proj);
+  const base = Number.isFinite(raw) ? raw : null;
+  if (base == null) return '—';
+  return formatPoints(base, { actual: false });
+}
+
+function playerCard(player, { bench = false, usesActual = false } = {}) {
   const badge = player.is_captain
     ? '<span class="pick-player__badge" aria-label="Captain">C</span>'
     : player.is_vice_captain
@@ -242,21 +342,9 @@ function playerCard(player, { bench = false } = {}) {
     : `<span class="pick-player__shirt pick-player__shirt--fallback" aria-hidden="true"></span>`;
 
   const fx = (player.fixtures || [])[0];
-  const raw = Number(player.ai?.projections?.[0] ?? player.proj);
-  const base = Number.isFinite(raw) ? raw : null;
-  const onPitch = !bench;
-  const mul = Number(player.multiplier) || (player.is_captain && onPitch ? 2 : 1);
-  const isCaptBoost = Boolean(player.is_captain && onPitch && base != null && mul >= 2);
-  const boosted = isCaptBoost ? Math.round(base * mul * 10) / 10 : null;
-
-  let pred;
-  if (isCaptBoost && boosted != null) {
-    const mulLabel = mul >= 3 ? 'x 3' : 'x 2';
-    pred = `<span class="pick-player__score pick-player__score--captain" title="GW projected ${base.toFixed(1)}, captain ${mulLabel} equals ${boosted.toFixed(1)}" aria-label="Projected ${base.toFixed(1)} times ${mul} equals ${boosted.toFixed(1)}"><span class="pick-player__cap-raw">${escapeHtml(base.toFixed(1))}</span><span class="pick-player__cap-mul" aria-hidden="true">${mulLabel}</span><span class="pick-player__cap-sep" aria-hidden="true">–</span><span class="pick-player__cap-total">${escapeHtml(boosted.toFixed(1))}</span></span>`;
-  } else {
-    const shown = base == null ? '—' : base.toFixed(1);
-    pred = `<span class="pick-player__score" title="Projected points">${escapeHtml(shown)}</span>`;
-  }
+  const shown = playerDisplayPoints(player, { bench, usesActual });
+  const scoreTitle = usesActual ? 'Gameweek points' : 'Predicted points';
+  const pred = `<span class="pick-player__score" title="${escapeHtml(scoreTitle)}">${escapeHtml(shown)}</span>`;
 
   const fxLabel = pitchFxLabel(fx?.label || '-');
   const fdr = fdrBadgeHtml(fx?.fdr ?? 3, 'sm');
@@ -374,7 +462,7 @@ function renderGameweekNav() {
   if (nameEl) nameEl.textContent = gw?.name || `Gameweek ${state.viewGw}`;
   if (subEl) {
     const planning = state.payload?.planning_gw?.id;
-    subEl.textContent = gw?.id === planning ? 'Current gameweek' : (gw?.finished ? 'Finished' : 'Season archive');
+    subEl.textContent = gw?.id === planning ? 'Upcoming gameweek' : (gw?.uses_actual_points || gw?.finished ? 'Finished' : 'Season archive');
   }
   if (prev) prev.disabled = idx <= 0;
   if (next) next.disabled = idx < 0 || idx >= list.length - 1;
@@ -399,23 +487,88 @@ function renderTransfers(team) {
   const root = document.querySelector('[data-ait-transfers]');
   if (!root) return;
 
-  const transfers = team?.transfers || [];
-  if (!transfers.length) {
+  if (!isPlanningGameweekView(team)) {
     root.hidden = true;
     root.innerHTML = '';
     return;
   }
 
+  const plan = team.transfer_plan || {};
+  const transfers = plan.transfers || team.transfers || [];
+
+  if (!transfers.length && !plan.note) {
+    root.hidden = true;
+    root.innerHTML = '';
+    return;
+  }
+
+  const cards = transfers
+    .map((t) => {
+      const outName = t.out_name || 'Out';
+      const inName = t.in_name || 'In';
+      const outMeta = transferPlayerMeta(t, 'out');
+      const inMeta = transferPlayerMeta(t, 'in');
+      const hit = Number(t.hit_points) > 0;
+      const hitBadge = hit
+        ? `<span class="ait-transfer-plan__hit">${escapeHtml(String(t.hit_points))} pt hit</span>`
+        : '';
+      const delta = Number(t.proj_delta);
+      const deltaBadge = Number.isFinite(delta) && delta > 0
+        ? `<span class="ait-transfer-plan__gain">+${escapeHtml(formatPoints(delta))} pts</span>`
+        : '';
+
+      return `
+    <article class="ai-swap" data-ai-swap>
+      <div class="ai-swap__arena" aria-label="Transfer ${escapeHtml(outName)} out for ${escapeHtml(inName)}">
+        <div class="ai-swap__player ai-swap__player--out">
+          <span class="ai-swap__tag ai-swap__tag--out">Out</span>
+          <div class="ai-swap__face ai-swap__face--out">
+            ${playerFaceHtml(t.out_photo, t.out_shirt, outName, 'out')}
+          </div>
+          <p class="ai-swap__name">${escapeHtml(outName)}</p>
+          ${outMeta ? `<p class="ai-swap__club">${escapeHtml(outMeta)}</p>` : ''}
+        </div>
+
+        <div class="ai-swap__switch" aria-hidden="true">
+          <span class="ai-swap__switch-orb">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M7 8h11l-2.5-2.5M17 16H6l2.5 2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </div>
+
+        <div class="ai-swap__player ai-swap__player--in">
+          <span class="ai-swap__tag ai-swap__tag--in">In</span>
+          <div class="ai-swap__face ai-swap__face--in">
+            ${playerFaceHtml(t.in_photo, t.in_shirt, inName, 'in')}
+          </div>
+          <p class="ai-swap__name">${escapeHtml(inName)}</p>
+          ${inMeta ? `<p class="ai-swap__club">${escapeHtml(inMeta)}</p>` : ''}
+        </div>
+      </div>
+
+      <div class="ait-transfer-plan__foot">
+        ${deltaBadge}${hitBadge}
+        <p class="ai-swap__reason">${escapeHtml(t.reason || 'Upgrade within budget and squad rules')}</p>
+      </div>
+    </article>`;
+    })
+    .join('');
+
   root.hidden = false;
   root.innerHTML = `
-    <p class="ait-transfers__label">Transfers</p>
-    <ul class="ait-transfers__list">
-      ${transfers.map((t) => {
-        const hit = Number(t.hit_points) > 0 ? ` · ${t.hit_points} pt hit` : '';
-        return `<li class="ait-transfers__item"><span class="ait-transfers__out">${escapeHtml(t.out_name)}</span> → <span class="ait-transfers__in">${escapeHtml(t.in_name)}</span>${hit ? `<span class="ait-transfers__hit">${escapeHtml(hit)}</span>` : ''}</li>`;
-      }).join('')}
-    </ul>
+    <section class="ait-transfer-plan" aria-label="Planned transfers for the upcoming gameweek">
+      <div class="ait-transfer-plan__head">
+        <h2 class="ait-transfer-plan__title">Planned transfers</h2>
+        <p class="ait-transfer-plan__lead">Suggested moves before the next deadline.</p>
+      </div>
+      ${transfers.length ? `<div class="ait-transfer-plan__cards">${cards}</div>` : ''}
+      ${plan.note ? `<p class="ait-transfer-plan__note">${escapeHtml(plan.note)}</p>` : ''}
+    </section>
   `;
+
+  initFaceFallbacks();
+  animateTransferSwaps(root.querySelector('.ait-transfer-plan__cards'));
 }
 
 function renderMeta(team) {
@@ -426,14 +579,14 @@ function renderMeta(team) {
   renderTransfers(team);
 
   if (meta) {
-    const gwMeta = currentGameweekMeta();
-    const finished = Boolean(gwMeta?.finished);
+    const usesActual = Boolean(team.uses_actual_points ?? gameweekUsesActualPoints());
     const strength = Number(team.strength ?? 0);
     const strengthOk = strength >= 90;
-    const scoreLabel = finished ? 'Points' : 'Predicted';
-    const scoreValue = finished
-      ? Number(team.gw_points || 0).toFixed(1)
-      : Number(team.predicted_points || 0).toFixed(1);
+    const scoreLabel = usesActual ? 'Points' : 'Predicted';
+    const scoreValue = formatPoints(
+      usesActual ? team.gw_points : team.predicted_points,
+      { actual: usesActual }
+    );
 
     meta.innerHTML = `
       <div class="ait-stat">
@@ -459,12 +612,14 @@ function renderMeta(team) {
 function renderPitch(team) {
   if (!team) return;
 
+  const usesActual = Boolean(team.uses_actual_points ?? gameweekUsesActualPoints());
+
   ['gkp', 'def', 'mid', 'fwd'].forEach((row) => {
     const rowEl = document.querySelector(`[data-pitch-row="${row}"]`);
     if (!rowEl) return;
     const players = team.pitch?.[row] || [];
     rowEl.dataset.count = String(players.length);
-    rowEl.innerHTML = players.map((player) => playerCard(player)).join('');
+    rowEl.innerHTML = players.map((player) => playerCard(player, { usesActual })).join('');
   });
 
   const bench = document.querySelector('[data-ait-bench]');
@@ -472,7 +627,7 @@ function renderPitch(team) {
     const benchPlayers = team.bench || [];
     bench.dataset.count = String(benchPlayers.length);
     bench.innerHTML = benchPlayers
-      .map((player) => playerCard(player, { bench: true }))
+      .map((player) => playerCard(player, { bench: true, usesActual }))
       .join('');
   }
 

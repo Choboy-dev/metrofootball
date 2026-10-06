@@ -1,11 +1,40 @@
 /**
- * Self-hosted Motion — loads the UMD build once, re-exports ESM API.
+ * Motion — self-hosted bundle with timeout and safe fallbacks.
  */
-import './vendor/motion.umd.js';
 
-const motion = globalThis.Motion;
-if (!motion) {
-  throw new Error('Motion failed to load from ./vendor/motion.umd.js — run scripts/setup-performance-assets.php');
+const NOOP = () => {};
+const NOOP_STAGGER = () => 0;
+
+function stubMotion() {
+  return { animate: NOOP, inView: NOOP, stagger: NOOP_STAGGER };
 }
 
-export const { animate, inView, stagger } = motion;
+function importWithTimeout(specifier, ms) {
+  return Promise.race([
+    import(specifier),
+    new Promise((_, reject) => {
+      window.setTimeout(() => reject(new Error('motion import timeout')), ms);
+    }),
+  ]);
+}
+
+async function loadMotionApi() {
+  try {
+    return await importWithTimeout('./vendor/motion.esm.js', 10000);
+  } catch {
+    try {
+      return await importWithTimeout(
+        'https://cdn.jsdelivr.net/npm/motion@12.23.12/+esm',
+        6000
+      );
+    } catch {
+      return stubMotion();
+    }
+  }
+}
+
+const motionApi = await loadMotionApi();
+
+export const animate = typeof motionApi.animate === 'function' ? motionApi.animate : NOOP;
+export const inView = typeof motionApi.inView === 'function' ? motionApi.inView : NOOP;
+export const stagger = typeof motionApi.stagger === 'function' ? motionApi.stagger : NOOP_STAGGER;

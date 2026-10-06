@@ -7,9 +7,12 @@ let started = false;
 const ASIDE_SELECTORS = [
   '.privacy-aside',
   '.terms-aside',
+  '.about-aside',
   '.fin-aside',
   '.fin-layout__aside',
   '.fin-layout__toc',
+  '.fin-toc',
+  '[data-fin-toc]',
   '.report-aside',
   '.gwr-aside',
   '.pcp-aside',
@@ -47,6 +50,10 @@ function applyStickyAsideOffsets() {
   });
 
   document.querySelectorAll('[data-fin-toc]').forEach((nav) => {
+    nav.style.top = top;
+    nav.style.zIndex = '20';
+    nav.style.alignSelf = 'start';
+
     const aside = nav.closest('aside') || nav.closest('.fin-aside, .fin-layout__aside, .fin-layout__toc');
     if (aside instanceof HTMLElement) {
       aside.style.top = top;
@@ -56,6 +63,10 @@ function applyStickyAsideOffsets() {
   });
 
   document.querySelectorAll('.privacy-toc, .terms-toc, .fin-toc').forEach((toc) => {
+    toc.style.top = top;
+    toc.style.zIndex = '20';
+    toc.style.alignSelf = 'start';
+
     const aside = toc.closest('aside');
     if (aside instanceof HTMLElement) {
       aside.style.top = top;
@@ -76,9 +87,12 @@ function ensureStickyAsideStyles() {
     @media (min-width: 960px) {
       .privacy-aside,
       .terms-aside,
+      .about-aside,
       .fin-aside,
       .fin-layout__aside,
       .fin-layout__toc,
+      .fin-toc,
+      [data-fin-toc],
       .report-aside,
       .gwr-aside,
       .pcp-aside,
