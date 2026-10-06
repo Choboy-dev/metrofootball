@@ -1,20 +1,21 @@
-/* Performance — keep above-the-fold visible before Motion loads */
+/* Keep marketing content visible if Motion JS has not run yet */
 
+.join-intro,
+.compare-reveal,
+.faq-reveal,
 .hero-reveal,
 .auth-reveal {
   opacity: 1;
+  transform: none;
 }
 
 .reveal,
-.tools-grid .tool {
+.tools-grid .tool,
+.pricing-card.reveal {
   opacity: 1;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .hero-reveal {
-    transform: translateY(1.75rem);
-  }
-
   .reveal {
     transform: translateY(1.25rem);
   }
@@ -25,9 +26,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-reveal,
   .reveal,
-  .tools-grid .tool {
+  .tools-grid .tool,
+  .join-intro,
+  .compare-reveal,
+  .faq-reveal {
     transform: none;
   }
 }

@@ -1,4 +1,4 @@
-/* Self-hosted fonts — run scripts/setup-performance-assets.php once on deploy */
+/* Self-hosted fonts — latin subsets only (run scripts/subset-display-fonts.py after font updates) */
 
 @font-face {
   font-family: 'Inter';
@@ -21,17 +21,9 @@
 @font-face {
   font-family: 'Google Sans';
   font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../fonts/google-sans-400.woff') format('woff');
-}
-
-@font-face {
-  font-family: 'Google Sans';
-  font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url('../fonts/google-sans-500.woff') format('woff');
+  src: url('../fonts/google-sans-500-latin.woff2') format('woff2');
 }
 
 @font-face {
@@ -39,7 +31,7 @@
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url('../fonts/google-sans-600.woff') format('woff');
+  src: url('../fonts/google-sans-600-latin.woff2') format('woff2');
 }
 
 @font-face {
@@ -47,5 +39,5 @@
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('../fonts/google-sans-700.woff') format('woff');
+  src: url('../fonts/google-sans-700-latin.woff2') format('woff2');
 }

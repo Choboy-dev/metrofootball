@@ -190,8 +190,8 @@ foreach ($downloads as $dest => $url) {
 }
 
 $logoPairs = [
-    'metro-football-logo-dark.png' => 'metro-football-logo-dark.webp',
-    'metro-football-logo-light.png' => 'metro-football-logo-light.webp',
+    'metro-football-logo-dark.webp' => 'metro-football-logo-dark.webp',
+    'metro-football-logo-light.webp' => 'metro-football-logo-light.webp',
 ];
 
 foreach ($logoPairs as $pngName => $webpName) {

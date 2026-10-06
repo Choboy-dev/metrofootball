@@ -33,17 +33,5 @@
     ensureStylesheet('./css/perf.css?v=20260828b');
   }
 
-  document.querySelectorAll('img.site-logo__img[src*="metro-football-logo"]').forEach((img) => {
-    if (img.closest('picture')) return;
-    const png = img.getAttribute('src') || '';
-    if (!/\.png(\?|$)/i.test(png)) return;
-    const webp = png.replace(/\.png(\?.*)?$/i, '.webp$1');
-    const picture = document.createElement('picture');
-    const source = document.createElement('source');
-    source.type = 'image/webp';
-    source.srcset = webp;
-    picture.appendChild(source);
-    img.parentNode?.insertBefore(picture, img);
-    picture.appendChild(img);
-  });
+  /* Logos are served as WebP directly in markup. */
 })();
