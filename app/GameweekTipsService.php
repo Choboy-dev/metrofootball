@@ -77,6 +77,10 @@ final class GameweekTipsService
         ];
 
         $post = self::getPostForGameweek($requestedGw);
+        if ($post !== null && self::postNeedsRepair($post)) {
+            $post = self::attemptRepairPost($requestedGw, $post);
+        }
+
         $needsGenerate = $post === null;
 
         return [
@@ -201,6 +205,9 @@ final class GameweekTipsService
         $factPacks = self::factPacksFromResearch($research);
         $article = self::writeArticle($factPacks, $target, null);
         $post = self::assemblePost($article, $factPacks, $target, $research);
+        if (self::postNeedsRepair($post) || count($post['tips'] ?? []) < count($factPacks)) {
+            throw new \RuntimeException('The written article did not cover every tip player once. Nothing was saved; run --write --force again.');
+        }
         $post['cost_controls'] = [
             'tips' => count($factPacks),
             'tavily_calls' => 0,
@@ -274,6 +281,9 @@ final class GameweekTipsService
         ]);
 
         $post = self::assemblePost($article, $factPacks, $target, $research);
+        if (self::postNeedsRepair($post) || count($post['tips'] ?? []) < count($factPacks)) {
+            throw new \RuntimeException('The edited article did not cover every tip player once. Nothing was saved.');
+        }
         $post['published_at'] = $current['published_at'] ?? $post['published_at'];
         $post['cost_controls'] = [
             'tips' => count($factPacks),
@@ -304,6 +314,8 @@ final class GameweekTipsService
      */
     public static function enrichPostForDisplay(array $post): array
     {
+        $post = self::sanitizeStoredPost($post);
+
         if (isset($post['tips']) && is_array($post['tips'])) {
             foreach ($post['tips'] as $i => $tip) {
                 if (!is_array($tip)) {
@@ -334,6 +346,7 @@ final class GameweekTipsService
     private static function buildTipsToc(array $post): array
     {
         $toc = [];
+        $seen = [];
         $quick = $post['quick_picks'] ?? [];
         if (is_array($quick) && $quick !== []) {
             $toc[] = ['id' => 'quick-picks', 'label' => 'Quick picks'];
@@ -348,10 +361,144 @@ final class GameweekTipsService
             if ($slug === '' || $heading === '') {
                 continue;
             }
+            if (isset($seen[$slug])) {
+                continue;
+            }
+            $seen[$slug] = true;
             $toc[] = ['id' => $slug, 'label' => $heading];
         }
 
         return $toc;
+    }
+
+    /**
+     * @param array<string, mixed> $post
+     */
+    private static function postNeedsRepair(array $post): bool
+    {
+        $tips = is_array($post['tips'] ?? null) ? $post['tips'] : [];
+        if ($tips === []) {
+            return false;
+        }
+
+        $seen = [];
+        foreach ($tips as $tip) {
+            if (!is_array($tip)) {
+                return true;
+            }
+            $eid = (int) ($tip['element_id'] ?? 0);
+            if ($eid > 0) {
+                if (isset($seen[$eid])) {
+                    return true;
+                }
+                $seen[$eid] = true;
+            }
+            foreach (['why_pick', 'fpl_impact', 'what_we_suggest'] as $field) {
+                foreach ((array) ($tip[$field] ?? []) as $paragraph) {
+                    if (self::isCorruptParagraph((string) $paragraph)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return count($tips) !== count($seen);
+    }
+
+    /**
+     * @param array<string, mixed> $post
+     * @return array<string, mixed>
+     */
+    private static function attemptRepairPost(int $gw, array $post): array
+    {
+        // A rewrite takes minutes, so it must never run inside a visitor's page request.
+        if (PHP_SAPI === 'cli' && OpenAiClient::configured() && self::getStoredResearch($gw) !== null) {
+            try {
+                return self::publishFromResearch(true, $gw);
+            } catch (\Throwable) {
+                // Fall back to sanitizing the stored copy.
+            }
+        }
+
+        $sanitized = self::sanitizeStoredPost($post);
+        FplCache::put(self::CACHE_PREFIX . $gw, $sanitized);
+
+        return $sanitized;
+    }
+
+    /**
+     * @param array<string, mixed> $post
+     * @return array<string, mixed>
+     */
+    private static function sanitizeStoredPost(array $post): array
+    {
+        if (isset($post['intro_paragraphs'])) {
+            $post['intro_paragraphs'] = self::cleanParagraphs($post['intro_paragraphs']);
+        }
+        if (isset($post['closing'])) {
+            $post['closing'] = self::cleanParagraphs($post['closing']);
+        }
+        if (isset($post['tips']) && is_array($post['tips'])) {
+            $post['tips'] = self::sanitizeTips($post['tips']);
+        }
+
+        return $post;
+    }
+
+    /**
+     * @param list<mixed> $tips
+     * @return list<array<string, mixed>>
+     */
+    private static function sanitizeTips(array $tips): array
+    {
+        $out = [];
+        $seen = [];
+
+        foreach ($tips as $tip) {
+            if (!is_array($tip)) {
+                continue;
+            }
+
+            $eid = (int) ($tip['element_id'] ?? 0);
+            $slug = (string) ($tip['slug'] ?? '');
+            if ($eid < 1 || $slug === '') {
+                continue;
+            }
+            if (isset($seen[$eid])) {
+                continue;
+            }
+
+            $tip['why_pick'] = self::cleanParagraphs($tip['why_pick'] ?? []);
+            $tip['fpl_impact'] = self::cleanParagraphs($tip['fpl_impact'] ?? []);
+            $tip['what_we_suggest'] = self::cleanParagraphs($tip['what_we_suggest'] ?? []);
+            if ($tip['why_pick'] === []) {
+                continue;
+            }
+
+            $seen[$eid] = true;
+            $out[] = $tip;
+        }
+
+        return $out;
+    }
+
+    private static function isCorruptParagraph(string $text): bool
+    {
+        $text = trim($text);
+        if ($text === '' || strcasecmp($text, 'closing') === 0) {
+            return true;
+        }
+        if (str_contains($text, '"element_id"') || str_contains($text, 'element_id":')) {
+            return true;
+        }
+        if (preg_match('/^\s*[\[{]/', $text) === 1) {
+            return true;
+        }
+        if (preg_match('/"\s*,\s*"element_id"/', $text) === 1) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -427,7 +574,7 @@ final class GameweekTipsService
             return null;
         }
 
-        return 'https://resources.premierleague.com/premierleague/photos/players/250x250/p' . $photoCode . '.png';
+        return 'https://resources.premierleague.com/premierleague/photos/players/110x140/p' . $photoCode . '.png';
     }
 
     /**
@@ -510,7 +657,7 @@ final class GameweekTipsService
     /**
      * @return list<array{gw:int,path:string,label:string}>
      */
-    private static function listPublishedPaths(): array
+    public static function listPublishedPaths(): array
     {
         $dir = dirname(__DIR__) . '/storage/cache';
         $paths = [];
@@ -530,6 +677,161 @@ final class GameweekTipsService
         }
         usort($paths, static fn (array $a, array $b): int => $b['gw'] <=> $a['gw']);
         return $paths;
+    }
+
+    /**
+     * Cards for the FPL Guides hub. Tip article bodies stay unchanged.
+     *
+     * @return list<array{
+     *   slug:string,
+     *   title:string,
+     *   description:string,
+     *   category:string,
+     *   read_mins:int,
+     *   featured_image:string,
+     *   href:string,
+     *   source:string
+     * }>
+     */
+    public static function listGuideCards(): array
+    {
+        $cards = [];
+        $elementsById = null;
+
+        foreach (self::listPublishedPaths() as $row) {
+            $gw = (int) ($row['gw'] ?? 0);
+            if ($gw < 1) {
+                continue;
+            }
+
+            $post = self::getPostForGameweek($gw);
+            if ($post === null) {
+                continue;
+            }
+
+            $title = trim((string) ($post['seo_title'] ?? $post['h1'] ?? ''));
+            if ($title === '') {
+                $title = 'FPL Gameweek ' . $gw . ' tips';
+            }
+
+            $description = trim((string) ($post['meta_description'] ?? ''));
+            if ($description === '') {
+                $intros = is_array($post['intro_paragraphs'] ?? null) ? $post['intro_paragraphs'] : [];
+                $description = trim((string) ($intros[0] ?? ''));
+            }
+            if ($description === '') {
+                $description = 'Captain, bench, and deadline tips for Gameweek ' . $gw . '.';
+            }
+
+            $featured = self::featuredImageFromPost($post);
+            if ($featured === '') {
+                if ($elementsById === null) {
+                    $elementsById = self::bootstrapElementsById();
+                }
+                $featured = self::featuredImageFromElementIds($post, $elementsById);
+            }
+
+            $words = str_word_count(strip_tags(implode(' ', [
+                $title,
+                $description,
+                ...(is_array($post['intro_paragraphs'] ?? null) ? $post['intro_paragraphs'] : []),
+                ...(is_array($post['closing'] ?? null) ? $post['closing'] : []),
+            ])));
+            $tipCount = is_array($post['tips'] ?? null) ? count($post['tips']) : 0;
+            $readMins = max(3, (int) ceil(max($words, $tipCount * 180) / 200));
+
+            $cards[] = [
+                'slug' => 'fpl-gameweek-' . $gw . '-tips',
+                'title' => $title,
+                'description' => $description,
+                'category' => 'Gameweek tips',
+                'read_mins' => $readMins,
+                'featured_image' => $featured,
+                'href' => '/fpl-gameweek-' . $gw . '-tips',
+                'source' => 'gameweek_tips',
+            ];
+        }
+
+        return $cards;
+    }
+
+    /**
+     * @param array<string, mixed> $post
+     */
+    private static function featuredImageFromPost(array $post): string
+    {
+        foreach (['tips', 'quick_picks'] as $key) {
+            $rows = $post[$key] ?? null;
+            if (!is_array($rows)) {
+                continue;
+            }
+            foreach ($rows as $row) {
+                if (!is_array($row)) {
+                    continue;
+                }
+                $photo = trim((string) ($row['photo'] ?? ''));
+                if ($photo !== '' && preg_match('#^https?://#i', $photo) === 1) {
+                    return $photo;
+                }
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * @param array<string, mixed> $post
+     * @param array<int, array<string, mixed>> $elementsById
+     */
+    private static function featuredImageFromElementIds(array $post, array $elementsById): string
+    {
+        foreach (['tips', 'quick_picks'] as $key) {
+            $rows = $post[$key] ?? null;
+            if (!is_array($rows)) {
+                continue;
+            }
+            foreach ($rows as $row) {
+                if (!is_array($row)) {
+                    continue;
+                }
+                $eid = (int) ($row['element_id'] ?? 0);
+                $el = $elementsById[$eid] ?? null;
+                if (!is_array($el)) {
+                    continue;
+                }
+                $photo = self::playerPhotoUrl($el);
+                if ($photo !== null && $photo !== '') {
+                    return $photo;
+                }
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private static function bootstrapElementsById(): array
+    {
+        try {
+            $bootstrap = FplClient::fetchBootstrapPick();
+        } catch (\Throwable) {
+            return [];
+        }
+
+        $out = [];
+        foreach (is_array($bootstrap['elements'] ?? null) ? $bootstrap['elements'] : [] as $el) {
+            if (!is_array($el)) {
+                continue;
+            }
+            $id = (int) ($el['id'] ?? 0);
+            if ($id > 0) {
+                $out[$id] = $el;
+            }
+        }
+
+        return $out;
     }
 
     /**
@@ -1077,7 +1379,8 @@ final class GameweekTipsService
             ],
             'writing_brief' => [
                 'Write for a smart 10 year old. Plain words only.',
-                'Never use delve, examining, navigating, landscape, or in a recent.',
+                'Sound like a human football journalist with a view, not a content generator. Every paragraph needs a real fact from the supplied data.',
+                'Follow the banned words list in the system message exactly.',
                 'Each tip why_pick opening sentence must name the player, fixture, opponent, and kickoff date when known.',
                 'Include exactly one markdown link per tip in the article body.',
                 'what_we_suggest must be 2 to 3 sentences with a clear action: captain, buy, sell, bench, hold, or avoid.',
@@ -1100,7 +1403,8 @@ final class GameweekTipsService
             ],
             $isEdit ? 'metro_fpl_gw_tips_edit' : 'metro_fpl_gw_tips',
             self::articleSchema(count($packsForAi)),
-            180
+            300,
+            ['service' => 'gameweek_tips', 'model' => Env::get('OPENAI_TIPS_MODEL', 'gpt-4.1') ?: 'gpt-4.1']
         );
     }
 
@@ -1109,9 +1413,13 @@ final class GameweekTipsService
         $base = <<<'TXT'
 You write Metro Football public FPL Gameweek tips for managers before the deadline. Long form journalism, not bullet notes.
 
-Voice: We or Metro Football. Never lone first person I.
-Copy: clear enough for a 10 year old. Short paragraphs of 2 to 4 sentences. No dashes. No exclamation marks.
-Banned: delve, examining, navigating, landscape, in a recent, it remains to be seen, in conclusion.
+Voice: an experienced British football writer who plays FPL every week and has an opinion. We or Metro Football. Never lone first person I.
+Write like a person talking to a friend in the pub about their team: direct, specific, a little dry. British English spelling (maximise, prioritise, favour).
+Copy: clear enough for a 10 year old. Short paragraphs of 2 to 4 sentences. No dashes. No exclamation marks. No rhetorical questions.
+Every paragraph must carry at least one concrete fact from the data: a number, an opponent, a price, a date, a stat, or a named source. Cut any sentence that would fit in any other week's article.
+Open the intro with the most important fact or decision of the week, not with scene setting.
+Banned words and phrases (never use them or close variants): delve, examining, navigating, landscape, in a recent, it remains to be seen, in conclusion, as we approach, let's dive in, dive into, without further ado, we have you covered, look no further, in this article, crucial, pivotal, essential, key to, vital, exciting, thrilling, high-stakes, game changer, must-have, standout, stellar, impressive form, plethora, myriad, a testament to, when it comes to, it is worth noting, it is important to, make sure to, don't miss out, climb the ranks, secure a strong position, shape their season, unlock, elevate, harness, leverage, boast, robust, seamless, buckle up, remember,.
+Do not tell readers the deadline is approaching or that decisions are important. They know.
 
 Length: whole article at least 1500 words. Each tip at least 150 words. Intro at least 120 words. Closing at least 80 words.
 
@@ -1125,7 +1433,7 @@ Never say a player blanked or had no returns if season_stats show goals, assists
 Source snippets are background only. If a snippet conflicts with season_stats, ignore the snippet for that fact.
 Links: exactly one markdown link [phrase](url) per tip inside why_pick or fpl_impact.
 
-SEO: phrase "FPL Gameweek X tips" (use the real gameweek number) in seo_title at front, first intro paragraph, and about 1.5 to 2 percent density.
+SEO: put the phrase "FPL Gameweek X tips" (real gameweek number) at the front of seo_title, in the h1, and once in the first intro paragraph where it reads naturally. Do not repeat it anywhere else. Elsewhere say "this gameweek" or "Gameweek X". Never bolt the word tips onto a sentence just to fit the phrase in.
 
 quick_picks: 4 short labels for captain, differential, avoid, and budget with element_id and teaser under 12 words.
 
@@ -1250,20 +1558,29 @@ TXT;
         }
 
         $tipsOut = [];
+        $usedIds = [];
         foreach (($article['tips'] ?? []) as $index => $block) {
             if (!is_array($block)) {
                 continue;
             }
             $eid = (int) ($block['element_id'] ?? 0);
             $pack = $byId[$eid] ?? null;
-            if ($pack === null) {
+            if ($pack === null || isset($usedIds[(int) $pack['player']['element_id']])) {
+                // The writer sometimes repeats one element_id across blocks; fall back to tip type, then position.
                 $type = (string) ($block['tip_type'] ?? '');
-                $pack = $packsByType[$type] ?? ($factPacks[$index] ?? null);
+                $pack = null;
+                foreach ([$packsByType[$type] ?? null, $factPacks[$index] ?? null] as $candidate) {
+                    if ($candidate !== null && !isset($usedIds[(int) $candidate['player']['element_id']])) {
+                        $pack = $candidate;
+                        break;
+                    }
+                }
             }
             if ($pack === null) {
                 continue;
             }
             $eid = (int) $pack['player']['element_id'];
+            $usedIds[$eid] = true;
             $p = $pack['player'];
             $slug = self::slug((string) ($block['slug'] ?? $p['web_name']));
             $tipsOut[] = [
@@ -1271,7 +1588,7 @@ TXT;
                 'slug' => $slug,
                 'heading' => self::cleanCopy((string) ($block['heading'] ?? $p['web_name'])),
                 'alt_text' => self::cleanCopy((string) ($block['alt_text'] ?? ($p['web_name'] . ' FPL Gameweek ' . $gw . ' tips'))),
-                'tip_type' => (string) ($block['tip_type'] ?? $pack['tip_type']),
+                'tip_type' => (string) $pack['tip_type'],
                 'tip_label' => self::TIP_LABELS[$pack['tip_type']] ?? $pack['tip_label'],
                 'web_name' => $p['web_name'],
                 'team_name' => $p['team_name'],
@@ -1386,6 +1703,9 @@ TXT;
         }
         $out = [];
         foreach ($paras as $p) {
+            if (self::isCorruptParagraph((string) $p)) {
+                continue;
+            }
             $t = self::cleanCopy((string) $p);
             if ($t !== '') {
                 $out[] = $t;
@@ -1411,11 +1731,21 @@ TXT;
             '/\bexamining\b/i' => 'looking at',
             '/\bin a recent\b/i' => 'in the',
             '/\bnavigating\b/i' => 'handling',
+            '/\bLet\'?s dive (in|into)[^.]*\.\s*/i' => '',
+            '/\bWithout further ado,?\s*/i' => '',
+            '/\bIn this article,?\s*/i' => '',
+            '/\bwe have you covered\b/i' => 'we cover it here',
+            '/\bmaximiz/i' => 'maximis',
+            '/\bprioritiz/i' => 'prioritis',
+            '/\bfinaliz/i' => 'finalis',
+            '/\banalyz/i' => 'analys',
+            '/!/' => '.',
+            '/\s*\belement_?id\b[^.]*\.?$/i' => '',
         ];
         foreach ($replacements as $pattern => $replacement) {
             $text = preg_replace($pattern, $replacement, $text) ?? $text;
         }
-        return $text;
+        return ucfirst(ltrim($text));
     }
 
     private static function formatFixtureLine(string $text): string

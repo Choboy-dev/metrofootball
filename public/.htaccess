@@ -4,21 +4,66 @@
 
   # Catch direct /public/ hits (when Apache maps into this folder)
   RewriteCond %{ENV:REDIRECT_STATUS} ^$
-  RewriteCond %{THE_REQUEST} \s/+([^\s?]*)/public/([^\s?]+)\.html [NC]
-  RewriteRule ^ /%1/%2 [R=301,L,NE]
-
-  RewriteCond %{ENV:REDIRECT_STATUS} ^$
-  RewriteCond %{THE_REQUEST} \s/+([^\s?]*)/public/?([^\s?]*) [NC]
-  RewriteRule ^ /%1/%2 [R=301,L,NE]
+  RewriteCond %{THE_REQUEST} \s/+public/(.+?)[\s?] [NC]
+  RewriteRule ^public/(.*)$ /$1 [R=301,L,NE]
 
   # Extensionless URLs for pages served from this folder
   RewriteCond %{ENV:REDIRECT_STATUS} ^$
   RewriteCond %{THE_REQUEST} \s/+([^\s?]+)\.html[\s?] [NC]
   RewriteRule ^ /%1 [R=301,L,NE]
 
+  # Player sitemap (dynamic from FPL bootstrap)
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^sitemap-players\.xml$ sitemap-players.php [L]
+
   # Gameweek tips archive URLs: /fpl-gameweek-2-tips
   RewriteCond %{ENV:REDIRECT_STATUS} ^$
-  RewriteRule ^fpl-gameweek-([0-9]+)-tips/?$ fpl-gameweek-tips.html [L]
+  RewriteRule ^fpl-gameweek-([0-9]+)-tips/?$ fpl-gameweek-tips.php?gw=$1 [L,QSA]
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^fpl-gameweek-tips/?$ fpl-gameweek-tips.php [L,QSA]
+
+  # Admin dashboard
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^admin/?$ admin/index.html [L]
+
+  # Players index
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^players/?$ players.php [L,QSA]
+
+  # Player profile pages: /players/man-city/cherki
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^players/([a-z0-9-]+)/([a-z0-9-]+)/?$ player-profile.php?club=$1&player=$2 [L,QSA]
+
+  # Club hub pages: /players/man-city
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^players/([a-z0-9-]+)/?$ players-club.php?club=$1 [L,QSA]
+
+  # Mini league rival pages: /mini-leagues/league-slug/rival-slug
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^mini-leagues/([a-z0-9-]+)/([a-z0-9-]+)/?$ mini-league-rival.php?league=$1&rival=$2 [L,QSA]
+
+  # FPL Guides hub and articles
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^fpl-guides/?$ fpl-guides.php [L]
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^fpl-guides/([a-z0-9-]+)/?$ fpl-guide.php?slug=$1 [L,QSA]
+
+  # Author profile pages
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^author/([a-z0-9-]+)/?$ guide-author.php?slug=$1 [L,QSA]
+
+  # Metro Mail — extensionless routes under /mail
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^mail/?$ mail/index.php [L,QSA]
+
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^mail/(.+?)/?$ mail/$1.php [L,QSA]
+
+  # Resend inbound webhook
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^webhooks/resend-mail/?$ webhooks/resend-mail.php [L,QSA]
 
   # Serve real files and directories (css, js, images, php)
   RewriteCond %{REQUEST_FILENAME} -f [OR]
@@ -38,16 +83,23 @@ DirectoryIndex index.html
 
 <IfModule mod_expires.c>
   ExpiresActive On
-  ExpiresByType text/css "access plus 7 days"
-  ExpiresByType application/javascript "access plus 7 days"
-  ExpiresByType image/png "access plus 30 days"
-  ExpiresByType image/jpeg "access plus 30 days"
-  ExpiresByType image/webp "access plus 30 days"
-  ExpiresByType image/svg+xml "access plus 30 days"
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType font/woff "access plus 1 year"
+  ExpiresByType application/font-woff "access plus 1 year"
+  ExpiresByType application/font-woff2 "access plus 1 year"
 </IfModule>
 
 <IfModule mod_headers.c>
   <FilesMatch "\.(css|js|png|jpg|jpeg|webp|svg)$">
-    Header set Cache-Control "public, max-age=604800, immutable"
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(woff2?|woff)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
 </IfModule>

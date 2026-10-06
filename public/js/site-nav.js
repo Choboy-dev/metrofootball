@@ -1,9 +1,28 @@
-import { animate } from 'https://cdn.jsdelivr.net/npm/motion@12.23.12/+esm';
-import { initLinkTargets } from './link-targets.js';
-import { apiUrl, bindAuthToolLinks, fetchSession } from './auth.js';
-import { buildMobileMenuNav, initMobileAccordions } from './mobile-menu.js';
+import { initLinkTargets } from './link-targets.js?v=20260920toc';
+import { apiUrl, bindAuthToolLinks, fetchSession, fetchWithTimeout } from './auth.js?v=20260907pub';
+import { buildMobileMenuNav, initMobileAccordions } from './mobile-menu.js?v=20260907pub';
+import { initStickyAsideOffset } from './sticky-aside.js?v=20260828h';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let motionPromise = null;
+
+function loadAnimate() {
+  if (!motionPromise) {
+    motionPromise = import('./motion.js?v=20260901perf')
+      .then((mod) => mod.animate)
+      .catch(() => null);
+  }
+  return motionPromise;
+}
+
+function panelAnimate(target, keyframes, options) {
+  if (reduceMotion || !target) return;
+  loadAnimate().then((animate) => {
+    if (typeof animate === 'function') {
+      animate(target, keyframes, options);
+    }
+  });
+}
 
 export async function hydrateGwTipsLabels() {
   const labels = document.querySelectorAll('[data-nav-gw-tips-label]');
@@ -11,10 +30,10 @@ export async function hydrateGwTipsLabels() {
   if (!labels.length && !links.length) return;
 
   try {
-    const res = await fetch(apiUrl('fpl/gameweek-tips?meta=1'), {
+    const res = await fetchWithTimeout(apiUrl('fpl/gameweek-tips?meta=1'), {
       credentials: 'same-origin',
       headers: { Accept: 'application/json' },
-    });
+    }, 8000);
     const data = await res.json();
     const gw = Number(data?.upcoming_gw);
     const text = Number.isFinite(gw) && gw > 0 ? `Gameweek ${gw} Tips` : 'Gameweek Tips';
@@ -52,9 +71,24 @@ export function initSiteNav(options = {}) {
   const sessionOverride = options.session ?? null;
   const deferGwTips = pageDefersGwTips(options);
 
+  // Free tools must never keep leftover auth gates from old markup/cache.
+  document.querySelectorAll('a[href*="fixture-difficulty"], [data-auth-tool-href*="fixture-difficulty"]').forEach((node) => {
+    node.removeAttribute('data-auth-tool');
+    if (node.hasAttribute('data-auth-tool-href')) {
+      const href = node.getAttribute('data-auth-tool-href');
+      node.removeAttribute('data-auth-tool-href');
+      if (node instanceof HTMLAnchorElement && href && !node.getAttribute('href')) {
+        node.setAttribute('href', href);
+      }
+    }
+  });
+
   initLinkTargets();
   if (!deferGwTips) {
     hydrateGwTipsLabels();
+  } else if (typeof options.deferGwTips !== 'boolean') {
+    // Pages that defer by markup have no page script that schedules it later.
+    scheduleGwTipsHydration();
   }
 
   const header = document.querySelector('[data-header]');
@@ -97,7 +131,7 @@ export function initSiteNav(options = {}) {
       trigger.setAttribute('aria-expanded', 'true');
       panel.hidden = false;
       if (!reduceMotion) {
-        animate(panel, { opacity: [0, 1], y: [6, 0] }, { duration: 0.18, easing: [0.17, 0.55, 0.55, 1] });
+        panelAnimate(panel, { opacity: [0, 1], y: [6, 0] }, { duration: 0.18, easing: [0.17, 0.55, 0.55, 1] });
       }
     };
 
@@ -146,7 +180,7 @@ export function initSiteNav(options = {}) {
     menuIcon?.classList.add('is-open');
     document.body.style.overflow = 'hidden';
     if (!reduceMotion && mobileInner) {
-      animate(
+      panelAnimate(
         mobileInner,
         { opacity: [0, 1], y: [8, 0] },
         { duration: 0.24, easing: [0.17, 0.55, 0.55, 1] }
@@ -165,12 +199,18 @@ export function initSiteNav(options = {}) {
       mobileMenu.hidden = true;
       return;
     }
-    animate(
-      mobileInner,
-      { opacity: 0, y: 8 },
-      { duration: 0.18, easing: [0.4, 0, 1, 1] }
-    ).finished.then(() => {
-      if (!mobileOpen) mobileMenu.hidden = true;
+    loadAnimate().then((animate) => {
+      if (typeof animate !== 'function') {
+        mobileMenu.hidden = true;
+        return;
+      }
+      animate(
+        mobileInner,
+        { opacity: 0, y: 8 },
+        { duration: 0.18, easing: [0.4, 0, 1, 1] }
+      ).finished.then(() => {
+        if (!mobileOpen) mobileMenu.hidden = true;
+      });
     });
   }
 
@@ -196,4 +236,6 @@ export function initSiteNav(options = {}) {
       });
     });
   }
+
+  initStickyAsideOffset();
 }

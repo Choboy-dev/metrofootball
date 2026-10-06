@@ -1,11 +1,11 @@
-import { animate, inView, stagger } from './motion.js';
-import { initSiteNav } from './site-nav.js';
+import { animate, inView, stagger } from './motion.js?v=20260901perf';
+import { initSiteNav } from './site-nav.js?v=20260907pub';
 import {
   applyAuthNav,
   bindSignOutButtons,
   fetchSession,
   apiUrl,
-} from './auth.js';
+} from './auth.js?v=20260907pub';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const PROGRESS_SHOW_DELAY_MS = 80;
@@ -262,8 +262,19 @@ function formatPrice(value) {
   return `£${n.toFixed(1)}`;
 }
 
+function isCorruptParagraph(text) {
+  const value = String(text ?? '').trim();
+  if (!value || value.toLowerCase() === 'closing') return true;
+  if (value.includes('"element_id"') || value.includes('element_id":')) return true;
+  if (/^\s*[\[{]/.test(value)) return true;
+  return false;
+}
+
 function paragraphs(list) {
-  return (list || []).map((p) => renderParagraph(p)).join('');
+  return (list || [])
+    .filter((p) => !isCorruptParagraph(p))
+    .map((p) => renderParagraph(p))
+    .join('');
 }
 
 function renderParagraph(text) {
@@ -629,6 +640,10 @@ async function loadPost() {
   showError('');
   const empty = document.querySelector('[data-fin-empty]');
   const article = document.querySelector('[data-fin-article]');
+  if (article?.dataset.finSsr || empty?.dataset.finSsr) {
+    state.gameweek = parseGameweekFromPath();
+    return;
+  }
   if (empty) empty.hidden = true;
   if (article) article.hidden = true;
 
@@ -657,8 +672,8 @@ async function loadPost() {
           title.textContent = `${data.gameweek_name || 'This gameweek'} tips are not live yet`;
         }
         if (copy) {
-          copy.textContent =
-            'Metro Football writes FPL Gameweek tips once for each new gameweek. We do not rebuild them on every visit.';
+          copy.textContent = '';
+          copy.hidden = true;
         }
         empty.hidden = false;
       }

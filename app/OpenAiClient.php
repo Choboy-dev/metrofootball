@@ -22,7 +22,7 @@ final class OpenAiClient
     /**
      * Chat Completions with strict JSON schema output.
      *
-     * @param list<array{role:string,content:string}> $messages
+     * @param list<array{role:string,content:mixed}> $messages
      * @param array<string, mixed> $schema
      * @return array<string, mixed>
      */
@@ -30,7 +30,8 @@ final class OpenAiClient
         array $messages,
         string $schemaName,
         array $schema,
-        int $timeoutSeconds = 45
+        int $timeoutSeconds = 45,
+        array $meta = []
     ): array
     {
         if (!self::configured()) {
@@ -53,8 +54,15 @@ final class OpenAiClient
             ],
         ];
 
+        if (isset($meta['temperature']) && is_numeric($meta['temperature'])) {
+            $payload['temperature'] = max(0, min(1, (float) $meta['temperature']));
+        }
+        if (!empty($meta['model']) && is_string($meta['model'])) {
+            $payload['model'] = $meta['model'];
+        }
+
         $body = json_encode($payload, JSON_THROW_ON_ERROR);
-        $timeout = max(20, min(180, $timeoutSeconds));
+        $timeout = max(20, min(300, $timeoutSeconds));
 
         $ch = curl_init(self::CHAT_URL);
         curl_setopt_array($ch, [
@@ -88,13 +96,21 @@ final class OpenAiClient
             throw new \RuntimeException($message);
         }
 
+        AiUsageLogger::logFromOpenAiResponse(
+            (string) ($meta['service'] ?? 'openai'),
+            isset($meta['user_id']) ? (int) $meta['user_id'] : null,
+            (string) $payload['model'],
+            $decoded,
+            array_diff_key($meta, ['service' => 1, 'user_id' => 1, 'temperature' => 1, 'model' => 1])
+        );
+
         $message = $decoded['choices'][0]['message'] ?? null;
         if (!is_array($message)) {
             throw new \RuntimeException('OpenAI returned an empty response.');
         }
 
         if (!empty($message['refusal'])) {
-            throw new \RuntimeException('OpenAI refused to analyse this squad.');
+            throw new \RuntimeException('OpenAI refused this request.');
         }
 
         $content = (string) ($message['content'] ?? '');

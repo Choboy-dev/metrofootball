@@ -3,12 +3,8 @@
 
   # Never expose /public in the browser
   RewriteCond %{ENV:REDIRECT_STATUS} ^$
-  RewriteCond %{THE_REQUEST} \s/+([^\s?]*)/public/([^\s?]+)\.html [NC]
-  RewriteRule ^ /%1/%2 [R=301,L,NE]
-
-  RewriteCond %{ENV:REDIRECT_STATUS} ^$
-  RewriteCond %{THE_REQUEST} \s/+([^\s?]*)/public/?([^\s?]*) [NC]
-  RewriteRule ^ /%1/%2 [R=301,L,NE]
+  RewriteCond %{THE_REQUEST} \s/+public/(.+?)[\s?] [NC]
+  RewriteRule ^public/(.*)$ /$1 [R=301,L,NE]
 
   # Extensionless URLs: redirect visible .html requests
   RewriteCond %{ENV:REDIRECT_STATUS} ^$
@@ -17,7 +13,35 @@
 
   # Gameweek tips archive URLs: /fpl-gameweek-2-tips
   RewriteCond %{ENV:REDIRECT_STATUS} ^$
-  RewriteRule ^fpl-gameweek-([0-9]+)-tips/?$ public/fpl-gameweek-tips.html [L]
+  RewriteRule ^fpl-gameweek-([0-9]+)-tips/?$ public/fpl-gameweek-tips.php?gw=$1 [L,QSA]
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^fpl-gameweek-tips/?$ public/fpl-gameweek-tips.php [L,QSA]
+
+  # Players index (must beat any stale public/players/ directory mapping)
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^players/?$ public/players.php [L,QSA]
+
+  # Player profile pages: /players/man-city/cherki
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^players/([a-z0-9-]+)/([a-z0-9-]+)/?$ public/player-profile.php?club=$1&player=$2 [L,QSA]
+
+  # Club hub pages: /players/man-city
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^players/([a-z0-9-]+)/?$ public/players-club.php?club=$1 [L,QSA]
+
+  # Mini league rival pages: /mini-leagues/league-slug/rival-slug
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^mini-leagues/([a-z0-9-]+)/([a-z0-9-]+)/?$ public/mini-league-rival.php?league=$1&rival=$2 [L,QSA]
+
+  # FPL Guides hub and articles
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^fpl-guides/?$ public/fpl-guides.php [L]
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^fpl-guides/([a-z0-9-]+)/?$ public/fpl-guide.php?slug=$1 [L,QSA]
+
+  # Author profile pages
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteRule ^author/([a-z0-9-]+)/?$ public/guide-author.php?slug=$1 [L,QSA]
 
   # Route all requests into the public web root
   RewriteRule ^(.*)$ public/$1 [L]
